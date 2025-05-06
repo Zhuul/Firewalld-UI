@@ -38,17 +38,17 @@ module.exports = (app, sequelize) => {
       },
     },
     {
-      // MySQL数据库表名
+      // MySQL database table name
       tableName: 'users',
-      // 不使用created_at , updated_at
+      // Do not use created_at, updated_at
       timestamps: false,
       defaultScope: {
         // dataValues: {
-        //   // 排除密码，不返回密码
+        //   // Exclude password, do not return password
         //   exclude: ['password'],
         // },
         // attributes: {
-        //   // 排除密码，不返回密码
+        //   // Exclude password, do not return password
         //   exclude: ['password'],
         // },
       },

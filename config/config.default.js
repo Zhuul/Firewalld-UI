@@ -10,7 +10,7 @@
  * @param {Egg.EggAppInfo} appInfo app info
  */
 const path = require('path');
-//  pkg打包配置 begin
+//  pkg packaging configuration begin
 const process = require('process');
 
 const I18n = require('i18n');
@@ -27,7 +27,7 @@ module.exports = appInfo => {
    * @type {Egg.EggAppConfig}
    **/
 
-  //自定义中间件
+  // Custom middleware
 
   const db = new Map();
 
@@ -43,7 +43,7 @@ module.exports = appInfo => {
     clean,
     believe,
     jwt: {
-      enable: false, //false 表示非全局,路由上生效
+      enable: false, // false means non-global, effective on routes
       expiresIn: `${jwt.expiresIn}d`,
       secret: jwt.secret,
     },
@@ -55,7 +55,7 @@ module.exports = appInfo => {
     cluster: {
       listen: {
         port: 7001,
-        hostname: '0.0.0.0', // 不建议设置 hostname 为 '0.0.0.0'，它将允许来自外部网络和来源的连接，请在知晓风险的情况下使用
+        hostname: '0.0.0.0', // It is not recommended to set hostname to '0.0.0.0', as it will allow connections from external networks and sources. Use with caution.
         // path: '/var/run/egg.sock',
       },
     },
@@ -68,41 +68,41 @@ module.exports = appInfo => {
         enable: false,
       },
       ctoken: false,
-      domainWhiteList: ['340200.xyz:8013'], //允许跨域的白名单,为false时不限制跨域
+      domainWhiteList: ['340200.xyz:8013'], // Allowed cross-domain whitelist, no restriction if false
     },
     sequelize: {
       sync: true,
       dialect: 'sqlite',
-      storage: path.join(__dirname, '../database/sqlite-default.db'), //我这里用的是绝对路径
+      storage: path.join(__dirname, '../database/sqlite-default.db'), // I am using an absolute path here
     },
     onerror: {
       all(err, ctx) {
         try {
           ctx.status = 200;
-          let message = ctx.helper.status?.[err.name]?.(err) ?? '未知错误';
+          let message = ctx.helper.status?.[err.name]?.(err) ?? 'Unknown error';
           ctx.helper.response({ success: false, message });
         } catch (error) {
           ctx.helper.response({ success: false });
         }
       },
       html(err, ctx) {
-        // html hander
+        // html handler
         ctx.body = '<h3>error</h3>';
         ctx.status = 500;
       },
       json(err, ctx) {
-        // json hander
+        // json handler
         ctx.body = { message: 'error' };
         ctx.status = 500;
       },
       jsonp(err, ctx) {
-        // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
+        // Generally, there is no need to define special error handling for jsonp. The error handling for jsonp will automatically call the json error handler and wrap it in the jsonp response format.
       },
     },
     validate: {
-      // 配置参数校验器，基于parameter
-      convert: true, // 对参数可以使用 convertType 规则进行类型转换
-      // validateRoot: false,   // 限制被验证值必须是一个对象。
+      // Configure parameter validator, based on parameter
+      convert: true, // Parameters can be type-converted using the convertType rule
+      // validateRoot: false,   // Restrict the validated value to be an object.
       widelyUndefined: false,
       translate() {
         const args = Array.prototype.slice.call(arguments);
@@ -128,7 +128,7 @@ module.exports = appInfo => {
       driver: 'memory',
       duration: ratelimit.duration * 60 * 1000,
       max: ratelimit.max,
-      errorMessage: '访问限制,请稍后再试!',
+      errorMessage: 'Access restricted, please try again later!',
       id: ctx => ctx.helper.getXwf(),
       headers: {
         remaining: 'Rate-Limit-Remaining',

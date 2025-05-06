@@ -9,7 +9,7 @@ class AppBootHook {
   }
   async beforeClose() {
     this.app.beforeClose();
-    // 请将您的 app.beforeClose 中的代码置于此处
+    // Please place your app.beforeClose code here
   }
 }
 

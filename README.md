@@ -1,7 +1,7 @@
 <div align="center">
 
-#####   开源不易,点个 🌟🌟🌟 吧!!!
-##### 好人一生平安!!!
+#####   Open source is not easy, give it a 🌟🌟🌟!!!
+##### Good people live a safe life!!!
 
 </div>
 
@@ -11,410 +11,408 @@
 
 </div>
 
-基于 <B>Node.js</B> 适用于 <B>个人服务器</B> 和 <B>NAS</B> 的 <B>Firewalld(防火墙) 界面化</B>,不需要记忆操作命令,更没有 Firewalld 的区域概念,和 iptables 复杂的 表链结构 .界面上点击创建一些规则就可以达到 <B>自动</B> 屏蔽和放行 IP 的目的.
+Based on <B>Node.js</B> suitable for <B>personal servers</B> and <B>NAS</B> <B>Firewalld (firewall) interface</B>, no need to remember operation commands, no Firewalld area concept, and iptables complex table chain structure. Clicking to create some rules on the interface can achieve the purpose of <B>automatically</B> blocking and allowing IPs.
 
-关键词: 小型 个人 微型 防火墙 安装 界面 界面化 图形 图形化 防止攻击 屏蔽 访问记录 屏蔽名单
+Keywords: small personal micro firewall installation interface graphical graphical prevent attacks block access records block list
 
-#### [Gitee 码云 (国内极速)](https://gitee.com/SOONXFGetee/Firewalld-UI)
+#### [Gitee 码云 (Domestic Speed)](https://gitee.com/SOONXFGetee/Firewalld-UI)
 
-## 演示环境
+## Demo Environment
 
-> 演示环境没有部署在 linux ,因此很多功能是失效的 
+> The demo environment is not deployed on linux, so many functions are invalid 
 
-### [▶ 点击查看演示(24:00-6:00 服务器关机) ◀](https://340200.xyz:65001)
+### [▶ Click to view the demo (24:00-6:00 server shutdown) ◀](https://340200.xyz:65001)
 
-## 电梯
+## Elevator
 
-#### [▶ 部署和运行 ◀](#部署和运行)
+#### [▶ Deployment and Operation ◀](#Deployment and Operation)
 
-#### [▶ 一些问题的解答 ◀](#解答)
+#### [▶ Some Questions and Answers ◀](#Answers)
 
-#### [▶ 必看:可能会出现的问题 ◀](#问题)
+#### [▶ Must Read: Possible Issues ◀](#Issues)
 
-请务必仔细阅读文档...
+Please read the documentation carefully...
 
-### 要求
+### Requirements
 
-* Linux 系统
-* Firewalld 防火墙
-* pm2 守护进程管理器
-* Node.js (首选 16.18.1,推荐 >= 14.0.0)
+* Linux system
+* Firewalld firewall
+* pm2 process manager
+* Node.js (preferred 16.18.1, recommended >= 14.0.0)
 
-脚本会检测安装 除 Firewalld 防火墙外的所有环境,一键部署启动
+The script will detect and install all environments except the Firewalld firewall, one-click deployment and startup
 
-CentOS7 内置 Firewalld
+CentOS7 comes with Firewalld
 
-### 项目介绍和技术栈
+### Project Introduction and Technology Stack
 
 ---
 
-* 部署启动极其简单,一键 startup.sh 脚本轻松部署
-* 前端基于 Vue(element UI), 后端 基于 nodejs(eggjs)
-* 修改 element 源码,table 组件增加 defer 延迟加载函数
-* vuex 和 数据持久化, pm2 管理和部署项目, pkg 打包前端静态资源
-* express 部署前端 https 静态资源,使用 limiter 帽子防护 xss 等攻击
-* 使用 jwt 和 浏览器指纹维护前端的登录状态
-* 前后端 根据 IP 的限流措施
-* 基于 sqlite3 的数据库存储,接口使用事务处理数据
-* Linux 防火墙 Firewalld 的使用
-* 自动的检测环境和下载所需的依赖
-* 自动化屏蔽 IP,可以根据 IP 归属地流量和地点关键词规则屏蔽刻意访问
-* 使用 rsa 加密 token 和 指纹等信息
-* 自动保存的表格可拖拽宽度配置,所有单元格内容都做了省略处理和 tooltip 提示
-* 多种组件大小可供手动调节,多尺寸设备都可兼容
+* Deployment and startup are extremely simple, one-click startup.sh script for easy deployment
+* Frontend based on Vue (element UI), backend based on nodejs (eggjs)
+* Modified element source code, table component adds defer delay loading function
+* vuex and data persistence, pm2 management and deployment projects, pkg package frontend static resources
+* express deploys frontend https static resources, using limiter to protect against xss and other attacks
+* Use jwt and browser fingerprint to maintain frontend login status
+* Frontend and backend IP rate limiting measures
+* Database storage based on sqlite3, interface uses transaction processing data
+* Use of Linux firewall Firewalld
+* Automatic detection of environment and download of required dependencies
+* Automatic IP blocking, can block intentional access based on IP location traffic and location keyword rules
+* Use rsa to encrypt token and fingerprint information
+* Automatically saved table can drag width configuration, all cell content is ellipsis processed and tooltip prompt
+* Multiple component sizes can be manually adjusted, compatible with multiple size devices
 
-### 目录和文件
+### Directory and Files
 
-* **[shell]:** 自动化脚本目录
-* **[secretKey]:** 存放 rsa 密钥,用于加密 token 和 指纹
-* **[shell/shell.log]:** 记录自动化脚本的日志
-* **[config.json]:** 系统设置,同界面化 系统设置 页面
-* **[express]:** 前端根目录
-  * **[express/ssl]:** 存放 https 证书
-  * **[express/dist]:** 前端静态资源
-  * **[express/config.js]:** 前端配置文件
-  * **[express/config.js.httpPort]:** http 端口
-  * **[express/config.js.httpsPort]:** https 端口(没有部署 https 证书无法访问)
-  * **[express/config.js.limiter]:** 前端流量限制配置
-  * **[express/config.js.proxy.target]:** 代理的后端路径
+* **[shell]:** Automation script directory
+* **[secretKey]:** Store rsa keys, used to encrypt token and fingerprint
+* **[shell/shell.log]:** Record the log of the automation script
+* **[config.json]:** System settings, same as the interface System Settings page
+* **[express]:** Frontend root directory
+  * **[express/ssl]:** Store https certificates
+  * **[express/dist]:** Frontend static resources
+  * **[express/config.js]:** Frontend configuration file
+  * **[express/config.js.httpPort]:** http port
+  * **[express/config.js.httpsPort]:** https port (cannot be accessed without deploying https certificate)
+  * **[express/config.js.limiter]:** Frontend traffic limit configuration
+  * **[express/config.js.proxy.target]:** Proxy backend path
 
-[▶ 部署 https ◀](#部署https)
+[▶ Deploy https ◀](#Deploy https)
 
-> 如 7001 端口被占用,修改 根目录/config/config.prod.js.cluster.listen.port 同步修改 express/config.js.proxy.target 最后面的 端口即可,重启生效
+> If port 7001 is occupied, modify the root directory/config/config.prod.js.cluster.listen.port and synchronize modify express/config.js.proxy.target the last port, restart to take effect
 
-### startup.sh 脚本
+### startup.sh Script
 
-> 暖心的自动化脚本,做到了那些功能
+> Warm-hearted automation script, achieved those functions
 
-* 检测环境 node pm2 Firewalld
-* 自动下载 node pm2 ,自动创建 node pm2 软连接
-* 检测依赖,并自动下载(node_modules)
-* 检测 secretKey 密钥,和自动生成密钥
-* 自动检测端口,并自动在防火墙开放项目端口
-* 检测开机启动,自动追加开机脚本(/etc/rc.d/rc.local)
-* 检测完环境后自动启动前后端服务,默认端口 http:5000,https:5001
+* Detect environment node pm2 Firewalld
+* Automatically download node pm2, automatically create node pm2 soft link
+* Detect dependencies and automatically download (node_modules)
+* Detect secretKey keys and automatically generate keys
+* Automatically detect ports and automatically open project ports in the firewall
+* Detect startup, automatically add startup script (/etc/rc.d/rc.local)
+* Automatically start frontend and backend services after detecting the environment, default port http:5000, https:5001
 
-> 项目根目录窗口运行
+> Run in the root directory of the project
 
 ```shell
 ./shell/startup.sh
 ```
 
-或者
+or
 
-> 没有执行权限情况下
+> Without execution permission
 
 ```shell
 chmod -R 777 ./shell/startup.sh && ./shell/startup.sh
 ```
 
-> 项目出现没有权限
+> Project has no permission
 
 ```shell
-chmod -R 777 项目根目录
+chmod -R 777 project root directory
 ```
 
-### 检测部署
+### Detect Deployment
 
-* 前端:启动完成浏览器打开 本机IP:5000(5001) 
-* 后端:启动完成浏览器打开 本机IP:5000(5001)/api/getPublicKeyFingerprint
-* 默认端口 http:5000,https:5001
+* Frontend: After startup, open the browser and visit local IP:5000 (5001) 
+* Backend: After startup, open the browser and visit local IP:5000 (5001)/api/getPublicKeyFingerprint
+* Default port http:5000, https:5001
 
-### 部署和运行
+### Deployment and Operation
 
-* 克隆项目 或者下载 [releases](https://github.com/soonxf/Micro-Firewall/releases) 
-* 拷贝解压到 Linux 服务器任意目录
-* 项目根目录运行 startup.sh 脚本即部署成功
+* Clone the project or download [releases](https://github.com/soonxf/Micro-Firewall/releases) 
+* Copy and extract to any directory on the Linux server
+* Run the startup.sh script in the root directory of the project to deploy successfully
 
-#### [下载过慢建议使用 Gitee](https://gitee.com/SOONXFGetee/Firewalld-UI/releases)
+#### [Download too slow, it is recommended to use Gitee](https://gitee.com/SOONXFGetee/Firewalld-UI/releases)
 
-运行见 startup.sh 脚本 标题
+See the startup.sh script title for operation
 
-> 注意:
-> 部署成功后一定要
+> Note:
+> After successful deployment, be sure to
 
-* 根目录/secretKey/fingerprint(token) 下面的密钥文件删除重新生成 
-* 系统设置 重新生成 jwt 密钥 和 captcha 密钥
-* 重新生成 JWT 密钥后需要重新修改密码才能登录
+* Delete and regenerate the key files under the root directory/secretKey/fingerprint (token) 
+* System settings regenerate jwt key and captcha key
+* After regenerating the JWT key, you need to change the password to log in
 
-[▶ 修改密码 ◀](#合并示例)
+[▶ Change Password ◀](#Merge Example)
 
-#### 手动运行
+#### Manual Operation
 
-> 确保 根目录 和 express 的依赖都已经下载完成(node_modules)
+> Ensure that the dependencies of the root directory and express have been downloaded (node_modules)
 
-* 根目录执行
+* Execute in the root directory
   
 ```
 npm run start
 ```
 
-* express 目录执行
+* Execute in the express directory
 
 ```
 node index.js
 ```
 
-或者安装有 pm2
+or install pm2
 
 ```
 pm2 start index.js --name=HttpServer --exp-backoff-restart-delay=1000
 ```
 
-### 登录和改密
+### Login and Change Password
 
-#### 登录
+#### Login
 
-> 若没有默认用户,登录页手动注册
+> If there is no default user, manually register on the login page
 
-默认用户名
+Default username
 
 ```
 admin
 ```
 
-默认密码
+Default password
 
 ```
 Admin123456@
 ```
 
-#### 修改密码
+#### Change Password
 
 
-步骤
+Steps
 
-* 进入登录页点击修改密码
-* 填入 用户名 新密码 注册口令  JWT 密钥
+* Enter the login page and click Change Password
+* Fill in the username, new password, registration key, JWT key
 
-##### 查看注册口令
+##### View Registration Key
 
-> 项目根目录打开终端执行,
+> Open the terminal in the root directory of the project and execute,
 >
-> Linux 环境下执行,没有自带 sqlite3 环境需要自行下载
+> Execute in the Linux environment, if there is no built-in sqlite3 environment, you need to download it yourself
 >
-> 将 你的用户名 (五个汉字)替换为自己注册的用户名,完整复制不要丢失
+> Replace your username (five Chinese characters) with your registered username, copy the complete command without losing any part
 
 ```shell
-echo -e "注册口令:" $(sqlite3 ./database/sqlite-prod.db 'SELECT secret FROM users WHERE username = "你的用户名";')
+echo -e "Registration Key:" $(sqlite3 ./database/sqlite-prod.db 'SELECT secret FROM users WHERE username = "your username";')
 ```
 
-##### 查看 JWT 密钥
+##### View JWT Key
 
-> 项目根目录打开 Linux 终端执行,完整复制不要丢失
+> Open the Linux terminal in the root directory of the project and execute, copy the complete command without losing any part
 
 ```shell
-echo -e "JWT 密钥:" $(grep secret ./config.json | head -n 1 | awk '{ print $2 }' | sed 's/\"//g')
+echo -e "JWT Key:" $(grep secret ./config.json | head -n 1 | awk '{ print $2 }' | sed 's/\"//g')
 ```
 
-> 注意: 注册口令 和 JWT 密钥 用来修改密码等,妥善保管,切勿泄漏
+> Note: The registration key and JWT key are used to change the password, etc., please keep them properly and do not disclose them
 
-##### 合并示例
+##### Merge Example
 
-###### 修改密码需要用到 JWT 密钥 和 注册口令
+###### Changing the password requires the JWT key and registration key
 
-> 复制修改 admin (五个字母)替换为自己注册的用户名,完整复制不要丢失
+> Replace admin (five letters) with your registered username, copy the complete command without losing any part
 
 ```shell
-echo -e "注册口令:" $(sqlite3 ./database/sqlite-prod.db 'SELECT secret FROM users WHERE username = "admin";') && echo -e "JWT 密钥:" $(grep secret ./config.json | head -n 1 | awk '{ print $2 }' | sed 's/\"//g')
+echo -e "Registration Key:" $(sqlite3 ./database/sqlite-prod.db 'SELECT secret FROM users WHERE username = "admin";') && echo -e "JWT Key:" $(grep secret ./config.json | head -n 1 | awk '{ print $2 }' | sed 's/\"//g')
 ```
 
-### 部署https
+### Deploy https
 
-* 将证书存储在 express/ssl
-* 修改 express/config.js 中的 ssl.key ssl.crt
-* 重启生效
+* Store the certificate in express/ssl
+* Modify ssl.key ssl.crt in express/config.js
+* Restart to take effect
 
-> ssl.key ssl.crt 填入文件名即可,不需要路径,空 (表示空 == "") 表示不启用 https
+> ssl.key ssl.crt fill in the file name, no need for the path, empty (表示空 == "") means https is not enabled
 
-### 问题
+### Issues
 
-### 验证码加载不出来
+### Verification Code Not Loading
 
-可能后端未部署成功,解决启动过程中的异常即可.
+The backend may not be deployed successfully, solve the exceptions during the startup process.
 
-### libstdc++ 报错
+### libstdc++ Error
 
-如图
+As shown in the figure
 
 ![image](https://raw.githubusercontent.com/soonxf/Micro-Firewall/main/images/1676604602040.jpg)
 
-###### 关键字
+###### Keywords
 
 > ERROR 24956 nodejs,ER DLOPEN FAILEDError: /lib64/libstdc++.50.6: version "CXXABL 1.3.8' not found 
 
-还可以升级系统应该也可以解决哈哈哈哈哈哈...
+Upgrading the system should also solve the problem...
 
-降低 node 版本 应该也是可以的 建议 node 版本>=14
+Lowering the node version should also work, recommended node version >=14
 
-###### 安装 libstdc++
+###### Install libstdc++
 
-> 安装 libstdc++ 有风险,建议备份后再尝试
+> Installing libstdc++ has risks, it is recommended to back up before trying
 
-[手动安装 libstdc](https://blog.340200.xyz/2022/12/19/ruan-jian/centos-libstdc.so.6-ruan-lian-jie-ku-sheng-ji/)
+[Manual installation of libstdc](https://blog.340200.xyz/2022/12/19/ruan-jian/centos-libstdc.so.6-ruan-lian-jie-ku-sheng-ji/)
 
-### 脚本下载依赖失败
+### Script Download Dependencies Failed
 
-* 删除根目录 node_modules
+* Delete the root directory node_modules
 
-* 使用 cnpm 下载
+* Use cnpm to download
 
 ```
 npm install -g cnpm -registry=https://registry.npm.taobao.org
 ```
 
-* 创建软连接
+* Create a soft link
 
 ```
-ln -s node目录/bin/cnpm /usr/local/bin/cnpm
+ln -s node directory/bin/cnpm /usr/local/bin/cnpm
 ```
 
-如果是 startup.sh 脚本安装的 node , node目录一般在 ./shell/node/node版本号
+If the node installed by the startup.sh script, the node directory is generally in ./shell/node/node version number
 
-* 修改 cnpm 镜像
+* Modify cnpm mirror
 
 ```
 cnpm config set registry https://registry.npm.taobao.org
 ```
 
-* 检查 cnpm 是否安装成功
+* Check if cnpm is installed successfully
 
 ```
 cnpm -v
 ```
 
-* 下载依赖
+* Download dependencies
 
 ```
 cnpm install -registry=https://registry.npm.taobao.org
 ```
 
-### 脚本内替换 node 版本
+### Replace Node Version in Script
 
-将 ./shell/node.sh 和 ./shell/pm2.sh 中出现 node-v16.18.1-linux-x64 的地方全部替换为手动下载的 node 名字
+Replace all occurrences of node-v16.18.1-linux-x64 in ./shell/node.sh and ./shell/pm2.sh with the name of the manually downloaded node
 
-[下载 node](https://nodejs.org/dist/)
+[Download node](https://nodejs.org/dist/)
 
 
-#### 手动安装 node
+#### Manual Installation of Node
 
-[教程:安装 node](https://blog.340200.xyz/2022/11/26/ruan-jian/linux-an-zhuang-node/)
+[Tutorial: Install Node](https://blog.340200.xyz/2022/11/26/ruan-jian/linux-an-zhuang-node/)
 
-### 手动安装 pm2
+### Manual Installation of pm2
 
-[教程:安装 pm2](https://blog.340200.xyz/2022/12/16/ruan-jian/pm2-de-an-zhuang-he-shi-yong/)
+[Tutorial: Install pm2](https://blog.340200.xyz/2022/12/16/ruan-jian/pm2-de-an-zhuang-he-shi-yong/)
 
 -----
 
-### 解答
+### Answers
 
-#### 加入黑名单失败
+#### Failed to Add to Blacklist
 
-> 可能已经通过终端方式加入过黑名单(白名单)
+> It may have been added to the blacklist (whitelist) through the terminal
 > 
-> 可以通过查看防火墙所有富规则来确定
+> You can check all rich rules of the firewall to confirm
 >
-> 任意目录,终端执行
+> Execute in any directory, terminal
 
 ```
 firewall-cmd --list-rich-rules
 ```
 
-#### 开启(关闭)端口失败
+#### Failed to Open (Close) Port
 
-> 可能这个端口是范围性端口,目前不支持切换范围性端口的状态
+> This port may be a range port, currently does not support switching the status of range ports
 > 
-> 可以通过查看防火墙所有开放端口来确定
+> You can check all open ports of the firewall to confirm
 >
-> 任意目录,终端执行
+> Execute in any directory, terminal
 
 ```
 firewall-cmd --list-ports
 ```
 
-#### 写入访问日志频繁
+#### Frequent Writing of Access Logs
 
-* 增加日志间隔时间(这会影响到屏蔽规则中的 频率检测)
-* 将 常用的信任的 IP 加入 信任配置 中的 全部信任 列表
+* Increase the log interval time (this will affect the frequency detection in the blocking rules)
+* Add commonly used trusted IPs to the All Trust list in the Trust Configuration
 
-> 注意: 如果访问日志当中出现了 本地地址或者回环地址 请手动将其加入 全部信任 列表
+> Note: If local addresses or loopback addresses appear in the access logs, please manually add them to the All Trust list
 
-#### 生成 token 或者 fingerprint 密钥失败
+#### Failed to Generate Token or Fingerprint Key
 
-* 方法一:安装 ssh-keygen 和 openssl 命令
-* 方法二:手动生成 rsa 密钥
+* Method 1: Install ssh-keygen and openssl commands
+* Method 2: Manually generate rsa keys
 
-> 方法二需要用到的密钥文件名和目录
+> Method 2 requires the key file name and directory
 > 
-> 尽量生成 2048 位及以上的 rsa 密钥
+> Try to generate rsa keys with 2048 bits or more
 > 
-> 根目录/secretKey/token PRIVATE-KEY.txt PUBLIC-KEY.txt
+> Root directory/secretKey/token PRIVATE-KEY.txt PUBLIC-KEY.txt
 > 
-> 根目录/secretKey/fingerprint PRIVATE-KEY.txt PUBLIC-KEY.txt
+> Root directory/secretKey/fingerprint PRIVATE-KEY.txt PUBLIC-KEY.txt
 
-#### 解禁时间
+#### Unblocking Time
 
-解禁时间是屏蔽 IP 可以访问的时间,当现在时间大于解禁时间 当前 IP 就会被解封从而能够访问,屏蔽名单中的状态也会从 屏蔽 置为 允许
+The unblocking time is the time when the blocked IP can access. When the current time is greater than the unblocking time, the current IP will be unblocked and can access. The status in the block list will change from Blocked to Allowed.
 
-#### 系统防火墙状态 和 屏蔽名单状态
+#### System Firewall Status and Block List Status
 
-系统防火墙状态 是指 通过 firewall-cmd --list-rich-rules 命令是否能够查询到关于此 IP drop 的富规则,其中包含 prefix="Micro-Firewall"  的是本服务写入的屏蔽规则标志.
+System firewall status refers to whether the rich rules about this IP drop can be queried through the firewall-cmd --list-rich-rules command, including prefix="Micro-Firewall" which is the blocking rule flag written by this service.
 
-屏蔽名单状态 是指 当前 IP 是否在 屏蔽名单 列表中查询到此 IP
+Block list status refers to whether the current IP can be queried in the block list.
 
-注意:有些特殊情况下,屏蔽名单状态 和 系统防火墙状态 可能并不会同步,此时以 系统防火墙状态 为准,只有 系统防火墙状态 为 屏蔽 才是真正达到了屏蔽这个 IP 的目的.
+Note: In some special cases, the block list status and system firewall status may not be synchronized. In this case, the system firewall status shall prevail. Only when the system firewall status is Blocked, the purpose of blocking this IP is truly achieved.
 
-#### 屏蔽规则 和 允许规则
+#### Blocking Rules and Allowing Rules
 
-屏蔽规则 指的是,访问的 IP 出现规则当中的其中一项条件就会被屏蔽
-允许规则 指的是,访问的 IP 出现规则当中的全部条件就会被允许
+Blocking rules refer to blocking the IP if any one of the conditions in the rules is met.
+Allowing rules refer to allowing the IP if all the conditions in the rules are met.
 
-注意: 屏蔽规则 和 允许规则 的权重,当权重高的规则被满足后面的规则就不会再执行了,越靠上 权重越高,会被优先判断
+Note: The weight of blocking rules and allowing rules, when the higher weight rule is met, the subsequent rules will not be executed. The higher the weight, the higher the priority.
 
-#### 屏蔽规则 中的 频率检测
+#### Frequency Detection in Blocking Rules
 
-频率检测中的时间 如 30分钟 和 100次,指的是 访问日志 在 30分钟内 写入了 100次 一样的 IP (只关注 IP 和 次数,不关注 访问的究竟是那个端口),其中访问日志写入的次数和 系统设置 中的 日志间隔 配置 息息相关
+The time in frequency detection, such as 30 minutes and 100 times, refers to the same IP being written to the access log 100 times within 30 minutes (only concerned with IP and times, not concerned with which port is accessed). The number of times the access log is written is closely related to the log interval configuration in the system settings.
 
-如 系统设置 中的 日志间隔 配置为 30 ,则表示 同一个 IP 在访问同一个端口的情况下 30 秒才会写入记录一次
+For example, if the log interval configuration in the system settings is 30, it means that the same IP accessing the same port will only be recorded once in 30 seconds (unlimited refresh access is also recorded once). If accessed again after 30 seconds, it will be recorded again.
 
-例: 
+If machine A only accesses port 80, then the access record of machine A accessing port 80 will only be recorded once in 30 seconds. If accessed again after 30 seconds, it will be recorded again.
 
-A 机器只 访问了 80端口 ,则 A 机器在 30 秒内访问 80端口 的记录只会记录一次(无限刷新访问也记录一次),如果 30 秒后再次访问就会再次写入一次
+If machine A accesses both port 80 and port 443 at the same time, the access records of port 80 and port 443 will be written at the same time. If accessed again after 30 seconds, it will be recorded again.
 
-A 机器同时 访问了 80 和 443 端口,则是 同时 写入 80 和 443 的访问记录, 30 秒还在访问,则会再重新写入
+#### IP Location
 
-#### IP 归属地
+IP location query uses the offline location query library ip2region. Therefore, some information may not be updated in time, and there may be rare cases of inaccuracy.
 
-IP 归属地查询使用的是 离线归属地查询库 ip2region .因此可能部分地区的 信息不能及时更新,极少情况下存在可能有失真的情况
+#### Location Search
 
-#### 归属地搜索
+Location search is not sensitive to order, such as Anhui and Hui'an will both search for access logs with the location of Anhui. However, it is sensitive to typos or symbols, so be careful. Entering some wrong characters may lead to unsatisfactory search results.
 
-归属地的搜索对顺序不敏感,如 安徽 和 徽安 会同样搜索出 归属地为 安徽 的访问日志等,但是对于错别字或者符号等是敏感的,需要注意,输入一些错误字符都可能导致搜索结果差强人意.
+#### Time Selection
 
-#### 时间选择
+The date selection used in the project is disabled, typically for blocking time hours, minutes, and seconds. When selecting the blocking time to the current day, the minimum selection is greater than the current time by 3 minutes or 5 minutes, because selecting to block an IP to a past time is meaningless, so it is disabled.
 
-项目中用到的日期选择都做了禁用处理,其中典型的是关于 屏蔽时间 时分秒的禁止选择,当选择 屏蔽时间 到当天时,最少的选择是大于当前时间的 3 分钟 或者 5 分钟后,因为选择屏蔽一个 IP 到 过去的时间是没有意义的,因此禁止选择.
+#### Frontend and Backend Traffic Limit
 
-#### 前后端流量限制
+Both frontend and backend have their own traffic limit rules. Check express/config.js.limiter (frontend traffic limit) and System Settings>Traffic Limit (backend traffic limit) for details.
 
-前后端流量都有着一套自己的一套流量限制规则 具体查看 express/config.js.limiter(前端流量限制) 和 系统设置>流量限制 (后端流量限制).
-
-重启可以重置这个时间.
+Restarting can reset this time.
 
 
-### 意见和建议
+### Suggestions and Feedback
 
-> 备注问题
+> Note the issue
 
 ```email
 soonxf@dingtalk.com
 ```
 
-#### 完整启动流程截图
+#### Complete Startup Process Screenshot
 
 ![image](https://github.com/soonxf/Micro-Firewall/blob/main/images/%E5%90%AF%E5%8A%A8%E6%88%AA%E5%9B%BE.png?raw=true)
 
-#### 部分截图
+#### Partial Screenshots
 
 ![image](https://github.com/soonxf/Micro-Firewall/blob/main/images/1676831778006.jpg?raw=true)
 

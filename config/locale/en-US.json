@@ -1,0 +1,14 @@
+{
+	"required": "Required, cannot be empty",
+	"missing_field": "Field is missing",
+	"should not be empty": "Should not be empty",
+	"invalid": "Invalid",
+	"should be an email": "Should be an email",
+	"jwt must be provided": "JWT must be provided",
+	"Validation Failed": "Validation failed",
+	"invalid_param": "Validation failed",
+	"should match %s": "Should match %s",
+	"should be a number": "Should be a number",
+	"should be an array": "Should be an array",
+	"should be an object": "Should be an object"
+}
