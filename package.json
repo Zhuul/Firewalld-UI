@@ -41,7 +41,7 @@
     "eslint-config-egg": "^13.0.0"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "waf": "node ./install",
@@ -59,7 +59,7 @@
     "ci": "npm run lint && npm run cov"
   },
   "ci": {
-    "version": "16, 18",
+    "version": "22",
     "type": "github"
   },
   "repository": {

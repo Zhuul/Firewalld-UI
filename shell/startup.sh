@@ -4,7 +4,6 @@
 
 # Get the parent directory, project root directory
 DIR=$(dirname $(dirname "$0"))
-RES=$(grep "$DIR/shell/startup.sh" /etc/rc.d/rc.local)
 
 cd $DIR
 
@@ -129,33 +128,71 @@ greMsg "Front-end and back-end dependencies have been downloaded";
 fi
 # Check if node_modules exists
 
-# Append startup script
-if [ "$RES" = "" ];then
-redMsg "Startup script not detected in /etc/rc.d/rc.local, appending automatic startup script"
+# --- Add new systemd service setup ---
+purMsg "-------------------------Setting up systemd service-------------------------"
+PROJECT_INSTALL_DIR="$DIR" 
+SERVICE_FILE_SOURCE="$(dirname "$0")/firewalld-ui.service" 
+SERVICE_FILE_DEST="/etc/systemd/system/firewalld-ui.service"
+TEMP_SERVICE_FILE="/tmp/firewalld-ui.service.$$"
 
+if [ ! -f "$SERVICE_FILE_SOURCE" ]; then
+    redMsg "ERROR: Service file template not found at $SERVICE_FILE_SOURCE"
+    exit 1
+fi
 
-# ------------------------------------------------
-chmod -R 777 /etc/rc.d/rc.local
-
+purMsg "Customizing service file template from $SERVICE_FILE_SOURCE..."
+# Replace placeholder for WorkingDirectory. The template uses /workspaces/Firewalld-UI
+sed "s|WorkingDirectory=/workspaces/Firewalld-UI|WorkingDirectory=${PROJECT_INSTALL_DIR}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
 if [ $? -ne 0 ]; then
-redMsg "chmod -R 777 /etc/rc.d/rc.local execution error"
-exit 1
-else
-greMsg "Successfully modified /etc/rc.d/rc.local permissions";
+    redMsg "ERROR: Failed to customize WorkingDirectory in service file template using sed."
+    rm -f "$TEMP_SERVICE_FILE"
+    exit 1
 fi
 
-echo >>/etc/rc.d/rc.local
-echo $DIR"/shell/startup.sh >"$DIR"/shell/shell.log 1>&1">>/etc/rc.d/rc.local
-
+# Replace placeholder for PIDFile. The template uses %H/run/egg-server.pid
+sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
 if [ $? -ne 0 ]; then
-redMsg "Error appending startup script in /etc/rc.d/rc.local"
-exit 1
-else
-greMsg "Successfully appended startup script in /etc/rc.d/rc.local";
+    redMsg "ERROR: Failed to customize PIDFile in service file template using sed."
+    rm -f "$TEMP_SERVICE_FILE"
+    exit 1
 fi
 
+purMsg "Installing systemd service file to $SERVICE_FILE_DEST..."
+cp "$TEMP_SERVICE_FILE" "$SERVICE_FILE_DEST"
+CP_STATUS=$?
+rm -f "$TEMP_SERVICE_FILE" # Clean up temp file
+
+if [ $CP_STATUS -eq 0 ]; then
+    greMsg "Service file successfully copied to $SERVICE_FILE_DEST."
+    chmod 644 "$SERVICE_FILE_DEST"
+    
+    purMsg "Reloading systemd daemon..."
+    systemctl daemon-reload
+    if [ $? -ne 0 ]; then
+        redMsg "Warning: systemctl daemon-reload failed. Proceeding, but manual check might be needed."
+    fi
+    
+    purMsg "Enabling firewalld-ui service to start on boot..."
+    systemctl enable firewalld-ui.service
+    if [ $? -ne 0 ]; then
+        redMsg "Warning: systemctl enable firewalld-ui.service failed. Service may not start on boot."
+    fi
+    
+    purMsg "Attempting to start/restart firewalld-ui service..."
+    systemctl restart firewalld-ui.service
+    if [ $? -ne 0 ]; then
+        redMsg "ERROR: systemctl restart firewalld-ui.service failed."
+        redMsg "Check service status with: systemctl status firewalld-ui.service"
+        redMsg "And logs with: journalctl -u firewalld-ui.service"
+        # Consider if this should be a fatal error (exit 1)
+    else
+        greMsg "Service firewalld-ui setup complete. The service should now be managed by systemd."
+    fi
+else
+    redMsg "ERROR: Failed to copy customized service file to $SERVICE_FILE_DEST."
+    exit 1 
 fi
-# ------------------------------------------------
+purMsg "-------------------------Systemd service setup finished-------------------------"
 
 # Start front-end and back-end services
 cd $DIR
