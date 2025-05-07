@@ -10,7 +10,7 @@ DIR=$(pwd)
 read -r -p "Please install pm2 first. Do you want to install it? [y/n] " input
 case $input in
     [yY][eE][sS]|[yY])
-       npm install pm2 -g --registry=https://registry.npm.taobao.org
+       npm install pm2 -g --registry=https://registry.npmmirror.com
             if [ $? -eq 0 ]; then
             ln -sf $DIR/shell/node/node-v16.18.1-linux-x64/bin/pm2 /usr/local/bin
             greMsg "pm2 installation successful"
