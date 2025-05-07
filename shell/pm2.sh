@@ -22,24 +22,61 @@ EXPECTED_PM2_PATH="${PROJECT_ROOT_DIR_PM2}/shell/node/node-${NODE_VERSION_FROM_N
 
 # Function to find pm2, prioritizing the path relative to node.sh's install
 find_pm2_executable() {
-    if [ -x "$EXPECTED_PM2_PATH" ]; then
-        echo "$EXPECTED_PM2_PATH"
-        return 0
+    purMsg "Attempting to find pm2 executable..."
+    purMsg "1. Checking EXPECTED_PM2_PATH: $EXPECTED_PM2_PATH"
+    if [ -f "$EXPECTED_PM2_PATH" ]; then # Check if file exists first
+        purMsg "File exists at EXPECTED_PM2_PATH."
+        if [ -x "$EXPECTED_PM2_PATH" ]; then # Then check if executable
+            purMsg "File is executable. Using EXPECTED_PM2_PATH."
+            echo "$EXPECTED_PM2_PATH"
+            return 0
+        else
+            redMsg "File exists at EXPECTED_PM2_PATH but is NOT executable. Check permissions."
+            ls -l "$EXPECTED_PM2_PATH" # Show permissions
+        fi
+    else
+        redMsg "File does NOT exist at EXPECTED_PM2_PATH."
     fi
-    # Fallback: check if npm put it in a globally accessible PATH via symlinks from node.sh
+
+    purMsg "2. Checking command -v pm2"
     if command -v pm2 &>/dev/null; then
         PM2_CMD_V_PATH=$(command -v pm2)
+        purMsg "command -v pm2 found: $PM2_CMD_V_PATH"
         if [ -x "$PM2_CMD_V_PATH" ]; then
+            purMsg "Using command -v pm2 path."
             echo "$PM2_CMD_V_PATH"
             return 0
+        else
+            redMsg "command -v pm2 found path $PM2_CMD_V_PATH but it's NOT executable."
+            ls -l "$PM2_CMD_V_PATH"
         fi
+    else
+        redMsg "command -v pm2 did NOT find pm2 in PATH."
     fi
-    # Fallback: npm prefix -g (this should ideally resolve to the node.sh installed node's global bin)
-    NPM_GLOBAL_PREFIX_BIN=$(npm prefix -g 2>/dev/null)/bin/pm2
-    if [ -x "$NPM_GLOBAL_PREFIX_BIN" ]; then
-        echo "$NPM_GLOBAL_PREFIX_BIN"
-        return 0
+
+    purMsg "3. Checking npm prefix -g path"
+    NPM_PREFIX_PATH=$(npm prefix -g 2>/dev/null)
+    if [ -n "$NPM_PREFIX_PATH" ]; then
+        NPM_GLOBAL_PM2_PATH="${NPM_PREFIX_PATH}/bin/pm2"
+        purMsg "npm prefix -g is: $NPM_PREFIX_PATH. Checking for pm2 at: $NPM_GLOBAL_PM2_PATH"
+        if [ -f "$NPM_GLOBAL_PM2_PATH" ]; then
+            purMsg "File exists at npm global pm2 path."
+            if [ -x "$NPM_GLOBAL_PM2_PATH" ]; then
+                purMsg "Using npm global pm2 path."
+                echo "$NPM_GLOBAL_PM2_PATH"
+                return 0
+            else
+                redMsg "File exists at npm global pm2 path but is NOT executable."
+                ls -l "$NPM_GLOBAL_PM2_PATH"
+            fi
+        else
+            redMsg "File does NOT exist at npm global pm2 path: $NPM_GLOBAL_PM2_PATH"
+        fi
+    else
+        redMsg "npm prefix -g did not return a path."
     fi
+    
+    redMsg "find_pm2_executable: Could not find pm2."
     return 1
 }
 
