@@ -16,8 +16,8 @@ const process = require('process');
 const I18n = require('i18n');
 
 I18n.configure({
-  locales: ['zh-CN'],
-  defaultLocale: 'zh-CN',
+  locales: ['en-US'],
+  defaultLocale: 'en-US',
   directory: __dirname + '/locale',
 });
 
