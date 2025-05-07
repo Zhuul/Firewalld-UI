@@ -8,19 +8,19 @@
   },
   "dependencies": {
     "dy-node-ip2region": "^1.0.1",
-    "egg": "^3",
-    "egg-cors": "^2.2.3",
+    "egg": "^3.30.1",
+    "egg-cors": "^3.0.1",
     "egg-jwt": "^3.1.7",
     "egg-scripts": "^2.17.0",
     "egg-sequelize": "^6.0.0",
     "egg-socket.io": "^4.1.6",
     "egg-validate": "^2.0.2",
     "express": "^4.19.2",
-    "http-proxy-middleware": "^2.0.6",
+    "http-proxy-middleware": "^3.0.0",
     "i18n": "^0.15.1",
     "jsencrypt": "^3.3.2",
-    "koa-compress": "^5.1.0",
-    "koa-ratelimit": "^5.0.1",
+    "koa-compress": "^5.1.1",
+    "koa-ratelimit": "^5.1.0",
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "node-rsa": "^1.1.1",
@@ -31,14 +31,14 @@
     "svg-captcha": "^1.4.0",
     "esquery": "^1.5.0",
     "debug": "^4.3.4",
-    "@npmcli/fs": "^2.1.0"
+    "@npmcli/fs": "^3.1.0"
   },
   "devDependencies": {
-    "egg-bin": "^5.19.0",
+    "egg-bin": "^6.13.0",
     "egg-ci": "^2.2.0",
     "egg-mock": "^5.10.0",
     "eslint": "^8.57.0",
-    "eslint-config-egg": "^12.2.1"
+    "eslint-config-egg": "^13.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
