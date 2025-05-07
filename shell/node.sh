@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 定义输出颜色 
+# Define output colors
 redMsg() { echo -e "\\n\E[1;31m$*\033[0m\\n"; }
 greMsg() { echo -e "\\n\E[1;32m$*\033[0m\\n"; }
 bluMsg() { echo -e "\\n\033[5;34m$*\033[0m\\n"; }
@@ -10,7 +10,7 @@ purMsg() { echo -e "\\n\033[35m$*\033[0m\\n"; }
 
 DIR=$(pwd)
 
-read -r -p "请先安装 node  是否下载 node-v16.18.1-linux-x64 ? [y/n] " input
+read -r -p "Please install node first. Do you want to download node-v16.18.1-linux-x64? [y/n] " input
 case $input in
     [yY][eE][sS]|[yY])
       rm -rf $DIR/shell/node/*
@@ -29,10 +29,10 @@ case $input in
               sleep 3
               NODE=$(node -v)
               if [ $? -eq 0 ]; then
-              greMsg "node 安装成功"
+              greMsg "node installation successful"
               exit 0
               else
-              redMsg "node 安装失败"
+              redMsg "node installation failed"
               exit 1
               fi
 
@@ -43,26 +43,26 @@ case $input in
               sleep 3
               NODE=$(node -v)
               if [ $? -eq 0 ]; then
-              greMsg "node 安装成功"
+              greMsg "node installation successful"
               exit 0
               else
-              redMsg "node 安装失败"
+              redMsg "node installation failed"
               exit 1
               fi
 
               exit 0
               fi
             else
-            redMsg "下载失败";
+            redMsg "Download failed";
             exit 1
             fi
 		;;
     [nN][oO]|[nN])
-		echo "请手动安装 推荐的 node 版本为 >= v16.18.1"
-		echo "需要修改版本请进入 $DIR/node.sh 修改链接再替换本文件和 pm2.sh 中出现 node-v16.18.1-linux-x64 的地方即可"
+		echo "Please install manually. Recommended node version is >= v16.18.1"
+		echo "To change the version, modify the link in $DIR/node.sh and replace occurrences of node-v16.18.1-linux-x64 in this file and pm2.sh"
         exit 1
        	;;
     *)
-		echo "请输入 y/n"
+		echo "Please enter y/n"
 		;;
     esac

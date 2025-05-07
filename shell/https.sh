@@ -14,32 +14,32 @@ HTTPSCHECK=$(firewall-cmd --query-port=$HTTPS/tcp)
 HTTPSANP=$(netstat -anp |grep -w $HTTPS)
 
 if [[ -n "$HTTPSANP" ]];then
-  purMsg $HTTPS 端口已被使用
-  purMsg "使用 lsof -i:$HTTP 或者 netstat -anp | grep -w $HTTPS 可以查看详细信息"
-  purMsg "使用 kill PID 可销毁该进程(PID 是进程号)"
+  purMsg $HTTPS port is already in use
+  purMsg "Use lsof -i:$HTTP or netstat -anp | grep -w $HTTPS to view detailed information"
+  purMsg "Use kill PID to terminate the process (PID is the process ID)"
 fi
 
 if [ $HTTPSCHECK = "yes" ];then
-bluMsg 防火墙已开放前端 HTTPS 端口 $HTTPS
+bluMsg Firewall has opened the front-end HTTPS port $HTTPS
 else 
-redMsg 防火墙未开放前端 HTTPS 端口 $HTTPS 云服务器需要在控制台同时开启
+redMsg Firewall has not opened the front-end HTTPS port $HTTPS. Cloud servers need to be opened in the console as well.
 
-read -r -p "是否开放端口 $HTTPS ? [y/n] " input
+read -r -p "Do you want to open port $HTTPS? [y/n] " input
 case $input in
     [yY][eE][sS]|[yY])
        firewall-cmd --permanent --add-port=$HTTPS/tcp
             if [ $? -eq 0 ]; then
             firewall-cmd --reload
-            greMsg "开放端口 $HTTPS 成功"
+            greMsg "Successfully opened port $HTTPS"
             else
-            redMsg "开放端口 $HTTPS 失败";
+            redMsg "Failed to open port $HTTPS";
             fi
 		;;
     [nN][oO]|[nN])
-		echo "请手动开放端口 $HTTPS 需要跳过检测请删除 startup.sh 脚本中的 sh ./https.sh"
+		echo "Please manually open port $HTTPS. To skip the check, delete the line sh ./https.sh in the startup.sh script."
        	;;
     *)
-		echo "请输入 y/n"
+		echo "Please enter y/n"
 		;;
     esac
 fi

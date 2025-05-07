@@ -7,24 +7,24 @@ purMsg() { echo -e "\\n\033[35m$*\033[0m\\n"; }
 
 DIR=$(pwd)
 
-read -r -p "请先安装 pm2  是否安装 ? [y/n] " input
+read -r -p "Please install pm2 first. Do you want to install it? [y/n] " input
 case $input in
     [yY][eE][sS]|[yY])
        npm install pm2 -g --registry=https://registry.npm.taobao.org
             if [ $? -eq 0 ]; then
             ln -sf $DIR/shell/node/node-v16.18.1-linux-x64/bin/pm2 /usr/local/bin
-            greMsg "pm2 安装成功"
+            greMsg "pm2 installation successful"
             exit 0
             else
-            redMsg "pm2 安装失败";
+            redMsg "pm2 installation failed";
             exit 1
             fi
 		;;
     [nN][oO]|[nN])
-		echo "请手动安装 pm2"
+		echo "Please install pm2 manually"
         exit 1
        	;;
     *)
-		echo "请输入 y/n"
+		echo "Please enter y/n"
 		;;
     esac

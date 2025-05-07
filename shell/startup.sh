@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# 先给脚本执行权限,项目根目录执行 chmod -R 777 ./startup.sh
+# First give the script execution permissions, execute chmod -R 777 ./startup.sh in the project root directory
 
-# 获取上级,项目根目录
+# Get the parent directory, project root directory
 DIR=$(dirname $(dirname "$0"))
 RES=$(grep "$DIR/shell/startup.sh" /etc/rc.d/rc.local)
 
@@ -18,7 +18,7 @@ chmod -R 777 $DIR/shell/reload.sh
 chmod -R 777 $DIR/shell/clean.sh
 chmod -R 777 $DIR/shell/secret.sh
 
-# 定义输出颜色 
+# Define output colors 
 redMsg() { echo -e "\\n\E[1;31m$*\033[0m\\n"; }
 greMsg() { echo -e "\\n\E[1;32m$*\033[0m\\n"; }
 bluMsg() { echo -e "\\n\033[5;34m$*\033[0m\\n"; }
@@ -28,199 +28,199 @@ HTTP=$(grep "httpPort" $DIR/express/config.js | grep -Eo '[0-9]{1,4}')
 HTTPS=$(grep "httpsPort" $DIR/express/config.js | grep -Eo '[0-9]{1,4}')
 SERVER=$(grep "port" $DIR/config/config.prod.js | grep -Eo '[0-9]{1,4}')
 
-greMsg -------------------------启动流程开始 $(date +%F%n%T)------------------------- 
+greMsg -------------------------Startup process begins $(date +%F%n%T)------------------------- 
 
-echo -------------------------端口信息-------------------------
+echo -------------------------Port Information-------------------------
 
 if [ ! $HTTP ]; then
-redMsg 前端端口 HTTP 不存在
+redMsg Front-end port HTTP does not exist
 else
-bluMsg 前端端口 HTTP: $HTTP
+bluMsg Front-end port HTTP: $HTTP
 sh ./shell/http.sh
 fi
 
 if [ ! $HTTPS ]; then  
-redMsg 前端端口 HTTPS 不存在 
+redMsg Front-end port HTTPS does not exist 
 else
-bluMsg 前端端口 HTTPS: $HTTPS
+bluMsg Front-end port HTTPS: $HTTPS
 sh ./shell/https.sh
 fi
 
 if [ ! $SERVER ]; then
-redMsg 后端端口 不存在 
+redMsg Back-end port does not exist 
 else
-bluMsg 后端端口: $SERVER
+bluMsg Back-end port: $SERVER
 sh ./shell/server.sh
 fi
 
 sleep 3
 
-# 删除下面跳过密钥检测
-echo -------------------------密钥生成-------------------------
+# Delete below to skip key detection
+echo -------------------------Key Generation-------------------------
 sh $DIR/shell/secret.sh
-# 删除上面跳过密钥检测
+# Delete above to skip key detection
 
-echo -------------------------环境检测-------------------------
+echo -------------------------Environment Detection-------------------------
 
 NODEFILES=$(dirname $(pwd))
-# 检测是否安装 node
+# Check if node is installed
 NODE=$(node -v)
 if [ $? -ne 0 ]; then
-    redMsg "请先安装 node 再试"
-    redMsg "注意: 每次安装 node 都会删除$NODEFILES/shell/node 目录"
+    redMsg "Please install node first and try again"
+    redMsg "Note: Each time node is installed, the $NODEFILES/shell/node directory will be deleted"
     sh ./shell/node.sh
     if [ $? -eq 1 ]; then
     exit 1
 fi
 else
-greMsg "node 已安装 版本: $NODE 推荐的 node 版本为 >= v16.18.1"
+greMsg "node is installed Version: $NODE Recommended node version is >= v16.18.1"
 fi
 
 sleep 3
 
-# 检测是否安装 pm2
+# Check if pm2 is installed
 PM=$(pm2 -v)
 if [ $? -ne 0 ]; then
-    redMsg "请先安装 pm2 再试"
+    redMsg "Please install pm2 first and try again"
     sh ./shell/pm2.sh
     if [ $? -eq 1 ]; then
     exit 1
     fi
 else
     PMV=$(pm2 -v)
-    greMsg "pm2  已安装 版本: $PMV"
+    greMsg "pm2 is installed Version: $PMV"
 fi
 
 FIRE=$(firewall-cmd -V)
 if [ $? -ne 0 ]; then
-redMsg "请先安装 firewalld 防火墙 再试"
+redMsg "Please install firewalld firewall first and try again"
 exit 1
 else
-greMsg "firewalld  已安装 版本: $FIRE"
+greMsg "firewalld is installed Version: $FIRE"
 fi
 
-# 检测是否安装 tcpkill
+# Check if tcpkill is installed
 which dsniff >/dev/null
 if [ $? -ne 0 ]; then
-    redMsg "建议安装 dsniff (不影响使用)"
+    redMsg "It is recommended to install dsniff (does not affect usage)"
 else
-greMsg "tcpkill  已安装"
+greMsg "tcpkill is installed"
 fi
 
 FIRE=$(firewall-cmd -V)
 if [ $? -ne 0 ]; then
-redMsg "请先安装 firewalld 防火墙 再试"
+redMsg "Please install firewalld firewall first and try again"
 exit 1
 else
-greMsg "firewalld  已安装 版本: $FIRE"
+greMsg "firewalld is installed Version: $FIRE"
 fi
 
-# 检查通过
+# Check passed
 
 cd $DIR
 
-# 检测 node_modules 是否存在
+# Check if node_modules exists
 sh ./shell/modules.sh
 if [ $? -ne 0 ]; then
-redMsg "请下载前后端依赖后再试,前端: $DIR/express 后端: $DIR"
+redMsg "Please download front-end and back-end dependencies and try again, front-end: $DIR/express back-end: $DIR"
 exit 1
 else
-greMsg "前后端依赖已经下载";
+greMsg "Front-end and back-end dependencies have been downloaded";
 fi
-# 检测 node_modules 是否存在
+# Check if node_modules exists
 
-# 追加开机脚本
+# Append startup script
 if [ "$RES" = "" ];then
-redMsg "在 /etc/rc.d/rc.local 未检测到开机脚本,正在追加自动开机脚本"
+redMsg "Startup script not detected in /etc/rc.d/rc.local, appending automatic startup script"
 
 
 # ------------------------------------------------
 chmod -R 777 /etc/rc.d/rc.local
 
 if [ $? -ne 0 ]; then
-redMsg "chmod -R 777 /etc/rc.d/rc.local 执行错误"
+redMsg "chmod -R 777 /etc/rc.d/rc.local execution error"
 exit 1
 else
-greMsg "修改 /etc/rc.d/rc.local 权限成功";
+greMsg "Successfully modified /etc/rc.d/rc.local permissions";
 fi
 
 echo >>/etc/rc.d/rc.local
 echo $DIR"/shell/startup.sh >"$DIR"/shell/shell.log 1>&1">>/etc/rc.d/rc.local
 
 if [ $? -ne 0 ]; then
-redMsg "在 /etc/rc.d/rc.local 追加开机脚本错误"
+redMsg "Error appending startup script in /etc/rc.d/rc.local"
 exit 1
 else
-greMsg "在 /etc/rc.d/rc.local 成功追加开机脚本";
+greMsg "Successfully appended startup script in /etc/rc.d/rc.local";
 fi
 
 fi
 # ------------------------------------------------
 
-# 启动前端和后端服务
+# Start front-end and back-end services
 cd $DIR
-purMsg "进入根目录 $DIR"
+purMsg "Entering root directory $DIR"
 
 if [ ! -f "./express/express-linux" ];then
-redMsg "前端目录或者执行程序不存在"
+redMsg "Front-end directory or executable does not exist"
 exit 1
 fi
 
-purMsg "进入前端目录 $DIR/express"
+purMsg "Entering front-end directory $DIR/express"
 cd ./express
 # chmod -R 777
-purMsg "修改前端执行权限,执行命令 chmod -R 777 express-linux"
+purMsg "Modifying front-end execution permissions, executing command chmod -R 777 express-linux"
 chmod -R 777 express-linux
 
 if [ $? -ne 0 ]; then
-redMsg "前端目录或者执行程序不存在"
+redMsg "Front-end directory or executable does not exist"
 exit 1
 fi
 
 sleep 5
 
-echo -------------------------正式启动-------------------------
+echo -------------------------Official Start-------------------------
 
-purMsg "返回根目录 $DIR 启动服务"
+purMsg "Returning to root directory $DIR to start service"
 cd ../
 
 echo -e >/dev/null 1>>$DIR/shell/shell.log
 echo -e ------------------------- $(date +%F%n%T) >/dev/null 1>>$DIR/shell/shell.log -------------------------
 
-purMsg "启动日志存储在 $DIR/shell.log"
+purMsg "Startup log stored in $DIR/shell.log"
 
 if [[ $1 -eq 2 ]];then
-    echo 执行 reload >>$DIR/shell/shell.log
+    echo Executing reload >>$DIR/shell/shell.log
 else 
     npm run stop:linux >/dev/null 1>>$DIR/shell/shell.log
     if [ $? -ne 0 ]; then
-    redMsg "npm run stop:linux 命令执行错误 可能原因分析: 1:环境不全 2:已经启动 3:端口占用"
+    redMsg "npm run stop:linux command execution error Possible reasons: 1: Incomplete environment 2: Already started 3: Port occupied"
     exit 1
     else
-    greMsg "正在检测是否存在已经启动过服务成功";
+    greMsg "Checking if the service has been successfully started before";
     fi
 fi
 
-# #未安装 pm2 运行 npm run start:linux:index
+# #If pm2 is not installed, run npm run start:linux:index
 npm run start:linux >/dev/null 1>>$DIR/shell/shell.log
 cd ./express
 pm2 start express-linux --name=HttpServer --exp-backoff-restart-delay=1000
 cd ../
 
 if [ $? -ne 0 ]; then
-redMsg "服务启动失败"
-redMsg "npm run start:linux 命令执行错误 可能原因分析: 1:环境不全 2:已经启动 3:端口占用"
-redMsg "使用 lsof -i:端口号 可查看占用的进程"
-redMsg "使用 kill PID 可销毁进程(PID 是进程号)"
+redMsg "Service startup failed"
+redMsg "npm run start:linux command execution error Possible reasons: 1: Incomplete environment 2: Already started 3: Port occupied"
+redMsg "Use lsof -i:port number to view the occupying process"
+redMsg "Use kill PID to terminate the process (PID is the process number)"
 exit 1
 else
-greMsg "服务启动成功";
-bluMsg "前端 HTTP: 本机IP:$HTTP"
-bluMsg "前端 HTTPS: 本机IP:$HTTPS (未部署 HTTPS 请访问 HTTP)"
-bluMsg "后端: 本机IP:$SERVER"
+greMsg "Service started successfully";
+bluMsg "Front-end HTTP: Local IP:$HTTP"
+bluMsg "Front-end HTTPS: Local IP:$HTTPS (If HTTPS is not deployed, please access HTTP)"
+bluMsg "Back-end: Local IP:$SERVER"
 fi
 
-greMsg -------------------------启动流程结束 $(date +%F%n%T)-------------------------
+greMsg -------------------------Startup process ends $(date +%F%n%T)-------------------------
 echo -e \ >/dev/null 1>>$DIR/shell/shell.log
 echo -e ------------------------- $(date +%F%n%T) >/dev/null 1>>$DIR/shell/shell.log -------------------------
 

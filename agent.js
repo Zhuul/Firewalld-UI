@@ -1,8 +1,8 @@
 /** @format */
 
 module.exports = agent => {
-  // 也可以通过 messenger 对象发送消息给 App Worker
-  // 但需要等待 App Worker 启动成功后才能发送，不然很可能丢失
+  // You can also send messages to the App Worker through the messenger object
+  // But you need to wait for the App Worker to start successfully before sending, otherwise it may be lost
   agent.messenger.on('egg-ready', () => {
     //   const data = { ... };
     agent.messenger.sendToApp('netstat_action', {});

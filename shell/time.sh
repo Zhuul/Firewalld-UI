@@ -1,4 +1,4 @@
-echo "|-检查ntpdate命令是否就绪.."
+echo "|-Checking if ntpdate command is ready.."
 is_ntpdate=$(which ntpdate)
 if [ "$is_ntpdate" = "" ];then
    if [ -f /usr/bin/apt ];then
@@ -13,12 +13,12 @@ fi
 is_ntpdate=$(which ntpdate)
 is_http=0
 if [ "$is_ntpdate" != "" ];then
-    echo "|-正在尝试同步时间..";
+    echo "|-Attempting to synchronize time..";
     ntpdate -u ntp.ntsc.ac.cn ntp.aliyun.com time.windows.com
 else
     is_http=1
 fi
-echo "|-正在尝试将当前系统时间写入硬件..";
+echo "|-Attempting to write current system time to hardware..";
 hwclock -w
-echo "|-当前时间为：$(date)"
-echo "|-时间同步完成!";
+echo "|-Current time is: $(date)"
+echo "|-Time synchronization complete!";
