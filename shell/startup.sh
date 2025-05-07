@@ -63,16 +63,32 @@ echo -------------------------Environment Detection-------------------------
 
 NODEFILES=$(dirname $(pwd))
 # Check if node is installed
-NODE=$(node -v)
-if [ $? -ne 0 ]; then
-    redMsg "Please install node first and try again"
-    redMsg "Note: Each time node is installed, the $NODEFILES/shell/node directory will be deleted"
-    sh ./shell/node.sh
-    if [ $? -eq 1 ]; then
-    exit 1
-fi
+NODE_VERSION_OUTPUT=$(node -v 2>/dev/null)
+RECOMMENDED_NODE_MAJOR=22
+
+if [ $? -ne 0 ] || ! [[ "$NODE_VERSION_OUTPUT" == "v${RECOMMENDED_NODE_MAJOR}."* ]]; then
+    if [ $? -ne 0 ]; then
+        redMsg "Node.js is not installed."
+    else
+        redMsg "Installed Node.js version ($NODE_VERSION_OUTPUT) is older than recommended (v${RECOMMENDED_NODE_MAJOR}.x)."
+    fi
+    redMsg "The script will attempt to install/update Node.js."
+    redMsg "Note: This will affect the system's Node.js version if installed into /usr/local/bin."
+    sh ./shell/node.sh # This script will exit if it fails or user says no
+    if [ $? -ne 0 ]; then
+        redMsg "Node.js setup via node.sh failed or was skipped. Please install Node.js v${RECOMMENDED_NODE_MAJOR}.x manually."
+        exit 1
+    fi
+    # Re-check version after potential install from node.sh
+    NODE_VERSION_OUTPUT=$(node -v 2>/dev/null)
+    if [ $? -ne 0 ] || ! [[ "$NODE_VERSION_OUTPUT" == "v${RECOMMENDED_NODE_MAJOR}."* ]]; then
+        redMsg "Node.js version is still not as recommended (v${RECOMMENDED_NODE_MAJOR}.x) after attempting install. Found: $NODE_VERSION_OUTPUT"
+        redMsg "Please check the installation manually."
+        exit 1
+    fi
+    greMsg "Node.js is now installed/updated to version: $NODE_VERSION_OUTPUT"
 else
-greMsg "node is installed Version: $NODE Recommended node version is >= v16.18.1"
+    greMsg "Node.js is installed. Version: $NODE_VERSION_OUTPUT (Recommended >= v${RECOMMENDED_NODE_MAJOR}.0.0)"
 fi
 
 sleep 3
