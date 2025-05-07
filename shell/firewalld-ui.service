@@ -10,10 +10,10 @@ Type=forking
 User=root
 # IMPORTANT: Adjust WorkingDirectory to the *actual absolute path* where Firewalld-UI is installed on your server.
 # Example: /opt/Firewalld-UI
-WorkingDirectory=/workspaces/Firewalld-UI
+WorkingDirectory=/usr/local/src/Firewalld-UI
 # IMPORTANT: Ensure npm is in the PATH for the service user, or provide the full path to npm.
 # Example: ExecStart=/usr/local/bin/npm start
-ExecStart=/usr/bin/npm start
+ExecStart=/usr/local/src/Firewalld-UI/shell/node/node-v22.1.0-linux-x64/bin/npm start
 # PIDFile should be relative to WorkingDirectory or an absolute path.
 # egg-scripts default is <project_root>/run/egg-server.pid
 PIDFile=%H/run/egg-server.pid # %H will be replaced by the WorkingDirectory

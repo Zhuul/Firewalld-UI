@@ -94,17 +94,45 @@ fi
 sleep 3
 
 # Check if pm2 is installed
-PM=$(pm2 -v)
-if [ $? -ne 0 ]; then
-    redMsg "Please install pm2 first and try again"
-    sh ./shell/pm2.sh
-    if [ $? -eq 1 ]; then
-    exit 1
+PM2_EXECUTABLE=$(command -v pm2 2>/dev/null) # Try finding pm2 in PATH first
+
+if [ -z "$PM2_EXECUTABLE" ]; then # If not found in PATH
+    redMsg "pm2 not found in PATH. Attempting to install..."
+    # Store the output of pm2.sh (which should be the path to pm2)
+    PM2_INSTALL_OUTPUT=$(sh ./shell/pm2.sh)
+    PM2_INSTALL_STATUS=$?
+    
+    if [ $PM2_INSTALL_STATUS -eq 0 ] && [ -n "$PM2_INSTALL_OUTPUT" ] && [ -x "$PM2_INSTALL_OUTPUT" ]; then
+        greMsg "pm2 installed/found at: $PM2_INSTALL_OUTPUT"
+        PM2_EXECUTABLE="$PM2_INSTALL_OUTPUT"
+    else
+        redMsg "pm2 installation or path retrieval failed. Please install pm2 manually and ensure it's in your PATH."
+        exit 1
     fi
-else
-    PMV=$(pm2 -v)
-    greMsg "pm2 is installed Version: $PMV"
 fi
+
+# Now use $PM2_EXECUTABLE to call pm2
+PMV=$($PM2_EXECUTABLE -v 2>/dev/null)
+if [ $? -ne 0 ]; then
+    redMsg "Failed to execute pm2 even after attempting install/path retrieval. Found at: $PM2_EXECUTABLE. Version check output: $PMV"
+    # This case might indicate an issue with the pm2 installation itself or execution environment
+    # Forcing a re-run of pm2.sh might be an option, or exiting.
+    # For now, let's try one more time with pm2.sh if PMV failed.
+    PM2_INSTALL_OUTPUT=$(sh ./shell/pm2.sh)
+    PM2_INSTALL_STATUS=$?
+    if [ $PM2_INSTALL_STATUS -eq 0 ] && [ -n "$PM2_INSTALL_OUTPUT" ] && [ -x "$PM2_INSTALL_OUTPUT" ]; then
+        PM2_EXECUTABLE="$PM2_INSTALL_OUTPUT"
+        PMV=$($PM2_EXECUTABLE -v 2>/dev/null)
+        if [ $? -ne 0 ]; then
+             redMsg "pm2 still not working after second attempt. Please check manually."
+             exit 1
+        fi
+    else
+        redMsg "pm2 installation or path retrieval failed on second attempt."
+        exit 1
+    fi
+fi
+greMsg "pm2 is available. Version: $PMV"
 
 FIRE=$(firewall-cmd -V)
 if [ $? -ne 0 ]; then
@@ -257,7 +285,7 @@ fi
 # #If pm2 is not installed, run npm run start:linux:index
 npm run start:linux >/dev/null 1>>$DIR/shell/shell.log
 cd ./express
-pm2 start express-linux --name=HttpServer --exp-backoff-restart-delay=1000
+"$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 # Use the variable
 cd ../
 
 if [ $? -ne 0 ]; then

@@ -12,11 +12,25 @@ case $input in
     [yY][eE][sS]|[yY])
        npm install pm2 -g --registry=https://registry.npmmirror.com
             if [ $? -eq 0 ]; then
-            ln -sf $DIR/shell/node/node-v16.18.1-linux-x64/bin/pm2 /usr/local/bin
             greMsg "pm2 installation successful"
-            exit 0
+            NPM_GLOBAL_BIN=$(npm bin -g 2>/dev/null)
+            if [ -n "$NPM_GLOBAL_BIN" ] && [ -x "$NPM_GLOBAL_BIN/pm2" ]; then
+                echo "$NPM_GLOBAL_BIN/pm2" # Output the path to pm2
+                exit 0
             else
-            redMsg "pm2 installation failed";
+                # Fallback if npm bin -g doesn't work or pm2 not found there
+                # Try to find pm2 in common global paths
+                if command -v pm2 &>/dev/null; then
+                    PM2_PATH=$(command -v pm2)
+                    echo "$PM2_PATH"
+                    exit 0
+                else
+                    redMsg "Could not determine pm2 installation path after install."
+                    exit 1
+                fi
+            fi
+            else
+            redMsg "pm2 installation failed"
             exit 1
             fi
 		;;
