@@ -99,14 +99,24 @@ PM2_EXECUTABLE=$(command -v pm2 2>/dev/null) # Try finding pm2 in PATH first
 if [ -z "$PM2_EXECUTABLE" ]; then # If not found in PATH
     redMsg "pm2 not found in PATH. Attempting to install..."
     # Store the output of pm2.sh (which should be the path to pm2)
-    PM2_INSTALL_OUTPUT=$(sh ./shell/pm2.sh)
+    PM2_INSTALL_OUTPUT=$(sh ./shell/pm2.sh) # pm2.sh will prompt the user
     PM2_INSTALL_STATUS=$?
     
+    # Crucially, check if PM2_INSTALL_OUTPUT is executable
     if [ $PM2_INSTALL_STATUS -eq 0 ] && [ -n "$PM2_INSTALL_OUTPUT" ] && [ -x "$PM2_INSTALL_OUTPUT" ]; then
-        greMsg "pm2 installed/found at: $PM2_INSTALL_OUTPUT"
+        greMsg "pm2 script successful. pm2 executable found at: $PM2_INSTALL_OUTPUT"
         PM2_EXECUTABLE="$PM2_INSTALL_OUTPUT"
     else
-        redMsg "pm2 installation or path retrieval failed. Please install pm2 manually and ensure it's in your PATH."
+        redMsg "pm2.sh failed, or did not return a valid/executable path."
+        redMsg "Output from pm2.sh: [$PM2_INSTALL_OUTPUT]" # Bracket to see if it's empty
+        redMsg "Exit status from pm2.sh: $PM2_INSTALL_STATUS"
+        if [ -n "$PM2_INSTALL_OUTPUT" ] && [ -f "$PM2_INSTALL_OUTPUT" ] && [ ! -x "$PM2_INSTALL_OUTPUT" ]; then
+            redMsg "The path $PM2_INSTALL_OUTPUT was found but is NOT EXECUTABLE. Check permissions."
+            ls -l "$PM2_INSTALL_OUTPUT"
+        elif [ -n "$PM2_INSTALL_OUTPUT" ] && [ ! -f "$PM2_INSTALL_OUTPUT" ]; then
+            redMsg "The path $PM2_INSTALL_OUTPUT returned by pm2.sh does NOT exist."
+        fi
+        redMsg "Please install pm2 manually and ensure it's in your PATH, then re-run."
         exit 1
     fi
 fi
