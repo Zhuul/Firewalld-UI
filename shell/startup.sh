@@ -102,12 +102,18 @@ else
     exit 1
 fi
 
-PM2_VERSION_OUTPUT=$("$PM2_EXECUTABLE" -v 2>/dev/null)
-if [ $? -ne 0 ]; then
-    redMsg "Failed to execute local pm2 using path: $PM2_EXECUTABLE. Version check failed."
+# Use NODE_EXECUTABLE to run PM2 scripts
+PM2_VERSION_OUTPUT=$("$NODE_EXECUTABLE" "$PM2_EXECUTABLE" -v 2>/dev/null)
+PM2_VERSION_EXIT_STATUS=$?
+
+if [ $PM2_VERSION_EXIT_STATUS -ne 0 ] || [ -z "$PM2_VERSION_OUTPUT" ]; then
+    redMsg "Failed to execute local pm2 version check using: $NODE_EXECUTABLE $PM2_EXECUTABLE -v"
+    redMsg "Exit status: $PM2_VERSION_EXIT_STATUS. Output: [$PM2_VERSION_OUTPUT]"
+    purMsg "Attempting pm2 -v with NODE_BIN_PATH in PATH for diagnostics (this might show the pm2 help if node is not found by env):"
+    env PATH="${NODE_BIN_PATH}:${PATH}" "$PM2_EXECUTABLE" -v >&2
     exit 1
 fi
-greMsg "Local pm2 is available. Version: $PM2_VERSION_OUTPUT. Using: $PM2_EXECUTABLE"
+greMsg "Local pm2 is available. Version: $PM2_VERSION_OUTPUT. Using: $NODE_EXECUTABLE $PM2_EXECUTABLE"
 
 # --- Firewall and dsniff checks ---
 FIREWALL_VERSION=$(firewall-cmd -V 2>/dev/null)
@@ -208,14 +214,15 @@ LOG_FILE="$DIR/shell/shell.log" # Central log for startup.sh actions
 echo -e "\\n------------------------- $(date +%F%n%T) PM2 Start -------------------------" >> "$LOG_FILE"
 
 # Stop existing pm2 process for HttpServer if any
-"$PM2_EXECUTABLE" delete HttpServer >> "$LOG_FILE" 2>&1 # Suppress error if not found
+# Use NODE_EXECUTABLE and ensure NODE_BIN_PATH is in PATH for pm2 commands
+env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" delete HttpServer >> "$LOG_FILE" 2>&1 # Suppress error if not found
 sleep 1
 
 purMsg "Starting/Managing frontend service (express-linux) with local pm2..."
 # Already in $DIR/express directory
 # Ensure PM2 also uses the correct PATH if it needs to find node for any reason,
 # though express-linux is a binary. For consistency with npm, we can set it.
-env PATH="${NODE_BIN_PATH}:${PATH}" "$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
+env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
 PM2_START_STATUS=$?
 cd "$DIR" || exit 1 # Return to project root
 
@@ -223,7 +230,7 @@ if [ $PM2_START_STATUS -ne 0 ]; then
     redMsg "Frontend (pm2 start express-linux) failed. Check $LOG_FILE and pm2 logs ($DIR/shell/pm2-HttpServer-*.log)."
 else
     greMsg "Frontend started/managed by local pm2."
-    "$PM2_EXECUTABLE" list >> "$LOG_FILE" 2>&1
+    env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" list >> "$LOG_FILE" 2>&1
 fi
 
 greMsg "Service startup initiated."
