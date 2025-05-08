@@ -138,6 +138,41 @@ else
     greMsg "Front-end and back-end dependencies should be downloaded/updated.";
 fi
 
+# --- Attempt to fix vulnerabilities ---
+purMsg "-------------------------Fixing Vulnerabilities-------------------------"
+purMsg "Attempting to fix vulnerabilities in backend..."
+# Ensure we are in the project root for the main audit fix
+cd "$DIR" || { redMsg "Failed to cd to $DIR for backend audit fix"; exit 1; }
+if "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" audit fix; then
+    greMsg "Backend npm audit fix completed."
+else
+    # Capture the exit code of npm audit fix
+    AUDIT_FIX_BACKEND_STATUS=$?
+    # Check if the exit code indicates that fixes were applied but some vulnerabilities remain (common)
+    # npm audit fix exits with 1 if vulnerabilities remain. This is not necessarily a script-stopping error.
+    if [ $AUDIT_FIX_BACKEND_STATUS -eq 1 ]; then
+        purMsg "Backend npm audit fix applied some fixes, but vulnerabilities may still remain. Check output."
+    else
+        redMsg "Backend npm audit fix failed with exit code $AUDIT_FIX_BACKEND_STATUS or had other issues."
+    fi
+fi
+
+purMsg "Attempting to fix vulnerabilities in frontend (express)..."
+# Change to the express directory for the frontend audit fix
+cd "$DIR/express" || { redMsg "Failed to cd to $DIR/express for frontend audit fix"; exit 1; }
+if "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" audit fix; then
+    greMsg "Frontend npm audit fix completed."
+else
+    AUDIT_FIX_FRONTEND_STATUS=$?
+    if [ $AUDIT_FIX_FRONTEND_STATUS -eq 1 ]; then
+        purMsg "Frontend npm audit fix applied some fixes, but vulnerabilities may still remain. Check output."
+    else
+        redMsg "Frontend npm audit fix failed with exit code $AUDIT_FIX_FRONTEND_STATUS or had other issues."
+    fi
+fi
+cd "$DIR" || { redMsg "Failed to cd back to $DIR after audit fixes"; exit 1; } # Return to project root
+
+
 # --- Systemd Service Setup (using local npm) ---
 purMsg "-------------------------Setting up systemd service-------------------------"
 PROJECT_INSTALL_DIR_ABS=$(cd "$DIR" && pwd) # Get absolute path for service file
@@ -151,8 +186,8 @@ if [ ! -f "$SERVICE_FILE_SOURCE" ]; then
 fi
 
 purMsg "Customizing service file template from $SERVICE_FILE_SOURCE..."
-# Replace placeholder for WorkingDirectory
-sed "s|WorkingDirectory=/workspaces/Firewalld-UI|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
+# Replace placeholder for WorkingDirectory - more robust sed command
+sed "s|^WorkingDirectory=.*|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
 
 # Replace placeholder for ExecStart to use the local node to run npm-cli.js start
 # Ensure PATH includes NODE_BIN_PATH for any child processes of npm start
