@@ -4,19 +4,10 @@ After=network.target firewalld.service
 
 [Service]
 Type=forking
-# IMPORTANT: Change User to the user you want to run this application as.
-# Running as root might be necessary if the application directly manipulates firewall rules
-# without sudo, but consider a less privileged user if possible.
 User=root
-# IMPORTANT: Adjust WorkingDirectory to the *actual absolute path* where Firewalld-UI is installed on your server.
-# Example: /opt/Firewalld-UI
-WorkingDirectory=/usr/local/src/Firewalld-UI
-# IMPORTANT: Ensure npm is in the PATH for the service user, or provide the full path to npm.
-# Example: ExecStart=/usr/local/bin/npm start
-ExecStart=/usr/local/src/Firewalld-UI/shell/node/node-v22.1.0-linux-x64/bin/npm start
-# PIDFile should be relative to WorkingDirectory or an absolute path.
-# egg-scripts default is <project_root>/run/egg-server.pid
-PIDFile=%H/run/egg-server.pid # %H will be replaced by the WorkingDirectory
+WorkingDirectory=/workspaces/Firewalld-UI
+ExecStart=__NPM_EXEC_PATH__ start
+PIDFile=%H/run/egg-server.pid
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production
