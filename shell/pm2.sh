@@ -56,7 +56,8 @@ case $input_char in
        
        # Execute npm install pm2 -g using the sourced NODE_EXECUTABLE to run the sourced NPM_CLI_JS_PATH
        # Ensure NODE_BIN_PATH is in the PATH for this command so npm can find other node tools if needed
-       env PATH="${NODE_BIN_PATH}:${PATH}" "${NODE_EXECUTABLE}" "${NPM_CLI_JS_PATH}" install pm2 -g --registry=https://registry.npmmirror.com
+       # Redirect npm install stdout to stderr to prevent it from being captured by startup.sh
+       env PATH="${NODE_BIN_PATH}:${PATH}" "${NODE_EXECUTABLE}" "${NPM_CLI_JS_PATH}" install pm2 -g --registry=https://registry.npmmirror.com >&2
        INSTALL_STATUS=$?
 
        if [ $INSTALL_STATUS -eq 0 ]; then
