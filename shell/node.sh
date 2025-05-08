@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define output colors
-redMsg() { echo -e "\n\E[1;31m$*\033[0m\n" >&2; } # Messages to stderr
-greMsg() { echo -e "\n\E[1;32m$*\033[0m\n" >&2; }
-bluMsg() { echo -e "\n\033[5;34m$*\033[0m\n" >&2; }
-purMsg() { echo -e "\n\033[35m$*\033[0m\n" >&2; }
+redMsg() { echo -e "\\n\\E[1;31m$*\\033[0m\\n" >&2; } # Messages to stderr
+greMsg() { echo -e "\\n\\E[1;32m$*\\033[0m\\n" >&2; }
+bluMsg() { echo -e "\\n\\033[5;34m$*\\033[0m\\n" >&2; }
+purMsg() { echo -e "\\n\\033[35m$*\\033[0m\\n" >&2; }
 
 # SCRIPT_DIR is the directory where node.sh is located (e.g., /path/to/Firewalld-UI/shell)
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -21,27 +21,35 @@ NODE_URL="https://nodejs.org/dist/${NODE_VERSION}/${NODE_TARBALL}"
 NODE_INSTALL_BASE_DIR="${SCRIPT_DIR}/node" # e.g., /path/to/Firewalld-UI/shell/node
 NODE_EXTRACTED_DIR="${NODE_INSTALL_BASE_DIR}/${NODE_FILENAME}" # e.g., .../shell/node/node-v22.1.0-linux-x64
 NODE_BIN_DIR="${NODE_EXTRACTED_DIR}/bin" # e.g., .../shell/node/node-v22.1.0-linux-x64/bin
+NODE_LIB_DIR="${NODE_EXTRACTED_DIR}/lib" # e.g., .../shell/node/node-v22.1.0-linux-x64/lib
 
 # File to store the paths of the installed executables
 NODE_PATHS_FILE="${NODE_INSTALL_BASE_DIR}/.node_paths" # Stored within shell/node/
 
 # Check if already installed correctly by checking the paths file and executables
 VERIFY_NODE_EXEC=""
-VERIFY_NPM_EXEC=""
+VERIFY_NPM_EXEC_SYMLINK=""
+VERIFY_NPM_CLI_JS=""
+
 if [ -f "$NODE_PATHS_FILE" ]; then
     source "$NODE_PATHS_FILE" # Try to load paths
     VERIFY_NODE_EXEC="$NODE_EXECUTABLE"
-    VERIFY_NPM_EXEC="$NPM_EXECUTABLE"
+    VERIFY_NPM_EXEC_SYMLINK="$NPM_EXECUTABLE_SYMLINK" # Path to the npm symlink in bin
+    VERIFY_NPM_CLI_JS="$NPM_CLI_JS_PATH"         # Path to the actual npm-cli.js
 fi
 
-if [ -n "$VERIFY_NODE_EXEC" ] && [ -x "$VERIFY_NODE_EXEC" ] && [ -n "$VERIFY_NPM_EXEC" ] && [ -x "$VERIFY_NPM_EXEC" ]; then
+if [ -n "$VERIFY_NODE_EXEC" ] && [ -x "$VERIFY_NODE_EXEC" ] && \
+   [ -n "$VERIFY_NPM_EXEC_SYMLINK" ] && [ -L "$VERIFY_NPM_EXEC_SYMLINK" ] && \
+   [ -n "$VERIFY_NPM_CLI_JS" ] && [ -f "$VERIFY_NPM_CLI_JS" ]; then
     CURRENT_VERSION=$("$VERIFY_NODE_EXEC" -v 2>/dev/null)
     if [[ "$CURRENT_VERSION" == "$NODE_VERSION" ]]; then
         greMsg "Node.js ${NODE_VERSION} already installed locally at ${NODE_EXTRACTED_DIR}."
-        # Ensure paths file is up-to-date (in case script logic changed or file was tampered)
+        # Ensure paths file is up-to-date
+        NPM_CLI_JS_ACTUAL_PATH="${NODE_LIB_DIR}/node_modules/npm/bin/npm-cli.js" # Standard path
         echo "NODE_EXECUTABLE=${NODE_BIN_DIR}/node" > "$NODE_PATHS_FILE"
-        echo "NPM_EXECUTABLE=${NODE_BIN_DIR}/npm" >> "$NODE_PATHS_FILE"
-        echo "NPX_EXECUTABLE=${NODE_BIN_DIR}/npx" >> "$NODE_PATHS_FILE"
+        echo "NPM_EXECUTABLE_SYMLINK=${NODE_BIN_DIR}/npm" >> "$NODE_PATHS_FILE"
+        echo "NPM_CLI_JS_PATH=${NPM_CLI_JS_ACTUAL_PATH}" >> "$NODE_PATHS_FILE"
+        echo "NPX_EXECUTABLE_SYMLINK=${NODE_BIN_DIR}/npx" >> "$NODE_PATHS_FILE"
         echo "NODE_BIN_PATH=${NODE_BIN_DIR}" >> "$NODE_PATHS_FILE"
         exit 0
     else
@@ -59,17 +67,14 @@ case $input in
             exit 1
         fi
 
-        # Clean up old extracted version if it exists to prevent conflicts
         if [ -d "$NODE_EXTRACTED_DIR" ]; then
             purMsg "Removing existing local Node.js directory: $NODE_EXTRACTED_DIR"
             rm -rf "$NODE_EXTRACTED_DIR"
         fi
-        # Clean up old tarball
         if [ -f "${NODE_INSTALL_BASE_DIR}/${NODE_TARBALL}" ]; then
             purMsg "Removing existing local Node.js tarball: ${NODE_INSTALL_BASE_DIR}/${NODE_TARBALL}"
             rm -f "${NODE_INSTALL_BASE_DIR}/${NODE_TARBALL}"
         fi
-        # Clean up old paths file
         if [ -f "$NODE_PATHS_FILE" ]; then
             rm -f "$NODE_PATHS_FILE"
         fi
@@ -80,22 +85,28 @@ case $input in
         curl -LO "$NODE_URL"
         if [ $? -ne 0 ] || [ ! -f "$NODE_TARBALL" ]; then
             redMsg "Node.js download failed. Please check the URL or network connection."
-            rm -f "$NODE_TARBALL" # Clean up partial download
+            rm -f "$NODE_TARBALL" 
             exit 1
         fi
 
         purMsg "Extracting ${NODE_TARBALL}..."
         tar -xzf "$NODE_TARBALL"
-        if [ $? -ne 0 ] || [ ! -d "$NODE_FILENAME" ]; then # $NODE_FILENAME is the extracted dir name
+        if [ $? -ne 0 ] || [ ! -d "$NODE_FILENAME" ]; then
             redMsg "Node.js extraction failed."
             rm -f "$NODE_TARBALL"
-            rm -rf "$NODE_FILENAME" # Clean up partial extraction
+            rm -rf "$NODE_FILENAME" 
             exit 1
         fi
 
-        # Verify executables exist after extraction
-        if [ ! -x "${NODE_BIN_DIR}/node" ] || [ ! -x "${NODE_BIN_DIR}/npm" ]; then
-            redMsg "Node.js or npm executable not found or not executable after extraction in ${NODE_BIN_DIR}."
+        NPM_CLI_JS_ACTUAL_PATH="${NODE_LIB_DIR}/node_modules/npm/bin/npm-cli.js"
+
+        if [ ! -x "${NODE_BIN_DIR}/node" ] || [ ! -L "${NODE_BIN_DIR}/npm" ] || [ ! -f "$NPM_CLI_JS_ACTUAL_PATH" ]; then
+            redMsg "Node.js executable, npm symlink, or npm-cli.js not found after extraction."
+            redMsg "Expected node at: ${NODE_BIN_DIR}/node"
+            redMsg "Expected npm symlink at: ${NODE_BIN_DIR}/npm"
+            redMsg "Expected npm-cli.js at: $NPM_CLI_JS_ACTUAL_PATH"
+            ls -l "${NODE_BIN_DIR}/"
+            ls -l "$NPM_CLI_JS_ACTUAL_PATH" 2>/dev/null
             rm -f "$NODE_TARBALL"
             rm -rf "$NODE_FILENAME"
             exit 1
@@ -103,17 +114,16 @@ case $input in
 
         greMsg "Node.js ${NODE_VERSION} installation successful into ${NODE_EXTRACTED_DIR}."
         
-        # Save the paths to the executables
         echo "NODE_EXECUTABLE=${NODE_BIN_DIR}/node" > "$NODE_PATHS_FILE"
-        echo "NPM_EXECUTABLE=${NODE_BIN_DIR}/npm" >> "$NODE_PATHS_FILE"
-        echo "NPX_EXECUTABLE=${NODE_BIN_DIR}/npx" >> "$NODE_PATHS_FILE"
-        echo "NODE_BIN_PATH=${NODE_BIN_DIR}" >> "$NODE_PATHS_FILE" # For convenience
+        echo "NPM_EXECUTABLE_SYMLINK=${NODE_BIN_DIR}/npm" >> "$NODE_PATHS_FILE"
+        echo "NPM_CLI_JS_PATH=${NPM_CLI_JS_ACTUAL_PATH}" >> "$NODE_PATHS_FILE"
+        echo "NPX_EXECUTABLE_SYMLINK=${NODE_BIN_DIR}/npx" >> "$NODE_PATHS_FILE"
+        echo "NODE_BIN_PATH=${NODE_BIN_DIR}" >> "$NODE_PATHS_FILE" # For convenience for pm2 and other global installs
         greMsg "Executable paths saved to ${NODE_PATHS_FILE}"
 
         purMsg "Cleaning up downloaded tarball: ${NODE_TARBALL}..."
         rm "$NODE_TARBALL"
         
-        # Return to original directory (important if called from another script)
         cd "$PROJECT_ROOT_DIR"
         ;;
     [nN][oO]|[nN])

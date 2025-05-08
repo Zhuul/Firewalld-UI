@@ -39,19 +39,23 @@ if [ ! -f "$NODE_PATHS_FILE" ]; then
     exit 1
 fi
 
-# Source the paths to make NODE_EXECUTABLE, NPM_EXECUTABLE, etc., available
+# Source the paths to make NODE_EXECUTABLE, NPM_CLI_JS_PATH, NODE_BIN_PATH etc., available
 source "$NODE_PATHS_FILE"
 
+# NPM_EXECUTABLE_SYMLINK is the path to the npm symlink in node/bin, useful for some contexts
+# NPM_CLI_JS_PATH is the direct path to npm's main script, used for robust execution with NODE_EXECUTABLE
 if [ -z "$NODE_EXECUTABLE" ] || [ ! -x "$NODE_EXECUTABLE" ] || \
-   [ -z "$NPM_EXECUTABLE" ] || [ ! -x "$NPM_EXECUTABLE" ] || \
-   [ -z "$NODE_BIN_PATH" ]; then # NODE_BIN_PATH is also essential
-    redMsg "Failed to load or verify executables from $NODE_PATHS_FILE. Contents:"
+   [ -z "$NPM_EXECUTABLE_SYMLINK" ] || [ ! -L "$NPM_EXECUTABLE_SYMLINK" ] || \
+   [ -z "$NPM_CLI_JS_PATH" ] || [ ! -f "$NPM_CLI_JS_PATH" ] || \
+   [ -z "$NODE_BIN_PATH" ]; then
+    redMsg "Failed to load or verify executables/paths from $NODE_PATHS_FILE (NODE_EXECUTABLE, NPM_EXECUTABLE_SYMLINK, NPM_CLI_JS_PATH, NODE_BIN_PATH). Contents:"
     cat "$NODE_PATHS_FILE" >&2
     exit 1
 fi
 
 greMsg "Using local Node.js from: $NODE_EXECUTABLE"
-greMsg "Using local npm from: $NPM_EXECUTABLE"
+greMsg "Using local npm (via CLI script) with: $NODE_EXECUTABLE $NPM_CLI_JS_PATH"
+greMsg "Local Node's bin path: $NODE_BIN_PATH"
 
 NODE_VERSION_EXPECTED_PREFIX="v22.1" # Expecting v22.1.x from node.sh
 NODE_VERSION_OUTPUT=$("$NODE_EXECUTABLE" -v 2>/dev/null)
@@ -75,9 +79,9 @@ sleep 1 # Reduced sleep
 purMsg "-------------------------Key Generation-------------------------"
 sh $DIR/shell/secret.sh
 
-# --- Environment Detection (Node.js handled, PM2 next) ---
+# --- Environment Detection (PM2) ---
 purMsg "-------------------------Environment Detection (PM2)-------------------------"
-# pm2.sh will also need to source .node_paths to use the correct npm and find pm2 relative to it
+# pm2.sh will also need to source .node_paths to use the correct npm (via node + npm-cli.js) and find pm2 relative to it.
 # pm2.sh will echo only the path to pm2 if successful.
 PM2_EXECUTABLE_PATH_OUTPUT=$(sh ./shell/pm2.sh) 
 PM2_SETUP_STATUS=$?
@@ -118,7 +122,8 @@ fi
 
 # --- Dependency Installation (using local npm) ---
 purMsg "-------------------------Dependency Installation-------------------------"
-sh ./shell/modules.sh # modules.sh uses local npm via .node_paths
+# modules.sh uses local npm via .node_paths (NODE_EXECUTABLE + NPM_CLI_JS_PATH)
+sh ./shell/modules.sh 
 MODULES_STATUS=$?
 if [ $MODULES_STATUS -ne 0 ]; then
     redMsg "Dependency installation via modules.sh failed or was skipped."
@@ -142,8 +147,12 @@ fi
 purMsg "Customizing service file template from $SERVICE_FILE_SOURCE..."
 # Replace placeholder for WorkingDirectory
 sed "s|WorkingDirectory=/workspaces/Firewalld-UI|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
-# Replace placeholder for ExecStart to use the local npm
-sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${NPM_EXECUTABLE} start|g" "$TEMP_SERVICE_FILE"
+
+# Replace placeholder for ExecStart to use the local node to run npm-cli.js start
+# Ensure PATH includes NODE_BIN_PATH for any child processes of npm start
+SYSTEMD_EXEC_START_COMMAND="/bin/sh -c 'PATH=${NODE_BIN_PATH}:\$PATH ${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH} start'"
+sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${SYSTEMD_EXEC_START_COMMAND}|g" "$TEMP_SERVICE_FILE"
+
 # Replace placeholder for PIDFile
 sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR_ABS}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
 
@@ -176,12 +185,12 @@ fi
 purMsg "-------------------------Systemd service setup finished-------------------------"
 
 
-# --- Application Start (using local npm and pm2) ---
+# --- Application Start (Frontend with PM2) ---
 cd "$DIR" || exit 1 # Ensure we are in project root
 purMsg "Entering root directory $DIR"
 
 if [ ! -f "./express/express-linux" ];then
-    redMsg "Front-end directory or executable ./express/express-linux does not exist"
+    redMsg "Front-end executable ./express/express-linux does not exist"
     exit 1
 fi
 
@@ -189,6 +198,7 @@ purMsg "Entering front-end directory $DIR/express"
 cd ./express || exit 1
 purMsg "Modifying front-end execution permissions for express-linux"
 chmod +x express-linux
+# No need to run express-linux directly here if PM2 is managing it.
 
 sleep 1
 
@@ -203,7 +213,9 @@ sleep 1
 
 purMsg "Starting/Managing frontend service (express-linux) with local pm2..."
 # Already in $DIR/express directory
-"$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
+# Ensure PM2 also uses the correct PATH if it needs to find node for any reason,
+# though express-linux is a binary. For consistency with npm, we can set it.
+env PATH="${NODE_BIN_PATH}:${PATH}" "$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
 PM2_START_STATUS=$?
 cd "$DIR" || exit 1 # Return to project root
 

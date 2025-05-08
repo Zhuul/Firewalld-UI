@@ -1,104 +1,89 @@
 #!/bin/bash
 
-# Send messages to stderr
+# Define output colors
 redMsg() { echo -e "\\n\\E[1;31m$*\\033[0m\\n" >&2; }
 greMsg() { echo -e "\\n\\E[1;32m$*\\033[0m\\n" >&2; }
 bluMsg() { echo -e "\\n\\033[5;34m$*\\033[0m\\n" >&2; }
 purMsg() { echo -e "\\n\\033[35m$*\\033[0m\\n" >&2; }
 
-SCRIPT_DIR_PM2="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-PROJECT_ROOT_DIR_PM2=$(dirname "$SCRIPT_DIR_PM2")
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
+NODE_PATHS_FILE="$SCRIPT_DIR/node/.node_paths"
 
-NODE_PATHS_FILE="$PROJECT_ROOT_DIR_PM2/shell/node/.node_paths"
-
-if [ ! -f "$NODE_PATHS_FILE" ]; then
-    redMsg "Node paths file ($NODE_PATHS_FILE) not found. Please run node.sh first (usually via startup.sh)."
-    exit 1
+# Source the node paths to get NODE_EXECUTABLE, NPM_CLI_JS_PATH, NODE_BIN_PATH
+if [ -f "$NODE_PATHS_FILE" ]; then
+    source "$NODE_PATHS_FILE"
+else
+    # This script relies on .node_paths being created by node.sh first.
+    # startup.sh should call node.sh before this script.
+    # If running standalone and .node_paths doesn't exist, this script might not find the intended Node/npm.
+    purMsg "Warning: ${NODE_PATHS_FILE} not found. Relying on Node/npm in global PATH or pre-set environment."
 fi
 
-# Source the paths to make NPM_EXECUTABLE and NODE_BIN_PATH available
-source "$NODE_PATHS_FILE"
-
-if [ -z "$NPM_EXECUTABLE" ] || [ ! -x "$NPM_EXECUTABLE" ] || \
-   [ -z "$NODE_BIN_PATH" ] ; then # NODE_BIN_PATH is where pm2 will be installed by local npm -g
-    redMsg "Required paths (NPM_EXECUTABLE, NODE_BIN_PATH) not found or not executable in $NODE_PATHS_FILE. Contents:"
-    cat "$NODE_PATHS_FILE" >&2
-    exit 1
-fi
-
-# When npm -g is used with a local npm (from NODE_BIN_PATH/npm),
-# "global" packages are installed relative to that Node.js instance's prefix.
-# Binaries typically go into that Node.js instance's bin directory.
-EXPECTED_PM2_PATH="${NODE_BIN_PATH}/pm2"
-
-find_local_pm2_executable() {
-    purMsg "Attempting to find local pm2 executable at: $EXPECTED_PM2_PATH"
-    if [ -f "$EXPECTED_PM2_PATH" ]; then
-        if [ ! -x "$EXPECTED_PM2_PATH" ]; then
-            purMsg "Attempting to make $EXPECTED_PM2_PATH executable..."
-            chmod +x "$EXPECTED_PM2_PATH"
-            if [ $? -ne 0 ]; then redMsg "Failed to chmod +x $EXPECTED_PM2_PATH"; fi
-        fi
-        if [ -x "$EXPECTED_PM2_PATH" ]; then
-            purMsg "Using local pm2: $EXPECTED_PM2_PATH"
-            # This echo is captured by startup.sh
-            echo "$EXPECTED_PM2_PATH"
-            return 0
-        else
-            redMsg "File at $EXPECTED_PM2_PATH is still not executable."
-            ls -l "$EXPECTED_PM2_PATH" >&2
-        fi
+# Attempt to find local pm2 executable first (it might be installed by a previous run)
+# NODE_BIN_PATH should be set if .node_paths was sourced and contained it.
+PM2_LOCAL_PATH_GUESS=""
+if [ -n "$NODE_BIN_PATH" ]; then
+    PM2_LOCAL_PATH_GUESS="${NODE_BIN_PATH}/pm2"
+    purMsg "Attempting to find local pm2 executable at: $PM2_LOCAL_PATH_GUESS"
+    if [ -x "$PM2_LOCAL_PATH_GUESS" ]; then
+        greMsg "Local pm2 found and executable at $PM2_LOCAL_PATH_GUESS"
+        echo "$PM2_LOCAL_PATH_GUESS" # Output the path
+        exit 0
     else
-        redMsg "File does NOT exist at $EXPECTED_PM2_PATH."
+        if [ -f "$PM2_LOCAL_PATH_GUESS" ]; then
+            purMsg "File exists at $PM2_LOCAL_PATH_GUESS but is not executable."
+        else
+            purMsg "File does NOT exist at $PM2_LOCAL_PATH_GUESS."
+        fi
     fi
-    return 1
-}
-
-# Check if pm2 is already installed locally
-# The output of find_local_pm2_executable (the path) will be sent to stdout if found
-# and its return status will be 0.
-PM2_FOUND_PATH=$(find_local_pm2_executable)
-if [ $? -eq 0 ] && [ -n "$PM2_FOUND_PATH" ]; then
-    # pm2.sh's job is done, path was already echoed by the function.
-    # We echo it again here to ensure it's the *only* thing on stdout from this branch.
-    # However, the function itself already echoes. So, if it succeeded, we just exit.
-    exit 0
+else
+    purMsg "NODE_BIN_PATH not set, cannot guess local pm2 path effectively."
 fi
 
+# If NODE_EXECUTABLE and NPM_CLI_JS_PATH are not set, we can't install pm2 locally.
+if [ -z "$NODE_EXECUTABLE" ] || [ -z "$NPM_CLI_JS_PATH" ] || [ -z "$NODE_BIN_PATH" ]; then
+    redMsg "NODE_EXECUTABLE, NPM_CLI_JS_PATH, or NODE_BIN_PATH is not set. Cannot install pm2 locally."
+    redMsg "Ensure node.sh has run successfully and .node_paths is sourced."
+    exit 1
+fi
 
-# If not found, prompt for installation
-read -r -p "Local pm2 not found at $EXPECTED_PM2_PATH. Do you want to install it using local npm ($NPM_EXECUTABLE)? [y/n] " input_char
-read -r -t 0.1 -n 10000 discard || true # Consume trailing newline if any
-
+read -r -p "Local pm2 not found at ${PM2_LOCAL_PATH_GUESS}. Do you want to install it using local npm (${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH})? [y/n] " input_char
 case $input_char in
     [yY][eE][sS]|[yY])
-       purMsg "Attempting to install pm2 globally *to this Node.js instance* using: $NPM_EXECUTABLE"
+       purMsg "Attempting to install pm2 globally *to this Node.js instance* using: ${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH}"
+       purMsg "Temporarily prepending $NODE_BIN_PATH to PATH and using local Node to execute npm-cli.js for this command."
        
-       "$NPM_EXECUTABLE" install pm2 -g --registry=https://registry.npmmirror.com
+       # Execute npm install pm2 -g using the sourced NODE_EXECUTABLE to run the sourced NPM_CLI_JS_PATH
+       # Ensure NODE_BIN_PATH is in the PATH for this command so npm can find other node tools if needed
+       env PATH="${NODE_BIN_PATH}:${PATH}" "${NODE_EXECUTABLE}" "${NPM_CLI_JS_PATH}" install pm2 -g --registry=https://registry.npmmirror.com
        INSTALL_STATUS=$?
 
        if [ $INSTALL_STATUS -eq 0 ]; then
-            greMsg "npm install pm2 -g command finished."
-            # Try to find pm2 again after installation
-            PM2_AFTER_INSTALL_PATH=$(find_local_pm2_executable)
-            if [ $? -eq 0 ] && [ -n "$PM2_AFTER_INSTALL_PATH" ]; then
-                # Path was already echoed by find_local_pm2_executable
+            # Verify installation
+            PM2_INSTALLED_PATH="${NODE_BIN_PATH}/pm2" # Default location for global installs within a node version
+            if [ -x "$PM2_INSTALLED_PATH" ]; then
+                greMsg "pm2 installed successfully at $PM2_INSTALLED_PATH"
+                echo "$PM2_INSTALLED_PATH" # Output the path
                 exit 0
             else
-                redMsg "pm2 installed, but find_local_pm2_executable could not determine its path or it's not executable."
+                redMsg "pm2 installation command seemed to succeed, but $PM2_INSTALLED_PATH is not found or not executable."
+                ls -l "$NODE_BIN_PATH" >&2 # List contents of bin for debugging
                 exit 1
             fi
        else
             redMsg "npm install pm2 -g failed with status $INSTALL_STATUS."
             exit 1
        fi
-		;;
+        ;;
     [nN][oO]|[nN])
-		purMsg "Skipping pm2 installation."
-        exit 1 
-       	;;
-    *)
-		redMsg "Invalid input. Please enter y/n."
+        redMsg "pm2 installation skipped by user."
         exit 1
-		;;
+        ;;
+    *)
+        redMsg "Invalid input. Please answer y/n."
+        exit 1
+        ;;
 esac
+
+exit 1 # Should not reach here if successful
