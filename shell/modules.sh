@@ -62,7 +62,7 @@ if [ "$INSTALL_BACKEND" = true ] || [ "$INSTALL_FRONTEND" = true ]; then
         [yY][eE][sS]|[yY])
             if [ "$INSTALL_BACKEND" = true ]; then
                 purMsg "Installing backend dependencies in $PROJECT_ROOT_DIR..."
-                "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps
+                env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps --build-from-source=sqlite3
                 if [ $? -ne 0 ]; then
                     redMsg "Error downloading backend dependencies."
                     exit 1
@@ -74,7 +74,7 @@ if [ "$INSTALL_BACKEND" = true ] || [ "$INSTALL_FRONTEND" = true ]; then
             if [ "$INSTALL_FRONTEND" = true ]; then
                 purMsg "Installing frontend dependencies in $PROJECT_ROOT_DIR/express..."
                 cd "$PROJECT_ROOT_DIR/express" || { redMsg "Failed to cd into $PROJECT_ROOT_DIR/express"; exit 1; }
-                "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps
+                env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps
                 if [ $? -ne 0 ]; then
                     redMsg "Error downloading frontend dependencies."
                     cd "$PROJECT_ROOT_DIR" 
