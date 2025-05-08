@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Define output colors
-redMsg() { echo -e "\\n\E[1;31m$*\033[0m\\n" >&2; } # Messages to stderr
-greMsg() { echo -e "\\n\E[1;32m$*\033[0m\\n" >&2; }
-bluMsg() { echo -e "\\n\033[5;34m$*\033[0m\\n" >&2; }
-purMsg() { echo -e "\\n\033[35m$*\033[0m\\n" >&2; }
+redMsg() { echo -e "\n\E[1;31m$*\033[0m\n" >&2; } # Messages to stderr
+greMsg() { echo -e "\n\E[1;32m$*\033[0m\n" >&2; }
+bluMsg() { echo -e "\n\033[5;34m$*\033[0m\n" >&2; }
+purMsg() { echo -e "\n\033[35m$*\033[0m\n" >&2; }
 
 # SCRIPT_DIR is the directory where node.sh is located (e.g., /path/to/Firewalld-UI/shell)
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # PROJECT_ROOT_DIR is the parent of SCRIPT_DIR (e.g., /path/to/Firewalld-UI)
 PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
 
-NODE_VERSION="v22.1.0"
-NODE_ARCH="linux-x64"
+NODE_VERSION="v22.1.0" # Specify the exact Node.js version
+NODE_ARCH="linux-x64" # Specify architecture
 NODE_FILENAME="node-${NODE_VERSION}-${NODE_ARCH}"
 NODE_TARBALL="${NODE_FILENAME}.tar.gz"
 NODE_URL="https://nodejs.org/dist/${NODE_VERSION}/${NODE_TARBALL}"
@@ -38,11 +38,11 @@ if [ -n "$VERIFY_NODE_EXEC" ] && [ -x "$VERIFY_NODE_EXEC" ] && [ -n "$VERIFY_NPM
     CURRENT_VERSION=$("$VERIFY_NODE_EXEC" -v 2>/dev/null)
     if [[ "$CURRENT_VERSION" == "$NODE_VERSION" ]]; then
         greMsg "Node.js ${NODE_VERSION} already installed locally at ${NODE_EXTRACTED_DIR}."
-        # Ensure paths file is up-to-date (in case script logic changed)
+        # Ensure paths file is up-to-date (in case script logic changed or file was tampered)
         echo "NODE_EXECUTABLE=${NODE_BIN_DIR}/node" > "$NODE_PATHS_FILE"
         echo "NPM_EXECUTABLE=${NODE_BIN_DIR}/npm" >> "$NODE_PATHS_FILE"
         echo "NPX_EXECUTABLE=${NODE_BIN_DIR}/npx" >> "$NODE_PATHS_FILE"
-        echo "NODE_BIN_PATH=${NODE_BIN_DIR}" >> "$NODE_PATHS_FILE" # For convenience
+        echo "NODE_BIN_PATH=${NODE_BIN_DIR}" >> "$NODE_PATHS_FILE"
         exit 0
     else
         purMsg "Existing local Node.js version ($CURRENT_VERSION) differs from target ($NODE_VERSION)."
@@ -69,7 +69,10 @@ case $input in
             purMsg "Removing existing local Node.js tarball: ${NODE_INSTALL_BASE_DIR}/${NODE_TARBALL}"
             rm -f "${NODE_INSTALL_BASE_DIR}/${NODE_TARBALL}"
         fi
-
+        # Clean up old paths file
+        if [ -f "$NODE_PATHS_FILE" ]; then
+            rm -f "$NODE_PATHS_FILE"
+        fi
 
         cd "$NODE_INSTALL_BASE_DIR" || { redMsg "Failed to cd into $NODE_INSTALL_BASE_DIR"; exit 1; }
 

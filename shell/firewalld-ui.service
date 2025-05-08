@@ -5,9 +5,9 @@ After=network.target firewalld.service
 [Service]
 Type=forking
 User=root
-WorkingDirectory=/workspaces/Firewalld-UI
-ExecStart=__NPM_EXEC_PATH__ start
-PIDFile=%H/run/egg-server.pid
+WorkingDirectory=/workspaces/Firewalld-UI # Placeholder, will be replaced by startup.sh
+ExecStart=__NPM_EXEC_PATH__ start # Placeholder for npm executable, will be replaced by startup.sh
+PIDFile=%H/run/egg-server.pid # %H will be replaced by the WorkingDirectory in startup.sh
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production

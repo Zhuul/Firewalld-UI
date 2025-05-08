@@ -5,17 +5,16 @@
 SCRIPT_STARTUP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 DIR=$(dirname "$SCRIPT_STARTUP_DIR") # This is the Project Root Directory
 
-cd "$DIR" || { echo "ERROR: Failed to cd into project root $DIR"; exit 1; }
+cd "$DIR" || { echo "ERROR: Failed to cd into project root $DIR" >&2; exit 1; }
 
 # Make all shell scripts executable (consider if this is always needed or only once)
-# This is generally fine for a setup script.
 chmod +x $DIR/shell/*.sh
 
-# Define output colors 
-redMsg() { echo -e "\\n\E[1;31m$*\033[0m\\n"; }
-greMsg() { echo -e "\\n\E[1;32m$*\033[0m\\n"; }
-bluMsg() { echo -e "\\n\033[5;34m$*\033[0m\\n"; }
-purMsg() { echo -e "\\n\033[35m$*\033[0m\\n"; }
+# Define output colors (all messages from startup.sh go to stderr by default, or stdout if explicit)
+redMsg() { echo -e "\\n\\E[1;31m$*\\033[0m\\n" >&2; }
+greMsg() { echo -e "\\n\\E[1;32m$*\\033[0m\\n" >&2; }
+bluMsg() { echo -e "\\n\\033[5;34m$*\\033[0m\\n" >&2; }
+purMsg() { echo -e "\\n\\033[35m$*\\033[0m\\n" >&2; }
 
 HTTP=$(grep "httpPort" $DIR/express/config.js | grep -Eo '[0-9]{1,4}')
 HTTPS=$(grep "httpsPort" $DIR/express/config.js | grep -Eo '[0-9]{1,4}')
@@ -27,9 +26,10 @@ greMsg "-------------------------Startup process begins $(date +%F%n%T)---------
 purMsg "-------------------------Node.js Setup-------------------------"
 # Run node.sh to ensure local Node.js is installed and get its paths
 # node.sh will create/update shell/node/.node_paths
-sh ./shell/node.sh
-if [ $? -ne 0 ]; then
-    redMsg "Local Node.js setup via node.sh failed or was skipped. Cannot proceed."
+sh ./shell/node.sh # node.sh messages go to its stderr
+NODE_SETUP_STATUS=$?
+if [ $NODE_SETUP_STATUS -ne 0 ]; then
+    redMsg "Local Node.js setup via node.sh failed or was skipped (exit status: $NODE_SETUP_STATUS). Cannot proceed."
     exit 1
 fi
 
@@ -44,73 +44,72 @@ source "$NODE_PATHS_FILE"
 
 if [ -z "$NODE_EXECUTABLE" ] || [ ! -x "$NODE_EXECUTABLE" ] || \
    [ -z "$NPM_EXECUTABLE" ] || [ ! -x "$NPM_EXECUTABLE" ] || \
-   [ -z "$NODE_BIN_PATH" ]; then
+   [ -z "$NODE_BIN_PATH" ]; then # NODE_BIN_PATH is also essential
     redMsg "Failed to load or verify executables from $NODE_PATHS_FILE. Contents:"
-    cat "$NODE_PATHS_FILE"
+    cat "$NODE_PATHS_FILE" >&2
     exit 1
 fi
 
 greMsg "Using local Node.js from: $NODE_EXECUTABLE"
 greMsg "Using local npm from: $NPM_EXECUTABLE"
 
+NODE_VERSION_EXPECTED_PREFIX="v22.1" # Expecting v22.1.x from node.sh
 NODE_VERSION_OUTPUT=$("$NODE_EXECUTABLE" -v 2>/dev/null)
-RECOMMENDED_NODE_MAJOR=22 # As defined in your original script
 
-if ! [[ "$NODE_VERSION_OUTPUT" == "v${RECOMMENDED_NODE_MAJOR}."* ]]; then
-    redMsg "Local Node.js version ($NODE_VERSION_OUTPUT) is not the expected v${RECOMMENDED_NODE_MAJOR}.x. Check node.sh."
-    exit 1
+if ! [[ "$NODE_VERSION_OUTPUT" == "${NODE_VERSION_EXPECTED_PREFIX}."* ]]; then
+    redMsg "Local Node.js version ($NODE_VERSION_OUTPUT) is not the expected ${NODE_VERSION_EXPECTED_PREFIX}.x. Check node.sh."
+    # exit 1 # Decide if this is fatal
 fi
-greMsg "Local Node.js version check passed: $NODE_VERSION_OUTPUT"
+greMsg "Local Node.js version check: $NODE_VERSION_OUTPUT"
 
 
-# --- Port Information & Checks (using local node/npm if needed by sub-scripts) ---
-echo "-------------------------Port Information-------------------------"
-# If http.sh, https.sh, server.sh need node/npm, they'll need to source .node_paths or receive paths
-# For now, assuming they don't directly execute node/npm themselves.
+# --- Port Information & Checks ---
+purMsg "-------------------------Port Information-------------------------"
 if [ ! "$HTTP" ]; then redMsg "Front-end port HTTP does not exist"; else bluMsg "Front-end port HTTP: $HTTP"; sh ./shell/http.sh; fi
 if [ ! "$HTTPS" ]; then redMsg "Front-end port HTTPS does not exist"; else bluMsg "Front-end port HTTPS: $HTTPS"; sh ./shell/https.sh; fi
 if [ ! "$SERVER" ]; then redMsg "Back-end port does not exist"; else bluMsg "Back-end port: $SERVER"; sh ./shell/server.sh; fi
 
-sleep 3
+sleep 1 # Reduced sleep
 
 # --- Key Generation ---
-echo "-------------------------Key Generation-------------------------"
-# If secret.sh needs node/npm, it should source .node_paths
+purMsg "-------------------------Key Generation-------------------------"
 sh $DIR/shell/secret.sh
 
-# --- Environment Detection (already handled Node.js above) ---
-echo "-------------------------Environment Detection-------------------------"
-
-# --- PM2 Setup (using local npm) ---
-purMsg "-------------------------PM2 Setup-------------------------"
+# --- Environment Detection (Node.js handled, PM2 next) ---
+purMsg "-------------------------Environment Detection (PM2)-------------------------"
 # pm2.sh will also need to source .node_paths to use the correct npm and find pm2 relative to it
-PM2_INSTALL_OUTPUT=$(sh ./shell/pm2.sh) 
-PM2_INSTALL_STATUS=$?
-PM2_INSTALL_OUTPUT=$(echo "$PM2_INSTALL_OUTPUT" | xargs) # Trim whitespace
+# pm2.sh will echo only the path to pm2 if successful.
+PM2_EXECUTABLE_PATH_OUTPUT=$(sh ./shell/pm2.sh) 
+PM2_SETUP_STATUS=$?
+PM2_EXECUTABLE_PATH_OUTPUT=$(echo "$PM2_EXECUTABLE_PATH_OUTPUT" | xargs) # Trim whitespace
 
-if [ $PM2_INSTALL_STATUS -eq 0 ] && [ -n "$PM2_INSTALL_OUTPUT" ] && [ -f "$PM2_INSTALL_OUTPUT" ] && [ -x "$PM2_INSTALL_OUTPUT" ]; then
-    greMsg "pm2 script successful. pm2 executable found at: $PM2_INSTALL_OUTPUT"
-    PM2_EXECUTABLE="$PM2_INSTALL_OUTPUT"
+if [ $PM2_SETUP_STATUS -eq 0 ] && [ -n "$PM2_EXECUTABLE_PATH_OUTPUT" ] && \
+   [ -f "$PM2_EXECUTABLE_PATH_OUTPUT" ] && [ -x "$PM2_EXECUTABLE_PATH_OUTPUT" ]; then
+    greMsg "pm2.sh successful. Local pm2 executable found at: $PM2_EXECUTABLE_PATH_OUTPUT"
+    PM2_EXECUTABLE="$PM2_EXECUTABLE_PATH_OUTPUT"
 else
     redMsg "pm2.sh failed, or did not return a valid/executable path."
-    redMsg "Output captured from pm2.sh: [$PM2_INSTALL_OUTPUT]"
-    redMsg "Exit status from pm2.sh: $PM2_INSTALL_STATUS"
-    # Add more detailed checks as before if needed
+    redMsg "Output captured from pm2.sh (should be a path or empty): [$PM2_EXECUTABLE_PATH_OUTPUT]"
+    redMsg "Exit status from pm2.sh: $PM2_SETUP_STATUS"
+    if [ -n "$PM2_EXECUTABLE_PATH_OUTPUT" ]; then
+        if [ ! -f "$PM2_EXECUTABLE_PATH_OUTPUT" ]; then redMsg "Path [$PM2_EXECUTABLE_PATH_OUTPUT] does not exist as a file."; fi
+        if [ -f "$PM2_EXECUTABLE_PATH_OUTPUT" ] && [ ! -x "$PM2_EXECUTABLE_PATH_OUTPUT" ]; then redMsg "Path [$PM2_EXECUTABLE_PATH_OUTPUT] is not executable."; ls -l "$PM2_EXECUTABLE_PATH_OUTPUT" >&2; fi
+    fi
     exit 1
 fi
 
-PMV=$("$PM2_EXECUTABLE" -v 2>/dev/null)
+PM2_VERSION_OUTPUT=$("$PM2_EXECUTABLE" -v 2>/dev/null)
 if [ $? -ne 0 ]; then
-    redMsg "Failed to execute pm2 using path: $PM2_EXECUTABLE. Version check failed."
+    redMsg "Failed to execute local pm2 using path: $PM2_EXECUTABLE. Version check failed."
     exit 1
 fi
-greMsg "pm2 is available. Version: $PMV. Using: $PM2_EXECUTABLE"
+greMsg "Local pm2 is available. Version: $PM2_VERSION_OUTPUT. Using: $PM2_EXECUTABLE"
 
 # --- Firewall and dsniff checks ---
-FIRE=$(firewall-cmd -V 2>/dev/null)
-if [ $? -ne 0 ]; then redMsg "firewalld not found or not working. Please install/configure firewalld."; exit 1; else greMsg "firewalld is installed. Version: $FIRE"; fi
+FIREWALL_VERSION=$(firewall-cmd -V 2>/dev/null)
+if [ $? -ne 0 ]; then redMsg "firewalld not found or not working. Please install/configure firewalld."; exit 1; else greMsg "firewalld is installed. Version: $FIREWALL_VERSION"; fi
 
-if ! command -v tcpkill &> /dev/null; then # dsniff provides tcpkill
+if ! command -v tcpkill &> /dev/null; then
     purMsg "dsniff (tcpkill) not found. This is optional but recommended for some features."
 else
     greMsg "tcpkill (from dsniff) is installed."
@@ -119,10 +118,10 @@ fi
 
 # --- Dependency Installation (using local npm) ---
 purMsg "-------------------------Dependency Installation-------------------------"
-# modules.sh will also need to source .node_paths
-sh ./shell/modules.sh
-if [ $? -ne 0 ]; then
-    redMsg "Dependency installation via modules.sh failed."
+sh ./shell/modules.sh # modules.sh uses local npm via .node_paths
+MODULES_STATUS=$?
+if [ $MODULES_STATUS -ne 0 ]; then
+    redMsg "Dependency installation via modules.sh failed or was skipped."
     exit 1
 else
     greMsg "Front-end and back-end dependencies should be downloaded/updated.";
@@ -130,8 +129,8 @@ fi
 
 # --- Systemd Service Setup (using local npm) ---
 purMsg "-------------------------Setting up systemd service-------------------------"
-PROJECT_INSTALL_DIR="$DIR" 
-SERVICE_FILE_SOURCE="$SCRIPT_STARTUP_DIR/firewalld-ui.service" # Assumes service template is in shell/
+PROJECT_INSTALL_DIR_ABS=$(cd "$DIR" && pwd) # Get absolute path for service file
+SERVICE_FILE_SOURCE="$SCRIPT_STARTUP_DIR/firewalld-ui.service"
 SERVICE_FILE_DEST="/etc/systemd/system/firewalld-ui.service"
 TEMP_SERVICE_FILE="/tmp/firewalld-ui.service.$$"
 
@@ -142,14 +141,12 @@ fi
 
 purMsg "Customizing service file template from $SERVICE_FILE_SOURCE..."
 # Replace placeholder for WorkingDirectory
-sed "s|WorkingDirectory=/workspaces/Firewalld-UI|WorkingDirectory=${PROJECT_INSTALL_DIR}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
+sed "s|WorkingDirectory=/workspaces/Firewalld-UI|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
 # Replace placeholder for ExecStart to use the local npm
 sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${NPM_EXECUTABLE} start|g" "$TEMP_SERVICE_FILE"
 # Replace placeholder for PIDFile
-sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
+sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR_ABS}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
 
-# ... (rest of systemd copy, reload, enable, start logic from your script) ...
-# Ensure you check for errors at each step.
 purMsg "Installing systemd service file to $SERVICE_FILE_DEST..."
 cp "$TEMP_SERVICE_FILE" "$SERVICE_FILE_DEST"
 CP_STATUS=$?
@@ -161,22 +158,26 @@ if [ $CP_STATUS -eq 0 ]; then
     systemctl daemon-reload
     systemctl enable firewalld-ui.service
     systemctl restart firewalld-ui.service
-    if [ $? -ne 0 ]; then
-        redMsg "ERROR: systemctl restart firewalld-ui.service failed."
-        redMsg "Check service status with: systemctl status firewalld-ui.service"
-        redMsg "And logs with: journalctl -u firewalld-ui.service"
+    RESTART_STATUS=$?
+    sleep 2 # Give systemd a moment
+    systemctl is-active --quiet firewalld-ui.service
+    ACTIVE_STATUS=$?
+
+    if [ $RESTART_STATUS -ne 0 ] || [ $ACTIVE_STATUS -ne 0 ]; then
+        redMsg "ERROR: systemctl restart/activation of firewalld-ui.service failed."
+        systemctl status firewalld-ui.service --no-pager >&2
+        journalctl -u firewalld-ui.service -n 20 --no-pager >&2
     else
         greMsg "Service firewalld-ui setup complete and started via systemd."
     fi
 else
     redMsg "ERROR: Failed to copy customized service file to $SERVICE_FILE_DEST."
-    # exit 1 # Decide if this is fatal
 fi
 purMsg "-------------------------Systemd service setup finished-------------------------"
 
 
 # --- Application Start (using local npm and pm2) ---
-cd "$DIR" || exit 1
+cd "$DIR" || exit 1 # Ensure we are in project root
 purMsg "Entering root directory $DIR"
 
 if [ ! -f "./express/express-linux" ];then
@@ -187,61 +188,39 @@ fi
 purMsg "Entering front-end directory $DIR/express"
 cd ./express || exit 1
 purMsg "Modifying front-end execution permissions for express-linux"
-chmod +x express-linux # Only need +x on the executable itself
+chmod +x express-linux
 
-sleep 1 # Reduced sleep
+sleep 1
 
-echo "-------------------------Official Start (via pm2 and npm)-------------------------"
-purMsg "Returning to root directory $DIR to start services"
-cd "$DIR" || exit 1
+purMsg "-------------------------Application Start (PM2 for Frontend)-------------------------"
+# Backend is managed by systemd now. Frontend by PM2.
+LOG_FILE="$DIR/shell/shell.log" # Central log for startup.sh actions
+echo -e "\\n------------------------- $(date +%F%n%T) PM2 Start -------------------------" >> "$LOG_FILE"
 
-# Logging setup
-LOG_FILE="$DIR/shell/shell.log"
-echo -e "\n------------------------- $(date +%F%n%T) -------------------------" >> "$LOG_FILE"
+# Stop existing pm2 process for HttpServer if any
+"$PM2_EXECUTABLE" delete HttpServer >> "$LOG_FILE" 2>&1 # Suppress error if not found
+sleep 1
 
-# Stop existing backend process if not managed by systemd (systemd handles its own stop/start)
-# If systemd is primary, this 'npm run stop:linux' might be redundant or conflict.
-# For now, keeping it as per original logic, but be mindful of systemd.
-if [[ "$1" != "reload" ]]; then # Assuming 'reload' is a special argument
-    purMsg "Attempting to stop existing backend process (if any, not managed by systemd)..."
-    "$NPM_EXECUTABLE" run stop:linux >> "$LOG_FILE" 2>&1
-    # Don't exit on error here, as it might not be running
-fi
-
-# Start backend (if systemd failed or is not used for direct management here)
-# If systemd is managing it, this 'npm run start:linux' is also redundant.
-# The original script had this, so keeping the structure.
-purMsg "Starting backend service (egg.js)..."
-"$NPM_EXECUTABLE" run start:linux >> "$LOG_FILE" 2>&1 & # Run in background
-BACKEND_PID=$!
-sleep 5 # Give backend some time to start
-
-# Check if backend started (very basic check)
-if ! ps -p $BACKEND_PID > /dev/null; then
-    redMsg "Backend (npm run start:linux) may have failed to start. Check $LOG_FILE"
-    # Potentially exit or try to show logs
-fi
-
-
-purMsg "Starting/Managing frontend service (express-linux) with pm2..."
-cd ./express || exit 1
-"$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 >> "$LOG_FILE" 2>&1
+purMsg "Starting/Managing frontend service (express-linux) with local pm2..."
+# Already in $DIR/express directory
+"$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
 PM2_START_STATUS=$?
-cd "$DIR" || exit 1
+cd "$DIR" || exit 1 # Return to project root
 
 if [ $PM2_START_STATUS -ne 0 ]; then
-    redMsg "Frontend (pm2 start express-linux) failed. Check $LOG_FILE and pm2 logs."
-    # Consider exiting
+    redMsg "Frontend (pm2 start express-linux) failed. Check $LOG_FILE and pm2 logs ($DIR/shell/pm2-HttpServer-*.log)."
 else
-    greMsg "Frontend started/managed by pm2."
+    greMsg "Frontend started/managed by local pm2."
+    "$PM2_EXECUTABLE" list >> "$LOG_FILE" 2>&1
 fi
 
 greMsg "Service startup initiated."
-bluMsg "Front-end HTTP: Local IP:$HTTP"
-bluMsg "Front-end HTTPS: Local IP:$HTTPS (If HTTPS is not deployed, please access HTTP)"
-bluMsg "Back-end: Local IP:$SERVER"
-greMsg "Check $LOG_FILE for detailed startup logs."
+bluMsg "Backend (Egg.js) should be running via systemd (port: $SERVER)."
+bluMsg "Frontend (Express) running via PM2 (HTTP port: $HTTP, HTTPS port: $HTTPS)."
+greMsg "Check $LOG_FILE for detailed startup logs of this script."
+greMsg "Check systemd logs for backend: journalctl -u firewalld-ui.service -f"
+greMsg "Check PM2 logs for frontend: $PM2_EXECUTABLE logs HttpServer"
 greMsg "-------------------------Startup process ends $(date +%F%n%T)-------------------------"
-echo -e "\n------------------------- $(date +%F%n%T) END -------------------------" >> "$LOG_FILE"
+echo -e "\\n------------------------- $(date +%F%n%T) END -------------------------" >> "$LOG_FILE"
 
 exit 0

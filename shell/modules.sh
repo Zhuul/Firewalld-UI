@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define output colors
-redMsg() { echo -e "\\n\E[1;31m$*\033[0m\\n" >&2; }
-greMsg() { echo -e "\\n\E[1;32m$*\033[0m\\n" >&2; }
-bluMsg() { echo -e "\\n\033[5;34m$*\033[0m\\n" >&2; }
-purMsg() { echo -e "\\n\033[35m$*\033[0m\\n" >&2; }
+redMsg() { echo -e "\n\E[1;31m$*\033[0m\n" >&2; }
+greMsg() { echo -e "\n\E[1;32m$*\033[0m\n" >&2; }
+bluMsg() { echo -e "\n\033[5;34m$*\033[0m\n" >&2; }
+purMsg() { echo -e "\n\033[35m$*\033[0m\n" >&2; }
 
 # SCRIPT_DIR is the directory where modules.sh is located
 SCRIPT_MODULES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -36,16 +36,13 @@ cd "$PROJECT_ROOT_DIR" || { redMsg "Failed to cd into project root $PROJECT_ROOT
 NPM_VERSION=$("$NPM_EXECUTABLE" -v)
 REQUIRED_NPM_VERSION="7.0.0" # As per your original script
 
-# Version comparison logic (ensure it's robust)
-if ! printf '%s\n' "$REQUIRED_NPM_VERSION" "$NPM_VERSION" | sort -V -C -r; then
-  # sort -V -C -r checks if $NPM_VERSION is greater than or equal to $REQUIRED_NPM_VERSION
-  # If $NPM_VERSION is less, sort returns non-zero
-  redMsg "Your npm version ($NPM_VERSION) is outdated. Required: $REQUIRED_NPM_VERSION or later."
-  redMsg "The local npm is at $NPM_EXECUTABLE. If this is wrong, check node.sh."
-  # exit 1 # Decide if this is a fatal error if local npm is older
+# Version comparison logic
+if [ "$(printf '%s\n' "$REQUIRED_NPM_VERSION" "$NPM_VERSION" | sort -V | head -n1)" != "$NPM_VERSION" ] && [ "$NPM_VERSION" != "$REQUIRED_NPM_VERSION" ]; then
+    redMsg "Your npm version ($NPM_VERSION) is outdated. Required: $REQUIRED_NPM_VERSION or later."
+    redMsg "The local npm is at $NPM_EXECUTABLE. If this is wrong, check node.sh."
+    # exit 1 # Decide if this is a fatal error
 fi
 greMsg "npm version check passed: $NPM_VERSION"
-
 
 # Check for backend node_modules
 if [ ! -d "$PROJECT_ROOT_DIR/node_modules/" ];then
@@ -65,7 +62,6 @@ else
     INSTALL_FRONTEND=false
 fi
 
-
 if [ "$INSTALL_BACKEND" = true ] || [ "$INSTALL_FRONTEND" = true ]; then
     redMsg "If the download fails, please delete $PROJECT_ROOT_DIR/node_modules and $PROJECT_ROOT_DIR/express/node_modules and try again."
     read -r -p "Do you want to run npm install for missing modules? (Ensure smooth network) [y/n] " input
@@ -73,7 +69,7 @@ if [ "$INSTALL_BACKEND" = true ] || [ "$INSTALL_FRONTEND" = true ]; then
         [yY][eE][sS]|[yY])
             if [ "$INSTALL_BACKEND" = true ]; then
                 purMsg "Installing backend dependencies in $PROJECT_ROOT_DIR..."
-                "$NPM_EXECUTABLE" install --legacy-peer-deps # Added --legacy-peer-deps for broader compatibility
+                "$NPM_EXECUTABLE" install --legacy-peer-deps # Using local npm
                 if [ $? -ne 0 ]; then
                     redMsg "Error downloading backend dependencies."
                     exit 1
@@ -85,7 +81,7 @@ if [ "$INSTALL_BACKEND" = true ] || [ "$INSTALL_FRONTEND" = true ]; then
             if [ "$INSTALL_FRONTEND" = true ]; then
                 purMsg "Installing frontend dependencies in $PROJECT_ROOT_DIR/express..."
                 cd "$PROJECT_ROOT_DIR/express" || { redMsg "Failed to cd into $PROJECT_ROOT_DIR/express"; exit 1; }
-                "$NPM_EXECUTABLE" install --legacy-peer-deps # Added --legacy-peer-deps
+                "$NPM_EXECUTABLE" install --legacy-peer-deps # Using local npm
                 if [ $? -ne 0 ]; then
                     redMsg "Error downloading frontend dependencies."
                     cd "$PROJECT_ROOT_DIR" # Go back to project root
