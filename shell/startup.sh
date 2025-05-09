@@ -197,6 +197,12 @@ sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${SYSTEMD_EXEC_START_COMMA
 # Replace placeholder for PIDFile
 sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR_ABS}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
 
+purMsg "Ensuring PIDFile directory exists: ${PROJECT_INSTALL_DIR_ABS}/run"
+mkdir -p "${PROJECT_INSTALL_DIR_ABS}/run"
+# Depending on the user systemd runs the service as, permissions might be needed.
+# For now, assuming the user starting this script or root can manage systemd,
+# and the egg application itself (run by systemd) can write to its own project directory.
+
 purMsg "Installing systemd service file to $SERVICE_FILE_DEST..."
 cp "$TEMP_SERVICE_FILE" "$SERVICE_FILE_DEST"
 CP_STATUS=$?

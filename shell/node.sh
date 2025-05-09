@@ -6,8 +6,8 @@ greMsg() { echo -e "\\n\\E[1;32m$*\\033[0m\\n" >&2; }
 bluMsg() { echo -e "\\n\\033[5;34m$*\\033[0m\\n" >&2; }
 purMsg() { echo -e "\\n\\033[35m$*\\033[0m\\n" >&2; }
 
-# SCRIPT_DIR is the directory where node.sh is located (e.g., /path/to/Firewalld-UI/shell)
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# Get the absolute physical path of the directory where this script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 # PROJECT_ROOT_DIR is the parent of SCRIPT_DIR (e.g., /path/to/Firewalld-UI)
 PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
 
