@@ -3,7 +3,7 @@ const directory = path.join(__dirname, '../validate');
 const crypto = require('crypto');
 
 module.exports = {
-  //查询是否刚开机查询黑名单(开机180秒内启动即算刚开机),
+  // Query whether to check the blacklist if the system has just booted (booting within 180 seconds is considered a fresh boot),
   ipsCache: [],
   pid: null,
   isStartUp() {
@@ -47,7 +47,7 @@ module.exports = {
     const { ctx } = this;
     const startUp = await this.isStartUp();
     startUp == false && del && (reload = true);
-    //在数据库中查询黑名单,查询到的重新添加到防火墙规则中(因为开机会丢失非永久性的防火墙富规则)
+    // Query the blacklist in the database, and re-add the queried entries to the firewall rules (because non-persistent firewall rich rules are lost on reboot)
     const { data } = await ctx.service.blacklist.getBlacklist({ page: 1, pageSize: 10000, unblocked: false });
 
     await data?.rows?.syncEach?.(async item => {
@@ -120,11 +120,11 @@ module.exports = {
     const { ctx } = this;
     const search = ctx.helper.searcher.memorySearchSync(ip);
     const region = search?.region.split('|').filter(item => item) ?? [];
-    const cityNo = search?.city ?? '未知城市编号';
-    const country = region[0] ?? '未知国家';
-    const province = region[2] ?? '未知省份';
-    const city = region[3] ?? '未知城市';
-    const isp = region[4] ?? '未知网络';
+    const cityNo = search?.city ?? 'Unknown City ID';
+    const country = region[0] ?? 'Unknown Country';
+    const province = region[2] ?? 'Unknown Province';
+    const city = region[3] ?? 'Unknown City';
+    const isp = region[4] ?? 'Unknown Network';
     const fullSite = `${country}-${province}-${city}-${isp}`;
 
     return { country, province, city, cityNo, isp, fullSite };
@@ -134,11 +134,11 @@ module.exports = {
     const data = value.split(/\s/);
     const connectionTime = `${data[5]} ${data[6]}`;
     const ip = this.ipMatch(data?.[3] ?? '')?.[0];
-    const type = data[0] ?? '连接类型未知';
-    const localIp = data[1] ?? '本地IP未知';
-    const localPort = data[2] ? parseInt(data[2]) : '本地端口未知';
-    const remoteIp = ip ?? '远程IP未知';
-    const remotePort = data[4] ?? '远程端口未知';
+    const type = data[0] ?? 'Unknown Connection Type';
+    const localIp = data[1] ?? 'Local IP Unknown';
+    const localPort = data[2] ? parseInt(data[2]) : 'Local Port Unknown';
+    const remoteIp = ip ?? 'Remote IP Unknown';
+    const remotePort = data[4] ?? 'Remote Port Unknown';
     const connectionTimeTo = new Date(connectionTime).toString() != 'Invalid Date' ? connectionTime : this.ctx.helper.getFormatNowDate();
 
     return { type, localIp, localPort, remoteIp, remotePort, connectionTime: connectionTimeTo };
@@ -161,7 +161,7 @@ module.exports = {
       site,
     };
     isInips || this.ipsCache.some(item => item.ip == parse.ip) || this.ipsCache.push(parse);
-    //过滤连接日志输出,规定时间内已经输出的或加入黑名单内的不再输出
+    // Filter connection log output: entries already logged within the specified time or added to the blacklist will not be output again
     await ctx.service.access.addAccessLog({ ...parse, site: parse.fullSite });
     ctx.helper.logCachePut(parse.ip, parse.port, parse, this.config?.accessLog?.interval ?? 30);
     this.messenger.sendToApp("logCachePut", parse)
@@ -179,16 +179,16 @@ module.exports = {
     const connectionTime = `${data[5]} ${data[6]}`;
     const ip = this.ipMatch(data?.[3] ?? '')?.[0];
     return {
-      type: data[0] ?? '连接类型未知',
-      localIp: data[1] ?? '本地IP未知',
-      localPort: data[2] ? parseInt(data[2]) : '本地端口未知',
-      remoteIp: ip ?? '远程IP未知',
-      remotePort: data[4] ?? '远程端口未知',
+      type: data[0] ?? 'Unknown Connection Type',
+      localIp: data[1] ?? 'Local IP Unknown',
+      localPort: data[2] ? parseInt(data[2]) : 'Local Port Unknown',
+      remoteIp: ip ?? 'Remote IP Unknown',
+      remotePort: data[4] ?? 'Remote Port Unknown',
       connectionTime: new Date(connectionTime).toString() != 'Invalid Date' ? connectionTime : ctx.helper.getFormatNowDate(),
     };
   },
   ipInSegment(ip, believeAccess) {
-    if (believeAccess.length == 1 && believeAccess[0] == '全部') return true;
+    if (believeAccess.length == 1 && believeAccess[0] == 'All') return true;
     try {
       const iParse = ip.split('.').map(item => parseInt(item));
       const ipIn = believeAccess.some(
@@ -254,7 +254,7 @@ module.exports = {
           const sitesDisabled = rowItem.sitesDisabled && sites;
           const ipsDisabled = rowItem.ipsDisabled && ips;
           const portsDisabled = rowItem.portsDisabled && ports;
-          const abroadDisabled = rowItem.abroadDisabled && item.fullSite.indexOf('中国') == -1;
+          const abroadDisabled = rowItem.abroadDisabled && item.fullSite.indexOf('China') == -1;
           const limitDisabled = rowItem.limitDisabled;
 
           if (sitesDisabled || ipsDisabled || portsDisabled || abroadDisabled || limitDisabled) {

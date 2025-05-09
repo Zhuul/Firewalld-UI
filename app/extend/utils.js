@@ -60,7 +60,7 @@ module.exports = {
       return response;
     } catch (error) {
       console.log(error);
-      const message = `事务执行失败 ${error.toString()}`;
+      const message = `Transaction execution failed ${error.toString()}`;
       await transaction.rollback();
       this.serviceAddSystem(13, message);
       this.app.getLogger('system').info('', message);
@@ -76,7 +76,7 @@ module.exports = {
     try {
       callBack && callBack();
     } catch (error) {
-      console.log('同时发生错误');
+      console.log('Concurrent error occurred');
       console.log(error);
       throw err;
     }
@@ -112,8 +112,8 @@ module.exports = {
   captchaCheck(playload, code) {
     const { ctx, app } = this;
     const captcha = playload.split('|')[0];
-    captchaCache.get(playload) != null && ctx.helper.throw('验证码已被使用');
-    ctx.helper._.toUpper(captcha) !== ctx.helper._.toUpper(code) && ctx.helper.throw('验证码错误');
+    captchaCache.get(playload) != null && ctx.helper.throw('CAPTCHA has been used');
+    ctx.helper._.toUpper(captcha) !== ctx.helper._.toUpper(code) && ctx.helper.throw('Incorrect CAPTCHA');
     captchaCache.put(playload, new Date(), app.config?.captcha?.expiresIn * 600000 ?? 600000);
   },
   isInLogCache(ip, port) {
@@ -125,7 +125,7 @@ module.exports = {
   logCachePut(ip, port, res, expirationTime) {
     const log = `${res.type}   ${res.port}  ${res.ip}   ${res.fullSite}`;
     logCache.put(`${ip}-${port}`, log, expirationTime * 1000, (key, value) => {
-      //这是缓存失效的回调不是插入成功的回调
+      // This is the callback for cache expiration, not for successful insertion
     });
   },
   ipsCacheKeys() {
@@ -141,7 +141,7 @@ module.exports = {
     const { ctx } = this;
     try {
       ipsCache.del(`ip-${ip}`);
-      //解决定时器溢出问题
+      // Solve timer overflow problem
       const time = 100000;
       if (expirationTime > time) {
         data.expirationTimeSplit = expirationTime - time;
@@ -150,7 +150,7 @@ module.exports = {
         });
       } else {
         ipsCache.put(`ip-${ip}`, data, expirationTime * 1000, (key, value) => {
-          //这是缓存失效的回调,不是插入成功的回调
+          // This is the callback for cache expiration, not for successful insertion
         });
       }
     } catch (error) {
@@ -167,11 +167,11 @@ module.exports = {
       const blacklist = await ctx.model.Blacklist.create({ ip, expirationTime, site, port, time, expirationTimeFormat });
       await blacklist.save();
       ctx.helper.ipsCachePut(ip, { ip, port, fullSite: site, expirationTime }, expirationTime);
-      this.serviceAddSystem(4, `加入黑名单 IP: ${ip} 地点: ${site} 端口: ${port} 屏蔽时间 ${expirationTimeFormat}`);
-      return { ip, success: true, message: '加入黑名单成功' };
+      this.serviceAddSystem(4, `Added to blacklist IP: ${ip} Location: ${site} Port: ${port} Block time ${expirationTimeFormat}`);
+      return { ip, success: true, message: 'Successfully added to blacklist' };
     } else {
-      this.serviceAddSystem(4, `加入黑名单失败,可能已经用其他方式加入防火墙 IP: ${ip} 地点: ${site} 端口: ${port}`);
-      return { ip, success: false, message: '加入黑名单失败,可能已经用其他方式加入防火墙' };
+      this.serviceAddSystem(4, `Failed to add to blacklist, may already be in firewall IP: ${ip} Location: ${site} Port: ${port}`);
+      return { ip, success: false, message: 'Failed to add to blacklist, may already be in firewall' };
     }
   },
   drop(ip, time) {
@@ -192,7 +192,7 @@ module.exports = {
       } else {
         exec(command, (err, stdout, stderr) => {
           const success = stderr || err ? false : true;
-          success && ctx.helper.serviceAddSystem(5, unblocked ? `移除已解禁黑名单 IP ${ip}` : `移除屏蔽中黑名单 IP ${ip}`);
+          success && ctx.helper.serviceAddSystem(5, unblocked ? `Removed unblocked blacklist IP ${ip}` : `Removed blocked blacklist IP ${ip}`);
           resolve({ err, stdout, stderr, success });
         });
       }
@@ -200,18 +200,15 @@ module.exports = {
   },
   async dropCommand(ip, expirationTime) {
     const { stdout, stderr, err } = await this.drop(ip, expirationTime);
-    stdout && this.app.getLogger('drop').info('黑名单', `ip ${ip}  禁止时间  ${expirationTime} 秒`);
-    stderr && this.app.getLogger('drop').info('黑名单', `重复加入 ${ip}`);
-    err && this.app.getLogger('drop').info('黑名单', `加入黑名单失败 ${ip}`);
+    stdout && this.app.getLogger('drop').info('Blacklist', `ip ${ip}  Block time  ${expirationTime} seconds`);
+    stderr && this.app.getLogger('drop').info('Blacklist', `Repeated addition ${ip}`);
+    err && this.app.getLogger('drop').info('Blacklist', `Failed to add to blacklist ${ip}`);
     return stderr || err ? false : true;
-  },
-  ipsCacheKeys() {
-    return ipsCache.keys();
   },
   async queryNodeVersion() {
     const version = (await this.command('node -v'))?.replace(/\n+/g, '');
     const isReturn = version?.replace(/[A-Za-z]+/g, '').split('.')[0] < 16;
-    isReturn && console.log('node 版本需要大于等于 16');
+    isReturn && console.log('Node version needs to be greater than or equal to 16');
     return isReturn;
   },
   millisecondToDay(millisecond = 86400000) {
@@ -235,7 +232,7 @@ module.exports = {
   tcpkill(ip, timeout = 300000) {
     return new Promise((resolve, reject) => {
       if (isTcpkill) return resolve(true);
-      console.log('kaishizhixing');
+      console.log('Starting execution');
       let timer;
       try {
         const response = exec(`tcpkill -i any -9 host ${ip}`, { timeout: timeout * 2, maxBuffer: 50 * 1024 });
@@ -301,7 +298,7 @@ module.exports = {
   async isCustomDrop() {
     const { err, stdout, stderr } = await this.command('firewall-cmd --permanent --get-ipsets');
     const isDrop = stdout.indexOf('CUSTOM-DROP') != -1;
-    this.app.getLogger('system').info('', `------------------自定义 ipsets CUSTOM-DROP ${isDrop ? '已存在' : '不存在'} ---------------`);
+    this.app.getLogger('system').info('', `------------------Custom ipsets CUSTOM-DROP ${isDrop ? 'exists' : 'does not exist'} ---------------`);
     return isDrop;
   },
   async triggerChangePort(status, port, protocol) {
@@ -323,10 +320,10 @@ module.exports = {
     return success;
   },
   async newIpset() {
-    this.app.getLogger('system').info('', `------------------即将新建 ipsets CUSTOM-DROP---------------`);
+    this.app.getLogger('system').info('', `------------------Will create new ipsets CUSTOM-DROP---------------`);
     const { err, stdout, stderr } = await this.command('firewall-cmd --permanent --new-ipset=CUSTOM-DROP --type=hash:ip');
-    stdout && this.app.getLogger('system').info('', `------------------新建成功---------------`);
-    (stderr || err) && this.app.getLogger('system').info('', `------------------新建失败---------------`);
+    stdout && this.app.getLogger('system').info('', `------------------Creation successful---------------`);
+    (stderr || err) && this.app.getLogger('system').info('', `------------------Creation failed---------------`);
     return stdout != null;
   },
   deleteFolder(path) {
@@ -410,20 +407,20 @@ module.exports = {
   },
   systemStart() {
     console.log('');
-    this.app.getLogger('system').info('', `------------------${this.app.env} 环境已启动---------------`);
+    this.app.getLogger('system').info('', `------------------${this.app.env} environment has started---------------`);
     console.log('');
-    this.serviceAddSystem(1, `${this.app.env} 环境已启动`);
+    this.serviceAddSystem(1, `${this.app.env} environment has started`);
   },
   systemStop() {
     console.log('');
-    this.app.getLogger('system').info('', `------------------${this.app.env} 环境已停止---------------`);
+    console.log(`[SYSTEM STOP] ${this.app.env} service has stopped (logged via console.log)`);
     console.log('');
   },
   systemTimeOut() {
     console.log('');
-    this.app.getLogger('system').info('', `------------------启动超时---------------`);
+    this.app.getLogger('system').info('', `------------------Startup timeout---------------`);
     console.log('');
-    this.serviceAddSystem(0, `${this.app.env} 启动超时`);
+    this.serviceAddSystem(0, `${this.app.env} startup timeout`);
   },
   async serviceAddSystem(type, details, callBack) {
     const {
@@ -434,7 +431,7 @@ module.exports = {
       const ip = this.getXwf();
       const jwt = header?.token ? ctx.helper.jwtVerify(header.token) : {};
       const json = jwt?.playload ? JSON.parse(jwt.playload) : {};
-      const user = json.username ?? '系统默认';
+      const user = json.username ?? 'System Default';
       await ctx.service.system.addSystem({ ip, user, type, details });
       callBack && callBack();
     } catch (error) {
@@ -464,71 +461,71 @@ module.exports = {
   },
   getMessage: {
     common(index, obj = {}) {
-      const message = ['失败', '成功', '创建失败', '服务即将重启', '黑名单'];
+      const message = ['Failed', 'Success', 'Creation failed', 'Service will restart soon', 'Blacklist'];
       return message[index];
     },
     blacklist(index, obj = {}) {
       const message = [
-        '重新加入黑名单成功',
-        '修改还在屏蔽中的黑名单时间成功',
-        `重新加入黑名单 IP: ${obj.ip} 地点: ${obj.site} 端口: ${obj.port} 屏蔽时间 ${obj.expirationTimeFormat}`,
-        `修改还在屏蔽黑名单的时间 IP: ${obj.ip} 地点: ${obj.site} 端口: ${obj.port} 屏蔽时间 ${obj.expirationTimeFormat}`,
-        '重新加入或者修改还在屏蔽中的黑名单时间失败',
+        'Successfully re-added to blacklist',
+        'Successfully modified block time for existing blacklist entry',
+        `Re-added to blacklist IP: ${obj.ip} Location: ${obj.site} Port: ${obj.port} Block time ${obj.expirationTimeFormat}`,
+        `Modified block time for blacklist IP: ${obj.ip} Location: ${obj.site} Port: ${obj.port} Block time ${obj.expirationTimeFormat}`,
+        'Failed to re-add or modify block time for existing blacklist entry',
       ];
       return message[index];
     },
     user(index, obj = {}) {
       const message = [
-        '已经注册过',
-        `用户名 ${obj.username}  注册失败,已经注册过`,
-        `用户名 ${obj.username}  注册成功`,
-        '修改失败',
-        `用户名 ${obj.username}  修改密码失败`,
-        `用户名 ${obj.username}  修改密码成功`,
-        '请检查用户名或者密码',
-        `用户名 ${obj.usernameDecrypt} 不存在`,
-        `用户名 ${obj.usernameDecrypt} 登录密码错误`,
-        `用户名 ${obj.usernameDecrypt} 登陆成功`,
+        'Already registered',
+        `Username ${obj.username} registration failed, already registered`,
+        `Username ${obj.username} registration successful`,
+        'Modification failed',
+        `Username ${obj.username} password modification failed`,
+        `Username ${obj.username} password modification successful`,
+        'Please check username or password',
+        `Username ${obj.usernameDecrypt} does not exist`,
+        `Username ${obj.usernameDecrypt} incorrect login password`,
+        `Username ${obj.usernameDecrypt} login successful`,
       ];
       return message[index];
     },
     access(index, obj = {}) {
-      const message = [`删除日志 ${obj.count} 条`];
+      const message = [`Deleted ${obj.count} log entries`];
       return message[index];
     },
     overview(index, obj = {}) {
-      const message = [`开启防火墙${obj.success ? '成功' : '失败'} 时间:${obj.time}`, `关闭防火墙${obj.success ? '成功' : '失败'} 时间:${obj.time}`];
+      const message = [`Firewall turned on ${obj.success ? 'successfully' : 'failed'} Time:${obj.time}`, `Firewall turned off ${obj.success ? 'successfully' : 'failed'} Time:${obj.time}`];
       return message[index];
     },
     project(index, obj = {}) {
       const message = [
-        `新建项目,项目名称:${obj.name} 项目端口:${obj.port}`,
-        `删除项目,项目名称:${obj.name} 项目端口:${obj.port}`,
-        `已经绑定过端口${obj.port}`,
-        `失败,错误原因:${obj.message?.join(',')}`,
+        `New project, Project name:${obj.name} Project port:${obj.port}`,
+        `Delete project, Project name:${obj.name} Project port:${obj.port}`,
+        `Port ${obj.port} already bound`,
+        `Failed, error reason:${obj.message?.join(',')}`,
       ];
       return message[index];
     },
     rule(index, obj = {}) {
-      const message = [`新建规则 时间${obj.time}`, `删除规则 ${obj.count} 条`];
+      const message = [`New rule Time ${obj.time}`, `Deleted ${obj.count} rules`];
       return message[index];
     },
     application(index, obj = {}) {
       const message = [
-        `查询开机时间失败,请检查 cat /proc/uptime 命令是否正常`,
-        `查询开机时间成功,开机时间 ${obj.startTime} 秒`,
-        `------------------查询开机时间失败 err------------------`,
-        `查询开机时间失败,请检查 cat /proc/uptime 命令是否正常`,
-        `------------------${this.env} 环境不校验开机时间------------------`,
-        `重启检测到黑名单, IP :${obj.ip} 禁止时间:${obj.surplus} 秒`,
-        '重启服务在数据库中查询到黑名单',
-        `${obj.port}  ${obj.ip}  ${obj.site} 禁止时间  ${obj.surplus} 秒`,
-        '开机在数据库中查询到黑名单',
-        `开机检测到黑名单, IP :${obj.ip} 禁止时间:${obj.surplus} 秒`,
-        `开机检测到黑名单屏蔽失败, IP :${obj.ip} 禁止时间:${obj.surplus} 秒`,
-        `加入黑名单失败 ${obj.ip}`,
-        `加入黑名单成功, IP :${obj.ip} 封禁时间 ${obj.expirationTime} 秒`,
-        `加入黑名单失败, IP :${obj.ip} ${obj.message}`,
+        `Failed to query boot time, please check if cat /proc/uptime command is normal`,
+        `Successfully queried boot time, boot time ${obj.startTime} seconds`,
+        `------------------Failed to query boot time err------------------`,
+        `Failed to query boot time, please check if cat /proc/uptime command is normal`,
+        `------------------${this.env} environment does not verify boot time------------------`,
+        `Restart detected blacklist, IP :${obj.ip} Block time:${obj.surplus} seconds`,
+        'Found blacklist in database upon service restart',
+        `${obj.port}  ${obj.ip}  ${obj.site} Block time  ${obj.surplus} seconds`,
+        'Found blacklist in database upon boot',
+        `Boot detected blacklist, IP :${obj.ip} Block time:${obj.surplus} seconds`,
+        `Boot detected blacklist block failed, IP :${obj.ip} Block time:${obj.surplus} seconds`,
+        `Failed to add to blacklist ${obj.ip}`,
+        `Successfully added to blacklist, IP :${obj.ip} Block time ${obj.expirationTime} seconds`,
+        `Failed to add to blacklist, IP :${obj.ip} ${obj.message}`,
       ];
       return message[index];
     },

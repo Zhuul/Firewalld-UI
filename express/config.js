@@ -1,25 +1,25 @@
 module.exports = {
   proxy: {
     path: '/api',
-    //后端 api 地址
+    // Backend API address
     target: 'http://0.0.0.0:7001/',
     changeOrigoin: false,
     pathRewrite: { '^/api': '/' },
     xfwd: true,
   },
-  //流量限制
+  // Traffic limit
   limiter: {
-    //重置时间间隔 10 分钟
+    // Reset time interval 10 minutes
     windowMs: 10 * 60 * 1000,
-    //最大访问次数
+    // Maximum number of visits
     max: 500,
-    message: '访问次数过多,请稍后再试!!!',
+    message: 'Too many visits, please try again later!!!',
     standardHeaders: true,
     legacyHeaders: false,
   },
-  // http 端口
+  // http port
   httpPort: 5000,
-  // https 端口 , 未部署不生效
+  // https port, not effective if not deployed
   httpsPort: 5001,
   maxAge: 86400000,
   setTimeout: 30 * 1000,

@@ -28,7 +28,7 @@ module.exports = app => {
         //     return new Date(new Date(this.getDataValue('time')).getTime() + this.getDataValue('expirationTime') * 1000).Format('yyyy-MM-dd hh:mm:ss');
         //   },
         //   set(value) {
-        //     throw new Error('不要尝试设置 expirationTimeFormat 的值!');
+        //     throw new Error('Do not try to set the value of expirationTimeFormat!');
         //   },
         // },
         time: {
@@ -53,23 +53,23 @@ module.exports = app => {
             return Date.now() - new Date(this.time).getTime() > this.expirationTime * 1000;
           },
           set(value) {
-            throw new Error('不要尝试设置 unblocked 的值!');
+            throw new Error('Do not try to set the value of unblocked!');
           },
         },
         unblockedText: {
           type: DataTypes.VIRTUAL,
           get() {
-            return this.unblocked ? '允许' : '屏蔽';
+            return this.unblocked ? 'Allowed' : 'Blocked'; // Translated from '解封' : '封禁中'
           },
           set(value) {
-            throw new Error('不要尝试设置 `unblockedText` 的值!');
+            throw new Error('Do not try to set the value of `unblockedText`!');
           },
         },
       },
       {
-        // MySQL数据库表名
+        // MySQL database table name // Translated from 'mysql数据库表名'
         tableName: 'blacklists',
-        // 不使用created_at , updated_at
+        // Do not use created_at, updated_at // Translated from '不使用 created_at, updated_at'
         timestamps: false,
       }
     );
