@@ -52,6 +52,7 @@ module.exports = appInfo => {
       secret: captcha.secret,
     },
     startupTime,
+    rundir: path.join(appInfo.baseDir, 'run'), // Explicitly set rundir
     cluster: {
       listen: {
         port: 7001,

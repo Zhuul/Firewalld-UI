@@ -2,7 +2,7 @@
 
 # Get the project root directory
 # Assuming startup.sh is in the 'shell' subdirectory of the project root
-SCRIPT_STARTUP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_STARTUP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P )" # Use -P for physical path
 DIR=$(dirname "$SCRIPT_STARTUP_DIR") # This is the Project Root Directory
 
 cd "$DIR" || { echo "ERROR: Failed to cd into project root $DIR" >&2; exit 1; }
@@ -151,11 +151,14 @@ else
     # Check if the exit code indicates that fixes were applied but some vulnerabilities remain (common)
     # npm audit fix exits with 1 if vulnerabilities remain. This is not necessarily a script-stopping error.
     if [ $AUDIT_FIX_BACKEND_STATUS -eq 1 ]; then
-        purMsg "Backend npm audit fix applied some fixes, but vulnerabilities may still remain. Check output."
+        purMsg "Backend npm audit fix applied some fixes, but vulnerabilities may still remain. Check output from audit fix."
     else
         redMsg "Backend npm audit fix failed with exit code $AUDIT_FIX_BACKEND_STATUS or had other issues."
     fi
 fi
+purMsg "-------------------------Backend Vulnerability Check-------------------------"
+"$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" audit || purMsg "Backend npm audit reported issues (or no issues if exit code 0)."
+echo "" # Add a newline for better readability
 
 purMsg "Attempting to fix vulnerabilities in frontend (express)..."
 # Change to the express directory for the frontend audit fix
@@ -165,11 +168,15 @@ if "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" audit fix; then
 else
     AUDIT_FIX_FRONTEND_STATUS=$?
     if [ $AUDIT_FIX_FRONTEND_STATUS -eq 1 ]; then
-        purMsg "Frontend npm audit fix applied some fixes, but vulnerabilities may still remain. Check output."
+        purMsg "Frontend npm audit fix applied some fixes, but vulnerabilities may still remain. Check output from audit fix."
     else
         redMsg "Frontend npm audit fix failed with exit code $AUDIT_FIX_FRONTEND_STATUS or had other issues."
     fi
 fi
+purMsg "-------------------------Frontend Vulnerability Check (express)-------------------------"
+"$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" audit || purMsg "Frontend (express) npm audit reported issues (or no issues if exit code 0)."
+echo "" # Add a newline for better readability
+
 cd "$DIR" || { redMsg "Failed to cd back to $DIR after audit fixes"; exit 1; } # Return to project root
 
 
