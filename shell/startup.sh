@@ -196,9 +196,9 @@ purMsg "Customizing service file template from $SERVICE_FILE_SOURCE..."
 # Replace placeholder for WorkingDirectory - more robust sed command
 sed "s|^WorkingDirectory=.*|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
 
-# Replace placeholder for ExecStart to use the local node to run npm-cli.js start
+# Replace placeholder for ExecStart to use the local node to run npm-cli.js start:systemd
 # Ensure PATH includes NODE_BIN_PATH for any child processes of npm start
-SYSTEMD_EXEC_START_COMMAND="/bin/sh -c 'PATH=${NODE_BIN_PATH}:\$PATH ${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH} start'"
+SYSTEMD_EXEC_START_COMMAND="/bin/sh -c 'PATH=${NODE_BIN_PATH}:\$PATH ${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH} run start:systemd'"
 sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${SYSTEMD_EXEC_START_COMMAND}|g" "$TEMP_SERVICE_FILE"
 
 # Replace placeholder for PIDFile

@@ -46,6 +46,7 @@
   "scripts": {
     "waf": "node ./install",
     "start": "egg-scripts start --sticky --env=prod --daemon --title=egg-server --pid run/egg-server.pid",
+    "start:systemd": "egg-scripts start --sticky --env=prod --title=egg-server --pid run/egg-server.pid",
     "start:linux": "egg-scripts start --sticky --env=prod --daemon --title=egg-server --pid run/egg-server.pid",
     "stop:linux": "egg-scripts stop  --sticky --env=prod --daemon --title=egg-server",
     "start:linux:index": "egg-scripts start --sticky --env=prod --daemon --title=egg-server && cd ./express && npm run start",
