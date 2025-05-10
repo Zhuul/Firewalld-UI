@@ -15,3 +15,4 @@ typings/
 .nyc_output/
 !pkg-entry.js
 node
+longlogsfile.txt

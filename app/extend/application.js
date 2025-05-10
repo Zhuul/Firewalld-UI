@@ -147,6 +147,14 @@ module.exports = {
     const { ctx } = this;
     const parseIp = this.parseIp(item);
 
+    // --- BEGIN ADDED VALIDATION ---
+    const ipv4Regex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+    if (!parseIp.remoteIp || !ipv4Regex.test(parseIp.remoteIp)) {
+      this.getLogger('error').error('[Firewalld-UI] addIpsCache: Invalid or missing remote IP address. Item:', item, 'Parsed IP:', parseIp);
+      return; // Skip this item
+    }
+    // --- END ADDED VALIDATION ---
+
     const isInips = ctx.helper.isInIpsCache(parseIp.remoteIp);
 
     if (ctx.helper.isInLogCache(parseIp.remoteIp, parseIp.localPort) || isInips) return;
