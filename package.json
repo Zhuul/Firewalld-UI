@@ -7,6 +7,8 @@
     "declarations": true
   },
   "dependencies": {
+    "@npmcli/fs": "^3.1.0",
+    "debug": "^4.3.5",
     "dy-node-ip2region": "^1.0.1",
     "egg": "^3.30.1",
     "egg-cors": "^3.0.1",
@@ -15,6 +17,7 @@
     "egg-sequelize": "^6.0.0",
     "egg-socket.io": "^4.1.6",
     "egg-validate": "^2.0.2",
+    "esquery": "^1.5.0",
     "express": "^4.19.2",
     "http-proxy-middleware": "^3.0.0",
     "i18n": "^0.15.1",
@@ -28,10 +31,7 @@
     "qjson-db": "^1.0.2",
     "sqlite3": "^5.1.7",
     "string-random": "^0.1.3",
-    "svg-captcha": "^1.4.0",
-    "esquery": "^1.5.0",
-    "debug": "^4.3.5",
-    "@npmcli/fs": "^3.1.0"
+    "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
     "egg-bin": "^6.13.0",
