@@ -224,20 +224,23 @@ bluMsg "This section may require sudo privileges if not already root."
 NODE_EXEC_PATTERN=""
 if [ -n "$NODE_EXECUTABLE" ]; then
     # Escape for regex, e.g. / becomes \/
-    ESCAPED_NODE_EXECUTABLE=$(echo "$NODE_EXECUTABLE" | sed 's/[/\\]/\\\\&/g')
+    ESCAPED_NODE_EXECUTABLE=$(echo "$NODE_EXECUTABLE" | sed 's/[/\\\\]/\\\\\\\\&/g') # Corrected sed escaping for bash
     NODE_EXEC_PATTERN="$ESCAPED_NODE_EXECUTABLE"
 fi
 
 KNOWN_PROCESS_PATTERNS=(
     "$NODE_EXEC_PATTERN .*/node_modules/.bin/pm2"                 # Local PM2
-    "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts start"   # Local egg-scripts start
+    # Specific egg patterns - targeting common script paths and the --title
+    "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts start"   # Initial egg-scripts start command
+    "$NODE_EXEC_PATTERN .*/egg-scripts/lib/start-cluster.js"     # Egg master process script often used by egg-scripts
+    "$NODE_EXEC_PATTERN .*/egg-cluster/lib/app_worker.js"        # Egg app worker script
+    "$NODE_EXEC_PATTERN .*/egg-cluster/lib/agent_worker.js"      # Egg agent worker script
+    "egg-server"                                                 # Process title (from --title=egg-server)
     "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts stop"    # Local egg-scripts stop (if it hung)
-    "egg-server"                                                 # General egg-server name
     "HttpServer"                                                 # General HttpServer name (PM2 default)
     "firewalld-ui"                                               # Systemd service name
-    # Broader patterns, more likely to catch strays but also higher risk of unintended matches if not careful
-    # These assume processes are running from within the project directory $DIR
-    "$NODE_EXEC_PATTERN .*$DIR"                                  # Any node process running from the project dir
+    # Broader pattern for any node process running from the project dir
+    "$NODE_EXEC_PATTERN .*$DIR"
 )
 # Add a very generic one if NODE_EXECUTABLE was not set
 if [ -z "$NODE_EXEC_PATTERN" ]; then
