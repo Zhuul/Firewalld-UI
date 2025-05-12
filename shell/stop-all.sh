@@ -160,38 +160,68 @@ sleep 2 # Brief consistent pause before moving to port checks
 purMsg "-------------------------Stopping firewalld-ui systemd service-------------------------"
 if command -v systemctl &> /dev/null; then
     # Check if the service is active, enabled, or in a failed state
-    if sudo systemctl is-active --quiet firewalld-ui.service || sudo systemctl is-enabled --quiet firewalld-ui.service || sudo systemctl is-failed --quiet firewalld-ui.service; then
-        greMsg "Attempting to stop, disable, and reset-failed firewalld-ui.service (requires sudo if not already root)..."
+    SERVICE_EXISTS=$(sudo systemctl list-unit-files | grep -q firewalld-ui.service && echo "exists" || echo "not_exists")
+
+    if [ "$SERVICE_EXISTS" = "exists" ]; then
+        greMsg "Attempting to stop, disable, reset-failed, and mask firewalld-ui.service (requires sudo if not already root)..."
         
         # Attempt to stop the service
-        if sudo systemctl stop firewalld-ui.service; then
-            greMsg "firewalld-ui.service stopped successfully."
+        if sudo systemctl is-active --quiet firewalld-ui.service; then
+            if sudo systemctl stop firewalld-ui.service; then
+                greMsg "firewalld-ui.service stopped successfully."
+            else
+                purMsg "firewalld-ui.service stop command issued. It might have already been stopped or failed to stop (status $?). Continuing."
+            fi
         else
-            # Non-fatal, as it might already be stopped or failed to stop. We still want to disable.
-            purMsg "firewalld-ui.service stop command issued. It might have already been stopped or failed to stop (status $?). Continuing to disable."
+            purMsg "firewalld-ui.service was not active."
         fi
         
-        greMsg "Waiting 2 seconds before attempting to disable..."
+        greMsg "Waiting 2 seconds..."
         sleep 2
 
         # Attempt to disable the service
-        if sudo systemctl disable firewalld-ui.service; then
-            greMsg "firewalld-ui.service disabled successfully."
+        if sudo systemctl is-enabled --quiet firewalld-ui.service; then
+            if sudo systemctl disable firewalld-ui.service; then
+                greMsg "firewalld-ui.service disabled successfully."
+            else
+                redMsg "Failed to disable firewalld-ui.service. Status: $? (This may require manual intervention if it keeps restarting)"
+            fi
         else
-            redMsg "Failed to disable firewalld-ui.service. Status: $? (This may require manual intervention if it keeps restarting)"
+            purMsg "firewalld-ui.service was not enabled."
+        fi
+
+        # Reload systemd daemon to apply changes like disable
+        greMsg "Reloading systemd daemon..."
+        if sudo systemctl daemon-reload; then
+            greMsg "systemd daemon-reload successful."
+        else
+            redMsg "systemd daemon-reload failed. Status: $?"
+        fi
+        sleep 1
+
+        # Attempt to mask the service
+        greMsg "Attempting to mask firewalld-ui.service..."
+        if sudo systemctl mask firewalld-ui.service; then
+            greMsg "firewalld-ui.service masked successfully."
+        else
+            redMsg "Failed to mask firewalld-ui.service. Status: $? (This is a strong indicator of a problem if it fails)"
         fi
 
         # Attempt to reset the failed state of the service
-        if sudo systemctl reset-failed firewalld-ui.service; then
-            greMsg "firewalld-ui.service reset-failed successfully."
+        if sudo systemctl is-failed --quiet firewalld-ui.service; then
+            if sudo systemctl reset-failed firewalld-ui.service; then
+                greMsg "firewalld-ui.service reset-failed successfully."
+            else
+                purMsg "Failed to reset-failed firewalld-ui.service. Status: $? (This may not be an issue if the service wasn't in a failed state)."
+            fi
         else
-            # This is less critical but good to note
-            purMsg "Failed to reset-failed firewalld-ui.service. Status: $? (This may not be an issue if the service wasn't in a failed state)."
+            purMsg "firewalld-ui.service was not in a failed state."
         fi
+
         greMsg "Waiting 3 seconds after systemd operations..."
         sleep 3
     else
-        purMsg "firewalld-ui.service was not found to be active, enabled, or in a failed state."
+        purMsg "firewalld-ui.service unit does not appear to exist. Skipping systemd operations."
     fi
 else
     purMsg "systemctl command not found. Skipping systemd service operations."
