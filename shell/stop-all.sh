@@ -347,6 +347,34 @@ for pattern in "${KNOWN_PROCESS_PATTERNS[@]}"; do
     fi
 done
 
+# --- Aggressive Last Resort: killall specific Node executable ---
+purMsg "-------------------------Aggressive Last Resort Kill-------------------------"
+if [ -n "$NODE_EXECUTABLE" ] && [ -x "$NODE_EXECUTABLE" ]; then
+    # Check if any processes are still running using this specific node executable within the project directory
+    # This is a safeguard to only run killall if our specific node processes are likely still there.
+    # pgrep -f will match the full command line.
+    if sudo pgrep -f "$NODE_EXECUTABLE .*$DIR" > /dev/null; then
+        redMsg "Attempting aggressive killall for $NODE_EXECUTABLE processes related to the project."
+        bluMsg "This will target all instances of $NODE_EXECUTABLE."
+        bluMsg "If this breaks your terminal, it might be because a VS Code process or similar was also using this exact Node.js path (unlikely for system VS Code server but possible)."
+        sudo killall "-9 $NODE_EXECUTABLE"
+        greMsg "killall -9 $NODE_EXECUTABLE command issued. Waiting 3 seconds..."
+        sleep 3
+        # Final verification for this specific node executable
+        if sudo pgrep -f "$NODE_EXECUTABLE .*$DIR" > /dev/null; then
+            redMsg "Processes running with $NODE_EXECUTABLE within $DIR might STILL be running after killall."
+            sudo ps aux | grep "$NODE_EXECUTABLE" | grep "$DIR" | grep -v grep
+        else
+            greMsg "Processes running with $NODE_EXECUTABLE within $DIR appear to be terminated after killall."
+        fi
+    else
+        purMsg "No processes found running with $NODE_EXECUTABLE within $DIR. Skipping aggressive killall."
+    fi
+else
+    purMsg "NODE_EXECUTABLE not defined or not executable. Skipping aggressive killall."
+fi
+
+
 greMsg "-------------------------Firewalld-UI Shutdown Process Completed-------------------------"
 purMsg "Please verify that all related processes have been stopped."
 purMsg "You can check with: ps aux | grep -E \"egg-server|HttpServer|firewalld-ui|node .*Firewalld-UI|egg-scripts|pm2\" | grep -v grep"
