@@ -95,17 +95,48 @@ fi
 # --- Stop Egg.js Backend (egg-server) ---
 purMsg "-------------------------Stopping Egg.js Backend (egg-server)-------------------------"
 EGG_SCRIPTS_PATH="$DIR/node_modules/.bin/egg-scripts"
-EGG_SERVER_STOPPED_GRACEFULLY=false
+EGG_SERVER_STOPPED_GRACEFULLY=false # Default to false
+
 if [ -n "$NODE_EXECUTABLE" ] && [ -f "$EGG_SCRIPTS_PATH" ]; then
     greMsg "Attempting to stop egg-server using local egg-scripts: $NODE_EXECUTABLE $EGG_SCRIPTS_PATH stop --sticky --title=egg-server"
-    "$NODE_EXECUTABLE" "$EGG_SCRIPTS_PATH" stop --sticky --title=egg-server
+    # Capture output to parse PID
+    EGG_STOP_OUTPUT=$("$NODE_EXECUTABLE" "$EGG_SCRIPTS_PATH" stop --sticky --title=egg-server 2>&1)
     stop_status=$?
+    echo "$EGG_STOP_OUTPUT" # Display the output for logging
+
+    MASTER_PID=$(echo "$EGG_STOP_OUTPUT" | grep 'got master pid' | sed -n 's/.*\["\\([0-9]*\\)"\\].*/\\1/p')
+
     if [ $stop_status -eq 0 ]; then
-        greMsg "Local egg-scripts stop command executed successfully."
-        EGG_SERVER_STOPPED_GRACEFULLY=true
+        greMsg "Local egg-scripts stop command reported success."
+        # We'll verify with PID check, so don't assume EGG_SERVER_STOPPED_GRACEFULLY=true yet
     else
-        purMsg "Local egg-scripts stop command finished (may have already been stopped or encountered an issue). Exit status: $stop_status"
+        purMsg "Local egg-scripts stop command finished with status $stop_status. It might have already been stopped or encountered an issue."
     fi
+
+    if [ -n "$MASTER_PID" ]; then
+        greMsg "egg-scripts identified master PID: $MASTER_PID. Waiting 5 seconds for it to stop..."
+        sleep 5
+        if ps -p "$MASTER_PID" > /dev/null; then
+            redMsg "Master PID $MASTER_PID (reported by egg-scripts) is STİLL RUNNİNG. Attempting forceful SIGKILL."
+            sudo kill -9 "$MASTER_PID"
+            sleep 2 # Give kill command a moment
+            if ps -p "$MASTER_PID" > /dev/null; then
+                redMsg "Master PID $MASTER_PID is STILL RUNNING even after SIGKILL!"
+            else
+                greMsg "Master PID $MASTER_PID appears to be terminated after SIGKILL."
+                EGG_SERVER_STOPPED_GRACEFULLY=true # Considered "handled"
+            fi
+        else
+            greMsg "Master PID $MASTER_PID (reported by egg-scripts) is no longer running."
+            EGG_SERVER_STOPPED_GRACEFULLY=true
+        fi
+    else
+        purMsg "Could not identify master PID from egg-scripts output. Will rely on port/pkill."
+        # If no PID, wait a bit less before general checks
+        greMsg "Waiting 2 seconds before proceeding to port/pkill checks..."
+        sleep 2
+    fi
+
 elif [ -n "$NODE_EXECUTABLE" ] && [ -n "$NPM_CLI_JS_PATH" ]; then
     greMsg "Local egg-scripts not found at $EGG_SCRIPTS_PATH. Falling back to npm run stop (may have issues)."
     greMsg "Attempting to stop egg-server using npm script: $NODE_EXECUTABLE $NPM_CLI_JS_PATH run stop -- --title=egg-server"
@@ -121,13 +152,8 @@ else
     purMsg "NODE_EXECUTABLE not set or local egg-scripts/npm not available. Skipping backend stop."
 fi
 
-if [ "$EGG_SERVER_STOPPED_GRACEFULLY" = true ]; then
-    greMsg "Waiting 5 seconds for egg-server to terminate gracefully..."
-    sleep 5
-else
-    greMsg "egg-server did not stop gracefully or stop command not fully executed. Proceeding to port/pkill checks more quickly."
-    sleep 2
-fi
+greMsg "Proceeding to port/pkill checks after egg-server stop attempt..."
+sleep 2 # Brief consistent pause before moving to port checks
 
 
 # --- Stop firewalld-ui systemd service ---
