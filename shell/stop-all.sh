@@ -42,50 +42,74 @@ fi
 
 # --- Stop PM2 Managed Frontend (HttpServer) ---
 purMsg "-------------------------Stopping PM2 Frontend (HttpServer)-------------------------"
-if [ -n "$NODE_EXECUTABLE" ] && [ -f "$DIR/shell/pm2.sh" ]; then
-    # pm2.sh is expected to source .node_paths itself and echo the PM2 executable path
-    PM2_EXECUTABLE_PATH_OUTPUT=$(sh "$DIR/shell/pm2.sh")
-    PM2_SETUP_STATUS=$?
-    PM2_EXECUTABLE=$(echo "$PM2_EXECUTABLE_PATH_OUTPUT" | xargs) # Trim whitespace
+PM2_EXECUTABLE=""
 
-    if [ $PM2_SETUP_STATUS -eq 0 ] && [ -n "$PM2_EXECUTABLE" ] && [ -f "$PM2_EXECUTABLE" ] && [ -x "$PM2_EXECUTABLE" ]; then
+if [ -n "$NODE_EXECUTABLE" ]; then
+    # Try shell/pm2.sh first
+    if [ -f "$DIR/shell/pm2.sh" ]; then
+        greMsg "Attempting to get PM2 path from $DIR/shell/pm2.sh..."
+        PM2_EXECUTABLE_PATH_OUTPUT=$(sh "$DIR/shell/pm2.sh") # pm2.sh should output the path to pm2
+        PM2_SETUP_STATUS=$?
+        TEMP_PM2_EXECUTABLE=$(echo "$PM2_EXECUTABLE_PATH_OUTPUT" | xargs) # Trim whitespace
+
+        if [ $PM2_SETUP_STATUS -eq 0 ] && [ -n "$TEMP_PM2_EXECUTABLE" ] && [ -f "$TEMP_PM2_EXECUTABLE" ] && [ -x "$TEMP_PM2_EXECUTABLE" ]; then
+            PM2_EXECUTABLE="$TEMP_PM2_EXECUTABLE"
+            greMsg "Using PM2 executable from shell/pm2.sh: $PM2_EXECUTABLE"
+        else
+            purMsg "shell/pm2.sh did not yield a valid PM2 executable. Status: $PM2_SETUP_STATUS, Output: '$PM2_EXECUTABLE_PATH_OUTPUT'."
+        fi
+    fi
+
+    # If shell/pm2.sh didn't provide a valid path, try default node_modules path
+    if [ -z "$PM2_EXECUTABLE" ]; then
+        DEFAULT_PM2_PATH="$DIR/node_modules/.bin/pm2"
+        if [ -f "$DEFAULT_PM2_PATH" ] && [ -x "$DEFAULT_PM2_PATH" ]; then
+            PM2_EXECUTABLE="$DEFAULT_PM2_PATH"
+            greMsg "Using default PM2 executable: $PM2_EXECUTABLE"
+        else
+            purMsg "Default PM2 executable not found at $DEFAULT_PM2_PATH."
+        fi
+    fi
+
+    if [ -n "$PM2_EXECUTABLE" ]; then
         greMsg "Attempting to stop HttpServer using PM2: $NODE_EXECUTABLE $PM2_EXECUTABLE delete HttpServer"
         "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" delete HttpServer
-        if [ $? -eq 0 ]; then
-            greMsg "PM2 delete HttpServer command successful."
-        else
-            purMsg "PM2 delete HttpServer command finished (process may have already been stopped or not found)."
-        fi
+        # Check status but don't exit, as process not existing is also a success for "stopping"
+        if [ $? -eq 0 ]; then greMsg "PM2 delete HttpServer command successful."; else purMsg "PM2 delete HttpServer command finished (status $?)."; fi
 
-        greMsg "Attempting to stop PM2 daemon process (if managed by this local Node/PM2)..."
+        greMsg "Attempting to stop PM2 daemon process: $NODE_EXECUTABLE $PM2_EXECUTABLE kill"
         "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" kill
-        if [ $? -eq 0 ]; then
-            greMsg "PM2 kill command successful (daemon stopped or was not running)."
-        else
-            purMsg "PM2 kill command finished (daemon might not have been running or not managed by this PM2 instance)."
-        fi
+        if [ $? -eq 0 ]; then greMsg "PM2 kill command successful."; else purMsg "PM2 kill command finished (status $?)."; fi
     else
-        redMsg "Local PM2 executable not found or not configured correctly via pm2.sh. Skipping PM2 stop."
-        purMsg "Details: pm2.sh status ($PM2_SETUP_STATUS), path output ('$PM2_EXECUTABLE_PATH_OUTPUT')."
+        redMsg "No valid PM2 executable found. Skipping PM2 stop."
     fi
-elif [ ! -f "$DIR/shell/pm2.sh" ]; then
-    redMsg "$DIR/shell/pm2.sh not found. Skipping PM2 stop."
 else
     purMsg "NODE_EXECUTABLE not set. Skipping PM2 stop."
 fi
 
 # --- Stop Egg.js Backend (egg-server) ---
 purMsg "-------------------------Stopping Egg.js Backend (egg-server)-------------------------"
-if [ -n "$NODE_EXECUTABLE" ] && [ -n "$NPM_CLI_JS_PATH" ]; then
+EGG_SCRIPTS_PATH="$DIR/node_modules/.bin/egg-scripts"
+if [ -n "$NODE_EXECUTABLE" ] && [ -f "$EGG_SCRIPTS_PATH" ]; then
+    greMsg "Attempting to stop egg-server using local egg-scripts: $NODE_EXECUTABLE $EGG_SCRIPTS_PATH stop --sticky --title=egg-server"
+    "$NODE_EXECUTABLE" "$EGG_SCRIPTS_PATH" stop --sticky --title=egg-server
+    if [ $? -eq 0 ]; then
+        greMsg "Local egg-scripts stop command executed successfully."
+    else
+        purMsg "Local egg-scripts stop command finished (may have already been stopped or encountered an issue). Exit status: $?"
+    fi
+elif [ -n "$NODE_EXECUTABLE" ] && [ -n "$NPM_CLI_JS_PATH" ]; then
+    # Fallback to npm run stop if direct egg-scripts path fails, though this had issues
+    greMsg "Local egg-scripts not found at $EGG_SCRIPTS_PATH. Falling back to npm run stop (may have issues)."
     greMsg "Attempting to stop egg-server using npm script: $NODE_EXECUTABLE $NPM_CLI_JS_PATH run stop -- --title=egg-server"
     "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" run stop -- --title=egg-server # package.json stop script
     if [ $? -eq 0 ]; then
         greMsg "egg-server stop script executed successfully."
     else
-        purMsg "egg-server stop script finished (may have already been stopped or encountered an issue)."
+        purMsg "npm run stop script finished. Exit status: $?"
     fi
 else
-    purMsg "NODE_EXECUTABLE or NPM_CLI_JS_PATH not set. Skipping npm run stop for egg-server."
+    purMsg "NODE_EXECUTABLE not set or local egg-scripts/npm not available. Skipping backend stop."
 fi
 
 # --- Stop firewalld-ui systemd service ---
