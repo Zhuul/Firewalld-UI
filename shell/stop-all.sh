@@ -22,9 +22,10 @@ if [ -f "$NODE_PATHS_FILE" ]; then
     source "$NODE_PATHS_FILE"
 else
     redMsg "Node paths file ($NODE_PATHS_FILE) not found. Cannot proceed with all Node-dependent shutdowns."
-    # Unset to prevent partial execution with bad/missing paths
     unset NODE_EXECUTABLE
     unset NPM_CLI_JS_PATH
+    # It's safer to exit if node paths can't be sourced, as subsequent commands rely on them.
+    # exit 1 # Consider if this is too strict or if script should attempt to continue.
 fi
 
 # Verify essential Node variables if paths file was sourced and exists
@@ -45,12 +46,11 @@ purMsg "-------------------------Stopping PM2 Frontend (HttpServer)-------------
 PM2_EXECUTABLE=""
 
 if [ -n "$NODE_EXECUTABLE" ]; then
-    # Try shell/pm2.sh first
     if [ -f "$DIR/shell/pm2.sh" ]; then
         greMsg "Attempting to get PM2 path from $DIR/shell/pm2.sh..."
-        PM2_EXECUTABLE_PATH_OUTPUT=$(sh "$DIR/shell/pm2.sh") # pm2.sh should output the path to pm2
+        PM2_EXECUTABLE_PATH_OUTPUT=$(sh "$DIR/shell/pm2.sh" 2>/dev/null) # Suppress pm2.sh errors for cleaner output
         PM2_SETUP_STATUS=$?
-        TEMP_PM2_EXECUTABLE=$(echo "$PM2_EXECUTABLE_PATH_OUTPUT" | xargs) # Trim whitespace
+        TEMP_PM2_EXECUTABLE=$(echo "$PM2_EXECUTABLE_PATH_OUTPUT" | xargs)
 
         if [ $PM2_SETUP_STATUS -eq 0 ] && [ -n "$TEMP_PM2_EXECUTABLE" ] && [ -f "$TEMP_PM2_EXECUTABLE" ] && [ -x "$TEMP_PM2_EXECUTABLE" ]; then
             PM2_EXECUTABLE="$TEMP_PM2_EXECUTABLE"
@@ -60,7 +60,6 @@ if [ -n "$NODE_EXECUTABLE" ]; then
         fi
     fi
 
-    # If shell/pm2.sh didn't provide a valid path, try default node_modules path
     if [ -z "$PM2_EXECUTABLE" ]; then
         DEFAULT_PM2_PATH="$DIR/node_modules/.bin/pm2"
         if [ -f "$DEFAULT_PM2_PATH" ] && [ -x "$DEFAULT_PM2_PATH" ]; then
@@ -73,13 +72,19 @@ if [ -n "$NODE_EXECUTABLE" ]; then
 
     if [ -n "$PM2_EXECUTABLE" ]; then
         greMsg "Attempting to stop HttpServer using PM2: $NODE_EXECUTABLE $PM2_EXECUTABLE delete HttpServer"
-        "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" delete HttpServer
-        # Check status but don't exit, as process not existing is also a success for "stopping"
-        if [ $? -eq 0 ]; then greMsg "PM2 delete HttpServer command successful."; else purMsg "PM2 delete HttpServer command finished (status $?)."; fi
+        "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" delete HttpServer > /dev/null 2>&1
+        pm2_delete_status=$?
+        if [ $pm2_delete_status -eq 0 ]; then greMsg "PM2 delete HttpServer command successful."; else purMsg "PM2 delete HttpServer command finished (status $pm2_delete_status - process may not have been running)."; fi
 
         greMsg "Attempting to stop PM2 daemon process: $NODE_EXECUTABLE $PM2_EXECUTABLE kill"
-        "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" kill
-        if [ $? -eq 0 ]; then greMsg "PM2 kill command successful."; else purMsg "PM2 kill command finished (status $?)."; fi
+        "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" kill > /dev/null 2>&1
+        pm2_kill_status=$?
+        if [ $pm2_kill_status -eq 0 ]; then greMsg "PM2 kill command successful."; else purMsg "PM2 kill command finished (status $pm2_kill_status - daemon may not have been running)."; fi
+        if [ $pm2_delete_status -ne 0 ] || [ $pm2_kill_status -ne 0 ]; then
+             # If PM2 commands had issues, wait a bit before pkill
+            greMsg "Waiting 3 seconds after PM2 stop attempts..."
+            sleep 3
+        fi
     else
         redMsg "No valid PM2 executable found. Skipping PM2 stop."
     fi
@@ -90,27 +95,40 @@ fi
 # --- Stop Egg.js Backend (egg-server) ---
 purMsg "-------------------------Stopping Egg.js Backend (egg-server)-------------------------"
 EGG_SCRIPTS_PATH="$DIR/node_modules/.bin/egg-scripts"
+EGG_SERVER_STOPPED_GRACEFULLY=false
 if [ -n "$NODE_EXECUTABLE" ] && [ -f "$EGG_SCRIPTS_PATH" ]; then
     greMsg "Attempting to stop egg-server using local egg-scripts: $NODE_EXECUTABLE $EGG_SCRIPTS_PATH stop --sticky --title=egg-server"
     "$NODE_EXECUTABLE" "$EGG_SCRIPTS_PATH" stop --sticky --title=egg-server
-    if [ $? -eq 0 ]; then
+    stop_status=$?
+    if [ $stop_status -eq 0 ]; then
         greMsg "Local egg-scripts stop command executed successfully."
+        EGG_SERVER_STOPPED_GRACEFULLY=true
     else
-        purMsg "Local egg-scripts stop command finished (may have already been stopped or encountered an issue). Exit status: $?"
+        purMsg "Local egg-scripts stop command finished (may have already been stopped or encountered an issue). Exit status: $stop_status"
     fi
 elif [ -n "$NODE_EXECUTABLE" ] && [ -n "$NPM_CLI_JS_PATH" ]; then
-    # Fallback to npm run stop if direct egg-scripts path fails, though this had issues
     greMsg "Local egg-scripts not found at $EGG_SCRIPTS_PATH. Falling back to npm run stop (may have issues)."
     greMsg "Attempting to stop egg-server using npm script: $NODE_EXECUTABLE $NPM_CLI_JS_PATH run stop -- --title=egg-server"
     "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" run stop -- --title=egg-server # package.json stop script
-    if [ $? -eq 0 ]; then
+    stop_status=$?
+    if [ $stop_status -eq 0 ]; then
         greMsg "egg-server stop script executed successfully."
+        EGG_SERVER_STOPPED_GRACEFULLY=true
     else
-        purMsg "npm run stop script finished. Exit status: $?"
+        purMsg "npm run stop script finished. Exit status: $stop_status"
     fi
 else
     purMsg "NODE_EXECUTABLE not set or local egg-scripts/npm not available. Skipping backend stop."
 fi
+
+if [ "$EGG_SERVER_STOPPED_GRACEFULLY" = true ]; then
+    greMsg "Waiting 5 seconds for egg-server to terminate gracefully..."
+    sleep 5
+else
+    greMsg "egg-server did not stop gracefully or stop command not fully executed. Proceeding to port/pkill checks more quickly."
+    sleep 2
+fi
+
 
 # --- Stop firewalld-ui systemd service ---
 purMsg "-------------------------Stopping firewalld-ui systemd service-------------------------"
@@ -119,6 +137,8 @@ if command -v systemctl &> /dev/null; then
     if sudo systemctl is-active --quiet firewalld-ui.service; then
         if sudo systemctl stop firewalld-ui.service; then
             greMsg "firewalld-ui.service stopped successfully."
+            greMsg "Waiting 3 seconds for systemd service to stop..."
+            sleep 3
         else
             redMsg "Failed to stop firewalld-ui.service. Status: $?"
         fi
@@ -148,10 +168,9 @@ fi
 if [ -f "$PROD_CONFIG_JS" ]; then
     SERVER_PORT_FROM_CONFIG=$(awk '/config.cluster *= *{/{flag=1;next}/}/{flag=0}flag && /port:/{print $NF}' "$PROD_CONFIG_JS" | tr -d ',' | grep -Eo '[0-9]+' | head -n 1)
 fi
-# Default backend port if not found in config or if config parsing fails
 if [ -z "$SERVER_PORT_FROM_CONFIG" ]; then
-    SERVER_PORT_EFFECTIVE="7001" # Default as commonly used
-    purMsg "Could not reliably determine backend server port from $PROD_CONFIG_JS, will use default $SERVER_PORT_EFFECTIVE for kill attempt if not already covered."
+    SERVER_PORT_EFFECTIVE="7001"
+    purMsg "Could not reliably determine backend server port from $PROD_CONFIG_JS, will use default $SERVER_PORT_EFFECTIVE for kill attempt."
 else
     SERVER_PORT_EFFECTIVE="$SERVER_PORT_FROM_CONFIG"
 fi
@@ -164,19 +183,29 @@ PORTS_TO_KILL=()
 UNIQUE_PORTS_TO_KILL=($(echo "${PORTS_TO_KILL[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
 
 if [ ${#UNIQUE_PORTS_TO_KILL[@]} -gt 0 ]; then
-    for PORT in "${UNIQUE_PORTS_TO_KILL[@]}"; do
-        greMsg "Attempting to kill processes on port $PORT (requires sudo)..."
-        PIDS=$(sudo lsof -t -i:$PORT)
-        if [ -n "$PIDS" ]; then
-            echo "$PIDS" | tr ' ' '\n' | while read -r pid_to_kill; do
-                if [ -n "$pid_to_kill" ]; then
-                    greMsg "Killing PID $pid_to_kill on port $PORT"
-                    sudo kill -9 "$pid_to_kill"
-                fi
-            done
-            greMsg "Kill attempt on port $PORT completed."
+    for PORT_TO_KILL in "${UNIQUE_PORTS_TO_KILL[@]}"; do
+        greMsg "Attempting to clear port $PORT_TO_KILL (requires sudo)..."
+        for attempt in 1 2 3; do
+            PIDS_ON_PORT=$(sudo lsof -t -i:$PORT_TO_KILL 2>/dev/null)
+            if [ -n "$PIDS_ON_PORT" ]; then
+                greMsg "[Port $PORT_TO_KILL - Attempt $attempt] Found PIDs: $PIDS_ON_PORT. Sending SIGKILL..."
+                echo "$PIDS_ON_PORT" | tr ' ' '\n' | while read -r pid_to_kill; do
+                    if [ -n "$pid_to_kill" ]; then # Ensure pid_to_kill is not empty
+                        sudo kill -9 "$pid_to_kill"
+                    fi
+                done
+                greMsg "[Port $PORT_TO_KILL - Attempt $attempt] SIGKILL sent. Waiting 2s..."
+                sleep 2
+            else
+                purMsg "[Port $PORT_TO_KILL - Attempt $attempt] No processes found."
+                break # Exit attempts loop for this port
+            fi
+        done
+        # Final check for the port
+        if sudo lsof -t -i:$PORT_TO_KILL 2>/dev/null; then
+            redMsg "Processes on port $PORT_TO_KILL might still be running after multiple kill attempts."
         else
-            purMsg "No processes found on port $PORT."
+            greMsg "Port $PORT_TO_KILL appears to be clear."
         fi
     done
 else
@@ -184,18 +213,50 @@ else
 fi
 
 # --- Final Cleanup using pkill for known process names ---
+# This is a broader attempt to catch anything missed.
 purMsg "-------------------------Final pkill cleanup (Broad attempt)-------------------------"
 bluMsg "This section may require sudo privileges if not already root."
-KNOWN_PROCESS_PATTERNS=("egg-server" "HttpServer" "firewalld-ui" "node .*Firewalld-UI" "node .*egg-scripts start")
+
+# More specific patterns first, then broader ones.
+# Focus on scripts and executables within the project directory.
+# The .* is greedy, so be careful. Using $DIR to scope it.
+# Ensure NODE_EXECUTABLE is set before using it in patterns.
+NODE_EXEC_PATTERN=""
+if [ -n "$NODE_EXECUTABLE" ]; then
+    # Escape for regex, e.g. / becomes \/
+    ESCAPED_NODE_EXECUTABLE=$(echo "$NODE_EXECUTABLE" | sed 's/[/\\]/\\\\&/g')
+    NODE_EXEC_PATTERN="$ESCAPED_NODE_EXECUTABLE"
+fi
+
+KNOWN_PROCESS_PATTERNS=(
+    "$NODE_EXEC_PATTERN .*/node_modules/.bin/pm2"                 # Local PM2
+    "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts start"   # Local egg-scripts start
+    "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts stop"    # Local egg-scripts stop (if it hung)
+    "egg-server"                                                 # General egg-server name
+    "HttpServer"                                                 # General HttpServer name (PM2 default)
+    "firewalld-ui"                                               # Systemd service name
+    # Broader patterns, more likely to catch strays but also higher risk of unintended matches if not careful
+    # These assume processes are running from within the project directory $DIR
+    "$NODE_EXEC_PATTERN .*$DIR"                                  # Any node process running from the project dir
+)
+# Add a very generic one if NODE_EXECUTABLE was not set
+if [ -z "$NODE_EXEC_PATTERN" ]; then
+    KNOWN_PROCESS_PATTERNS+=("node .*Firewalld-UI") # Fallback if local node path unknown
+fi
+
 
 for pattern in "${KNOWN_PROCESS_PATTERNS[@]}"; do
+    if [ -z "$pattern" ]; then continue; fi # Skip empty patterns
     greMsg "Attempting to pkill processes matching '$pattern' (requires sudo)..."
-    # Check if any processes match before trying to kill, to avoid non-zero exit code from pkill if no match
-    if pgrep -f "$pattern" > /dev/null; then
-        if sudo pkill -f "$pattern"; then
-            greMsg "pkill -f \"$pattern\" executed. Processes matching (if any) should be terminated."
+    if sudo pgrep -f "$pattern" > /dev/null; then
+        if sudo pkill -SIGKILL -f "$pattern"; then # Send SIGKILL directly
+            greMsg "pkill -SIGKILL -f \"$pattern\" executed. Processes matching (if any) should be terminated."
+            greMsg "Waiting 2 seconds after pkill for '$pattern'..."
+            sleep 2
         else
-            redMsg "pkill -f \"$pattern\" failed, even though processes were found. Check permissions or process state."
+            # pkill can return 1 if no processes were matched, even if pgrep found them (race condition)
+            # or if it fails to kill (permissions, zombie processes)
+            purMsg "pkill -f \"$pattern\" command finished. (status $?). This might be okay if processes were already gone."
         fi
     else
         purMsg "No processes found matching '$pattern' for pkill."
@@ -204,7 +265,7 @@ done
 
 greMsg "-------------------------Firewalld-UI Shutdown Process Completed-------------------------"
 purMsg "Please verify that all related processes have been stopped."
-purMsg "You can check with: ps aux | grep -E \"egg-server|HttpServer|firewalld-ui|node .*Firewalld-UI|egg-scripts\""
+purMsg "You can check with: ps aux | grep -E \"egg-server|HttpServer|firewalld-ui|node .*Firewalld-UI|egg-scripts|pm2\" | grep -v grep"
 purMsg "And for listening ports: sudo lsof -i -P -n | grep LISTEN"
 
 exit 0
