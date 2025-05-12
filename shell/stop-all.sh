@@ -159,20 +159,42 @@ sleep 2 # Brief consistent pause before moving to port checks
 # --- Stop firewalld-ui systemd service ---
 purMsg "-------------------------Stopping firewalld-ui systemd service-------------------------"
 if command -v systemctl &> /dev/null; then
-    greMsg "Attempting to stop firewalld-ui.service (requires sudo if not already root)..."
-    if sudo systemctl is-active --quiet firewalld-ui.service; then
+    # Check if the service is active, enabled, or in a failed state
+    if sudo systemctl is-active --quiet firewalld-ui.service || sudo systemctl is-enabled --quiet firewalld-ui.service || sudo systemctl is-failed --quiet firewalld-ui.service; then
+        greMsg "Attempting to stop, disable, and reset-failed firewalld-ui.service (requires sudo if not already root)..."
+        
+        # Attempt to stop the service
         if sudo systemctl stop firewalld-ui.service; then
             greMsg "firewalld-ui.service stopped successfully."
-            greMsg "Waiting 3 seconds for systemd service to stop..."
-            sleep 3
         else
-            redMsg "Failed to stop firewalld-ui.service. Status: $?"
+            # Non-fatal, as it might already be stopped or failed to stop. We still want to disable.
+            purMsg "firewalld-ui.service stop command issued. It might have already been stopped or failed to stop (status $?). Continuing to disable."
         fi
+        
+        greMsg "Waiting 2 seconds before attempting to disable..."
+        sleep 2
+
+        # Attempt to disable the service
+        if sudo systemctl disable firewalld-ui.service; then
+            greMsg "firewalld-ui.service disabled successfully."
+        else
+            redMsg "Failed to disable firewalld-ui.service. Status: $? (This may require manual intervention if it keeps restarting)"
+        fi
+
+        # Attempt to reset the failed state of the service
+        if sudo systemctl reset-failed firewalld-ui.service; then
+            greMsg "firewalld-ui.service reset-failed successfully."
+        else
+            # This is less critical but good to note
+            purMsg "Failed to reset-failed firewalld-ui.service. Status: $? (This may not be an issue if the service wasn't in a failed state)."
+        fi
+        greMsg "Waiting 3 seconds after systemd operations..."
+        sleep 3
     else
-        purMsg "firewalld-ui.service was not active or not found."
+        purMsg "firewalld-ui.service was not found to be active, enabled, or in a failed state."
     fi
 else
-    purMsg "systemctl command not found. Skipping systemd service stop."
+    purMsg "systemctl command not found. Skipping systemd service operations."
 fi
 
 # --- Force Stop Processes by Port (Fallback) ---
@@ -254,24 +276,53 @@ if [ -n "$NODE_EXECUTABLE" ]; then
     NODE_EXEC_PATTERN="$ESCAPED_NODE_EXECUTABLE"
 fi
 
-KNOWN_PROCESS_PATTERNS=(
-    "$NODE_EXEC_PATTERN .*/node_modules/.bin/pm2"                 # Local PM2
-    # Specific egg patterns - targeting common script paths and the --title
-    "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts start"   # Initial egg-scripts start command
-    "$NODE_EXEC_PATTERN .*/egg-scripts/lib/start-cluster.js"     # Egg master process script often used by egg-scripts
-    "$NODE_EXEC_PATTERN .*/egg-cluster/lib/app_worker.js"        # Egg app worker script
-    "$NODE_EXEC_PATTERN .*/egg-cluster/lib/agent_worker.js"      # Egg agent worker script
-    "egg-server"                                                 # Process title (from --title=egg-server)
-    "$NODE_EXEC_PATTERN .*/node_modules/.bin/egg-scripts stop"    # Local egg-scripts stop (if it hung)
-    "HttpServer"                                                 # General HttpServer name (PM2 default)
-    "firewalld-ui"                                               # Systemd service name
-    # Broader pattern for any node process running from the project dir
-    "$NODE_EXEC_PATTERN .*$DIR"
-)
-# Add a very generic one if NODE_EXECUTABLE was not set
-if [ -z "$NODE_EXEC_PATTERN" ]; then
-    KNOWN_PROCESS_PATTERNS+=("node .*Firewalld-UI") # Fallback if local node path unknown
+# Define full paths for script patterns for specificity
+# These paths are derived from the project structure and ps aux output
+EGG_SCRIPTS_BIN_FULL_PATH="$DIR/node_modules/.bin/egg-scripts"
+EGG_MASTER_SCRIPT_FULL_PATH="$DIR/node_modules/egg-scripts/lib/start-cluster.js" # As seen in ps aux for PID 15869
+EGG_APP_WORKER_SCRIPT_FULL_PATH="$DIR/node_modules/egg-cluster/lib/app_worker.js" # As seen for PID 15876+
+EGG_AGENT_WORKER_SCRIPT_FULL_PATH="$DIR/node_modules/egg-cluster/lib/agent_worker.js"
+PM2_BIN_FULL_PATH="$DIR/node_modules/.bin/pm2"
+
+KNOWN_PROCESS_PATTERNS=()
+
+# 1. NPM script that starts everything (e.g., PID 15847 `npm run start:systemd`)
+# pgrep -f "npm run start:systemd" should match if run from within $DIR or if $DIR is in its CWD path description
+# Making it more specific by anchoring to $DIR if possible, or just the command.
+# `ps aux` shows "npm run start:systemd" without full path context for npm itself, but it's likely run within $DIR.
+KNOWN_PROCESS_PATTERNS+=("npm run start:systemd")
+
+# 2. The egg-scripts start process (e.g., PID 15858), typically run by a generic 'node'
+# Matches: node /usr/local/src/Firewalld-UI/node_modules/.bin/egg-scripts start ...
+KNOWN_PROCESS_PATTERNS+=("node $EGG_SCRIPTS_BIN_FULL_PATH start")
+
+# 3. The egg master process (e.g., PID 15869), typically run by a generic 'node'
+# Matches: node --no-deprecation --trace-warnings /usr/local/src/Firewalld-UI/node_modules/egg-scripts/lib/start-cluster.js
+# Using ".*" to account for node options like --no-deprecation or other arguments.
+KNOWN_PROCESS_PATTERNS+=("node .*$EGG_MASTER_SCRIPT_FULL_PATH")
+
+# Common names/titles that might appear in process list
+KNOWN_PROCESS_PATTERNS+=("egg-server")      # Process title from --title=egg-server
+KNOWN_PROCESS_PATTERNS+=("HttpServer")      # PM2 default name for frontend, if used
+KNOWN_PROCESS_PATTERNS+=("firewalld-ui")    # systemd service name, if it appears directly in ps command lines
+
+# Patterns for processes specifically run by the project's local NODE_EXECUTABLE (NODE_EXEC_PATTERN)
+if [ -n "$NODE_EXEC_PATTERN" ]; then
+    # 4. App workers (e.g., PID 15876+), which use the local NODE_EXECUTABLE
+    KNOWN_PROCESS_PATTERNS+=("$NODE_EXEC_PATTERN .*$EGG_APP_WORKER_SCRIPT_FULL_PATH")
+    # 5. Agent workers (if any), also using local NODE_EXECUTABLE
+    KNOWN_PROCESS_PATTERNS+=("$NODE_EXEC_PATTERN .*$EGG_AGENT_WORKER_SCRIPT_FULL_PATH")
+    # 9. Local PM2 if run by the local NODE_EXECUTABLE
+    KNOWN_PROCESS_PATTERNS+=("$NODE_EXEC_PATTERN .*$PM2_BIN_FULL_PATH")
+    # 10. Catch-all for any other process run by the specific local Node within the project directory
+    KNOWN_PROCESS_PATTERNS+=("$NODE_EXEC_PATTERN .*$DIR")
 fi
+
+# 11. Fallback/general catch-all for ANY 'node' process running scripts from within the project directory.
+# This is important if some processes are started with a generic 'node' and not caught by specific paths above,
+# or if NODE_EXECUTABLE was not set. This pattern helps catch PIDs 15858 and 15869 if other patterns fail.
+# Example: "node /some/other/script/in/Firewalld-UI/something.js"
+KNOWN_PROCESS_PATTERNS+=("node .*$DIR")
 
 
 for pattern in "${KNOWN_PROCESS_PATTERNS[@]}"; do
@@ -357,8 +408,8 @@ if [ -n "$NODE_EXECUTABLE" ] && [ -x "$NODE_EXECUTABLE" ]; then
         redMsg "Attempting aggressive killall for $NODE_EXECUTABLE processes related to the project."
         bluMsg "This will target all instances of $NODE_EXECUTABLE."
         bluMsg "If this breaks your terminal, it might be because a VS Code process or similar was also using this exact Node.js path (unlikely for system VS Code server but possible)."
-        sudo killall "-9 $NODE_EXECUTABLE"
-        greMsg "killall -9 $NODE_EXECUTABLE command issued. Waiting 3 seconds..."
+        sudo killall -9 "$NODE_EXECUTABLE" # Corrected syntax: -9 is an option, then the process name/path
+        greMsg "killall -9 \"$NODE_EXECUTABLE\" command issued. Waiting 3 seconds..."
         sleep 3
         # Final verification for this specific node executable
         if sudo pgrep -f "$NODE_EXECUTABLE .*$DIR" > /dev/null; then
