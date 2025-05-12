@@ -289,10 +289,13 @@ for pattern in "${KNOWN_PROCESS_PATTERNS[@]}"; do
 
         if [ -n "$FILTERED_PIDS" ]; then
             greMsg "Found PIDs for pattern '$pattern': $FILTERED_PIDS. Sending SIGKILL..."
-            # Convert space-separated PIDs to newlines for the loop
-            echo "$FILTERED_PIDS" | tr ' ' '\\n' | while read -r pid_to_kill; do
-                if [ -n "$pid_to_kill" ]; then # Ensure pid_to_kill is not empty
-                    sudo kill -9 "$pid_to_kill"
+            # Simpler and potentially more robust loop for space-separated PIDs
+            for pid_to_kill_val in $FILTERED_PIDS; do # Relies on shell word splitting
+                if [ -n "$pid_to_kill_val" ]; then # Ensure pid_val is not empty
+                    greMsg "Attempting to kill PID: $pid_to_kill_val for pattern '$pattern'"
+                    sudo kill -9 "$pid_to_kill_val"
+                    # Brief pause to allow system to process kill, might help with rapid checks
+                    # sleep 0.1 
                 fi
             done
             greMsg "SIGKILL sent to PIDs for '$pattern'. Waiting 2s..."
