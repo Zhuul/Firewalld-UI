@@ -8,10 +8,10 @@ DIR=$(dirname "$SCRIPT_DIR") # This is the Project Root Directory
 cd "$DIR" || { echo -e "\\n\\E[1;31mERROR: Failed to cd into project root $DIR\\033[0m\\n" >&2; exit 1; }
 
 # Define output colors
-redMsg() { echo -e "\\n\\E[1;31m$*\\033[0m\\n" >&2; }
-greMsg() { echo -e "\\n\\E[1;32m$*\\033[0m\\n" >&2; }
-bluMsg() { echo -e "\\n\\033[5;34m$*\\033[0m\\n" >&2; }
-purMsg() { echo -e "\\n\\033[35m$*\\033[0m\\n" >&2; }
+redMsg() { echo -e "\\n\\033[1;31m$*\\033[0m\\n" >&2; } # Bold Red
+greMsg() { echo -e "\\n\\033[1;32m$*\\033[0m\\n" >&2; } # Bold Green
+bluMsg() { echo -e "\\n\\033[1;34m$*\\033[0m\\n" >&2; } # Bold Blue (no blink)
+purMsg() { echo -e "\\n\\033[1;35m$*\\033[0m\\n" >&2; } # Bold Purple
 
 purMsg "-------------------------Starting Firewalld-UI Shutdown Process-------------------------"
 
@@ -270,5 +270,12 @@ greMsg "-------------------------Firewalld-UI Shutdown Process Completed--------
 purMsg "Please verify that all related processes have been stopped."
 purMsg "You can check with: ps aux | grep -E \"egg-server|HttpServer|firewalld-ui|node .*Firewalld-UI|egg-scripts|pm2\" | grep -v grep"
 purMsg "And for listening ports: sudo lsof -i -P -n | grep LISTEN"
+
+# Final terminal reset
+if command -v tput &> /dev/null; then
+    tput sgr0
+else
+    printf '\\033[0m'
+fi
 
 exit 0
