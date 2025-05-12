@@ -250,19 +250,71 @@ fi
 
 for pattern in "${KNOWN_PROCESS_PATTERNS[@]}"; do
     if [ -z "$pattern" ]; then continue; fi # Skip empty patterns
-    greMsg "Attempting to pkill processes matching '$pattern' (requires sudo)..."
-    if sudo pgrep -f "$pattern" > /dev/null; then
-        if sudo pkill -SIGKILL -f "$pattern"; then # Send SIGKILL directly
-            greMsg "pkill -SIGKILL -f \"$pattern\" executed. Processes matching (if any) should be terminated."
-            greMsg "Waiting 2 seconds after pkill for '$pattern'..."
+    greMsg "Attempting to find and kill processes matching '$pattern' (requires sudo)..."
+    
+    # Use pgrep to find PIDs, then kill them. This is safer than `pkill -f` which might kill itself.
+    PIDS_TO_KILL=$(pgrep -f "$pattern")
+    
+    if [ -n "$PIDS_TO_KILL" ]; then
+        # Filter out the current script's PID ($$) and its parent's PID ($PPID might be sudo or shell)
+        # to prevent accidental self-termination if patterns are too broad.
+        # This is a basic filter; truly robust filtering can be complex.
+        CURRENT_SCRIPT_PID=$$
+        # Get parent PID, which could be the shell running the script or sudo
+        # If sudo is used, $PPID inside script is the sudo command's PID.
+        # The actual parent shell that invoked sudo is harder to get reliably from within.
+        
+        FILTERED_PIDS=""
+        for pid_val in $PIDS_TO_KILL; do
+            # Simple check: ensure we are not killing the script's own PID.
+            # A more robust check would involve checking command lines of $pid_val.
+            # For now, we rely on specific patterns not matching the script itself.
+            # The main risk was `pkill -f "pattern"` matching its own `sudo pkill -f "pattern"` cmdline.
+            # `pgrep` first, then `kill` largely mitigates this specific self-kill issue for `pkill`.
+            
+            # Check if the PID belongs to the pgrep command itself (can happen with very broad patterns)
+            # or the current shell. This is a basic safeguard.
+            pgrep_cmd_line=$(ps -o args= -p "$pid_val" 2>/dev/null)
+            if [[ "$pgrep_cmd_line" == *"pgrep -f"* ]]; then
+                purMsg "Skipping pgrep process $pid_val itself."
+                continue
+            fi
+            if [ "$pid_val" -eq "$CURRENT_SCRIPT_PID" ]; then
+                purMsg "Skipping current script PID $pid_val."
+                continue
+            fi
+
+            FILTERED_PIDS="$FILTERED_PIDS $pid_val"
+        done
+
+        if [ -n "$FILTERED_PIDS" ]; then
+            greMsg "Found PIDs for pattern '$pattern': $FILTERED_PIDS. Sending SIGKILL..."
+            # Convert space-separated PIDs to newlines for the loop
+            echo "$FILTERED_PIDS" | tr ' ' '\\n' | while read -r pid_to_kill; do
+                if [ -n "$pid_to_kill" ]; then # Ensure pid_to_kill is not empty
+                    sudo kill -9 "$pid_to_kill"
+                fi
+            done
+            greMsg "SIGKILL sent to PIDs for '$pattern'. Waiting 2s..."
             sleep 2
+            # Verify
+            if pgrep -f "$pattern" > /dev/null; then
+                # Re-check, excluding the current pgrep from matching itself if pattern is too broad
+                REMAINING_PIDS=$(pgrep -f "$pattern" | grep -v "^$$\$") # Basic attempt to exclude current pgrep
+                if [ -n "$REMAINING_PIDS" ]; then
+                    redMsg "Processes matching '$pattern' might still be running after pkill attempts: $REMAINING_PIDS"
+                    ps -ef | grep -E "$pattern" | grep -v grep
+                else
+                    greMsg "Processes matching '$pattern' appear to be terminated."
+                fi
+            else
+                greMsg "Processes matching '$pattern' appear to be terminated."
+            fi
         else
-            # pkill can return 1 if no processes were matched, even if pgrep found them (race condition)
-            # or if it fails to kill (permissions, zombie processes)
-            purMsg "pkill -f \"$pattern\" command finished. (status $?). This might be okay if processes were already gone."
+            purMsg "No PIDs to kill for pattern '$pattern' after filtering (or none found initially)."
         fi
     else
-        purMsg "No processes found matching '$pattern' for pkill."
+        purMsg "No processes found matching '$pattern' via pgrep."
     fi
 done
 
