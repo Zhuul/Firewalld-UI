@@ -1,3 +1,6 @@
 [HPM] Proxy created: /  -> http://0.0.0.0:7001/
 [HPM] Proxy rewrite rule created: "^/api" ~> "/"
 http:5000
+[HPM] Proxy created: /  -> http://0.0.0.0:7001/
+[HPM] Proxy rewrite rule created: "^/api" ~> "/"
+http:5000

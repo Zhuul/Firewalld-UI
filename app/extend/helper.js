@@ -19,14 +19,14 @@ module.exports = {
   },
   //响应前端
   response(params, callBack) {
-    let { data, success, message, code } = params ?? { data: null, success: false, message: '失败', code: 200 };
+    let { data, success, message, code } = params ?? { data: null, success: false, message: 'fail', code: 200 };
     data && params != undefined ? (success = true) : params?.success ? (success = true) : (success = false);
     if (data === null || data === undefined || data === NaN || data === 0 || data[0] === 0 || data[0] === 1) data = null;
     Array.isArray(params?.data) && params.data[0] == 0 && (success = false);
     this.ctx.body = {
       code: code ?? 200,
       success,
-      message: success ? '成功' : message ?? '失败',
+      message: success ? 'success' : message ?? 'fail',
       data,
     };
     callBack && callBack();
