@@ -135,8 +135,15 @@ if [ $MODULES_STATUS -ne 0 ]; then
     redMsg "Dependency installation via modules.sh failed or was skipped."
     exit 1
 else
-    greMsg "Front-end and back-end dependencies should be downloaded/updated.";
+    greMsg "Front-end and back-end dependencies should be downloaded/updated."
 fi
+
+# --- Update packages to latest ---
+purMsg "-------------------------Updating packages to latest-------------------------"
+env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install -g npm-check-updates
+env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" ncu -u
+env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install
+
 
 # --- Attempt to fix vulnerabilities ---
 purMsg "-------------------------Fixing Vulnerabilities-------------------------"

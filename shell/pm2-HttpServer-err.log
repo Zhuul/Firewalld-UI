@@ -9,3 +9,7 @@
 [HPM] Error occurred while proxying request 127.0.0.1:5000//getPublicKeyFingerprint to http://0.0.0.0:7001/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
 [HPM] Error occurred while proxying request 127.0.0.1:5000//captcha to http://0.0.0.0:7001/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
 [HPM] Error occurred while proxying request 127.0.0.1:5000//captcha to http://0.0.0.0:7001/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+(node:249736) [DEP0111] DeprecationWarning: Access to process.binding('http_parser') is deprecated.
+(Use `express-linux --trace-deprecation ...` to show where the warning was created)
+(node:279662) [DEP0111] DeprecationWarning: Access to process.binding('http_parser') is deprecated.
+(Use `express-linux --trace-deprecation ...` to show where the warning was created)
