@@ -23,49 +23,10 @@ SERVER=$(grep "port" $DIR/config/config.prod.js | grep -Eo '[0-9]{1,4}')
 greMsg "-------------------------Startup process begins $(date +%F%n%T)-------------------------"
 
 # --- Node.js Setup ---
-purMsg "-------------------------Node.js Setup-------------------------"
-# Run node.sh to ensure local Node.js is installed and get its paths
-# node.sh will create/update shell/node/.node_paths
-sh ./shell/node.sh # node.sh messages go to its stderr
-NODE_SETUP_STATUS=$?
-if [ $NODE_SETUP_STATUS -ne 0 ]; then
-    redMsg "Local Node.js setup via node.sh failed or was skipped (exit status: $NODE_SETUP_STATUS). Cannot proceed."
-    exit 1
-fi
-
-NODE_PATHS_FILE="$DIR/shell/node/.node_paths"
-if [ ! -f "$NODE_PATHS_FILE" ]; then
-    redMsg "Node paths file ($NODE_PATHS_FILE) not found after node.sh execution. Critical error."
-    exit 1
-fi
-
-# Source the paths to make NODE_EXECUTABLE, NPM_CLI_JS_PATH, NODE_BIN_PATH etc., available
-source "$NODE_PATHS_FILE"
-
-# NPM_EXECUTABLE_SYMLINK is the path to the npm symlink in node/bin, useful for some contexts
-# NPM_CLI_JS_PATH is the direct path to npm's main script, used for robust execution with NODE_EXECUTABLE
-if [ -z "$NODE_EXECUTABLE" ] || [ ! -x "$NODE_EXECUTABLE" ] || \
-   [ -z "$NPM_EXECUTABLE_SYMLINK" ] || [ ! -L "$NPM_EXECUTABLE_SYMLINK" ] || \
-   [ -z "$NPM_CLI_JS_PATH" ] || [ ! -f "$NPM_CLI_JS_PATH" ] || \
-   [ -z "$NODE_BIN_PATH" ]; then
-    redMsg "Failed to load or verify executables/paths from $NODE_PATHS_FILE (NODE_EXECUTABLE, NPM_EXECUTABLE_SYMLINK, NPM_CLI_JS_PATH, NODE_BIN_PATH). Contents:"
-    cat "$NODE_PATHS_FILE" >&2
-    exit 1
-fi
-
-greMsg "Using local Node.js from: $NODE_EXECUTABLE"
-greMsg "Using local npm (via CLI script) with: $NODE_EXECUTABLE $NPM_CLI_JS_PATH"
-greMsg "Local Node's bin path: $NODE_BIN_PATH"
-
-NODE_VERSION_EXPECTED_PREFIX="v22.1" # Expecting v22.1.x from node.sh
-NODE_VERSION_OUTPUT=$("$NODE_EXECUTABLE" -v 2>/dev/null)
-
-if ! [[ "$NODE_VERSION_OUTPUT" == "${NODE_VERSION_EXPECTED_PREFIX}."* ]]; then
-    redMsg "Local Node.js version ($NODE_VERSION_OUTPUT) is not the expected ${NODE_VERSION_EXPECTED_PREFIX}.x. Check node.sh."
-    # exit 1 # Decide if this is fatal
-fi
-greMsg "Local Node.js version check: $NODE_VERSION_OUTPUT"
-
+# The primary Node.js setup and initial npm install are now handled by 'npm run waf'
+# which executes 'scripts/ensure-local-node.sh'.
+# This startup.sh script assumes that 'npm run waf' has been successfully run at least once.
+purMsg "-------------------------Verifying Dependencies & Environment-------------------------"
 
 # --- Port Information & Checks ---
 purMsg "-------------------------Port Information-------------------------"
@@ -79,7 +40,7 @@ sleep 1 # Reduced sleep
 purMsg "-------------------------Key Generation-------------------------"
 sh $DIR/shell/secret.sh
 
-# --- Environment Detection (PM2) ---
+# --- Environment Checks ---
 purMsg "-------------------------Environment Detection (PM2)-------------------------"
 # pm2.sh will also need to source .node_paths to use the correct npm (via node + npm-cli.js) and find pm2 relative to it.
 # pm2.sh will echo only the path to pm2 if successful.

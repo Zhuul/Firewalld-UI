@@ -2,159 +2,56 @@
 
 # Get the project root directory
 # Assuming this script is in the 'shell' subdirectory of the project root
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P )" # Use -P for physical path
-DIR=$(dirname "$SCRIPT_DIR") # This is the Project Root Directory
+SCRIPT_STOP_ALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P )" # Use -P for physical path
+PROJECT_ROOT_DIR=$(dirname "$SCRIPT_STOP_ALL_DIR") # This is the Project Root Directory
 
-cd "$DIR" || { echo -e "\\n\\E[1;31mERROR: Failed to cd into project root $DIR\\033[0m\\n" >&2; exit 1; }
+cd "$PROJECT_ROOT_DIR" || { echo -e "\n\E[1;31mERROR: Failed to cd into project root $PROJECT_ROOT_DIR\033[0m\n" >&2; exit 1; }
 
 # Define output colors
-redMsg() { echo -e "\\n\\033[1;31m$*\\033[0m\\n" >&2; } # Bold Red
-greMsg() { echo -e "\\n\\033[1;32m$*\\033[0m\\n" >&2; } # Bold Green
-bluMsg() { echo -e "\\n\\033[1;34m$*\\033[0m\\n" >&2; } # Bold Blue (no blink)
-purMsg() { echo -e "\\n\\033[1;35m$*\\033[0m\\n" >&2; } # Bold Purple
+redMsg() { echo -e "\n\033[1;31m$*\033[0m\n" >&2; } # Bold Red
+greMsg() { echo -e "\n\033[1;32m$*\033[0m\n" >&2; } # Bold Green
+bluMsg() { echo -e "\n\033[1;34m$*\033[0m\n" >&2; } # Bold Blue (no blink)
+purMsg() { echo -e "\n\033[1;35m$*\033[0m\n" >&2; } # Bold Purple
+
+RUN_WITH_LOCAL_NODE_SCRIPT="$PROJECT_ROOT_DIR/scripts/run-with-local-node.sh"
+
+if [ ! -x "$RUN_WITH_LOCAL_NODE_SCRIPT" ]; then
+    redMsg "Error: Local node runner script ($RUN_WITH_LOCAL_NODE_SCRIPT) not found or not executable."
+    redMsg "Please ensure project setup (e.g., 'npm run waf') is complete."
+    # exit 1 # Decide if exiting here is appropriate or try to continue with global commands
+fi
 
 purMsg "-------------------------Starting Firewalld-UI Shutdown Process-------------------------"
 
-# --- Source Node.js Environment ---
-NODE_PATHS_FILE="$DIR/shell/node/.node_paths"
-if [ -f "$NODE_PATHS_FILE" ]; then
-    greMsg "Sourcing Node.js environment from $NODE_PATHS_FILE..."
-    source "$NODE_PATHS_FILE"
-else
-    redMsg "Node paths file ($NODE_PATHS_FILE) not found. Cannot proceed with all Node-dependent shutdowns."
-    unset NODE_EXECUTABLE
-    unset NPM_CLI_JS_PATH
-    # It's safer to exit if node paths can't be sourced, as subsequent commands rely on them.
-    # exit 1 # Consider if this is too strict or if script should attempt to continue.
-fi
-
-# Verify essential Node variables if paths file was sourced and exists
-if [ -n "$NODE_PATHS_FILE" ] && [ -f "$NODE_PATHS_FILE" ]; then
-    if [ -z "$NODE_EXECUTABLE" ] || [ ! -x "$NODE_EXECUTABLE" ] || \
-       [ -z "$NPM_CLI_JS_PATH" ] || [ ! -f "$NPM_CLI_JS_PATH" ]; then
-        redMsg "NODE_EXECUTABLE or NPM_CLI_JS_PATH is not correctly set from $NODE_PATHS_FILE. Node-dependent shutdowns may fail."
-        unset NODE_EXECUTABLE # Prevent use of bad paths
-        unset NPM_CLI_JS_PATH
-    else
-        greMsg "Using local Node.js: $NODE_EXECUTABLE"
-        greMsg "Using local npm: $NODE_EXECUTABLE $NPM_CLI_JS_PATH"
-    fi
-fi
-
 # --- Stop PM2 Managed Frontend (HttpServer) ---
 purMsg "-------------------------Stopping PM2 Frontend (HttpServer)-------------------------"
-PM2_EXECUTABLE=""
-
-if [ -n "$NODE_EXECUTABLE" ]; then
-    if [ -f "$DIR/shell/pm2.sh" ]; then
-        greMsg "Attempting to get PM2 path from $DIR/shell/pm2.sh..."
-        PM2_EXECUTABLE_PATH_OUTPUT=$(sh "$DIR/shell/pm2.sh" 2>/dev/null) # Suppress pm2.sh errors for cleaner output
-        PM2_SETUP_STATUS=$?
-        TEMP_PM2_EXECUTABLE=$(echo "$PM2_EXECUTABLE_PATH_OUTPUT" | xargs)
-
-        if [ $PM2_SETUP_STATUS -eq 0 ] && [ -n "$TEMP_PM2_EXECUTABLE" ] && [ -f "$TEMP_PM2_EXECUTABLE" ] && [ -x "$TEMP_PM2_EXECUTABLE" ]; then
-            PM2_EXECUTABLE="$TEMP_PM2_EXECUTABLE"
-            greMsg "Using PM2 executable from shell/pm2.sh: $PM2_EXECUTABLE"
-        else
-            purMsg "shell/pm2.sh did not yield a valid PM2 executable. Status: $PM2_SETUP_STATUS, Output: '$PM2_EXECUTABLE_PATH_OUTPUT'."
-        fi
-    fi
-
-    if [ -z "$PM2_EXECUTABLE" ]; then
-        DEFAULT_PM2_PATH="$DIR/node_modules/.bin/pm2"
-        if [ -f "$DEFAULT_PM2_PATH" ] && [ -x "$DEFAULT_PM2_PATH" ]; then
-            PM2_EXECUTABLE="$DEFAULT_PM2_PATH"
-            greMsg "Using default PM2 executable: $PM2_EXECUTABLE"
-        else
-            purMsg "Default PM2 executable not found at $DEFAULT_PM2_PATH."
-        fi
-    fi
-
-    if [ -n "$PM2_EXECUTABLE" ]; then
-        greMsg "Attempting to stop HttpServer using PM2: $NODE_EXECUTABLE $PM2_EXECUTABLE delete HttpServer"
-        "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" delete HttpServer > /dev/null 2>&1
-        pm2_delete_status=$?
-        if [ $pm2_delete_status -eq 0 ]; then greMsg "PM2 delete HttpServer command successful."; else purMsg "PM2 delete HttpServer command finished (status $pm2_delete_status - process may not have been running)."; fi
-
-        greMsg "Attempting to stop PM2 daemon process: $NODE_EXECUTABLE $PM2_EXECUTABLE kill"
-        "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" kill > /dev/null 2>&1
-        pm2_kill_status=$?
-        if [ $pm2_kill_status -eq 0 ]; then greMsg "PM2 kill command successful."; else purMsg "PM2 kill command finished (status $pm2_kill_status - daemon may not have been running)."; fi
-        if [ $pm2_delete_status -ne 0 ] || [ $pm2_kill_status -ne 0 ]; then
-             # If PM2 commands had issues, wait a bit before pkill
-            greMsg "Waiting 3 seconds after PM2 stop attempts..."
-            sleep 3
-        fi
+# Use npx pm2, which will be resolved by run-with-local-node.sh
+# Check if HttpServer is running before trying to stop/delete
+if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx pm2 describe HttpServer > /dev/null 2>&1; then
+    greMsg "HttpServer is running. Attempting to stop and delete it via PM2..."
+    if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx pm2 delete HttpServer; then
+        greMsg "HttpServer stopped and deleted successfully via PM2."
     else
-        redMsg "No valid PM2 executable found. Skipping PM2 stop."
+        redMsg "Failed to stop/delete HttpServer via PM2. It might have already been stopped or an error occurred."
+        # Optionally, try pm2 stop as a fallback if delete fails for some reason
+        # bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx pm2 stop HttpServer
     fi
 else
-    purMsg "NODE_EXECUTABLE not set. Skipping PM2 stop."
+    purMsg "HttpServer is not currently managed by PM2 or already stopped."
 fi
 
 # --- Stop Egg.js Backend (egg-server) ---
 purMsg "-------------------------Stopping Egg.js Backend (egg-server)-------------------------"
-EGG_SCRIPTS_PATH="$DIR/node_modules/.bin/egg-scripts"
-EGG_SERVER_STOPPED_GRACEFULLY=false # Default to false
-
-if [ -n "$NODE_EXECUTABLE" ] && [ -f "$EGG_SCRIPTS_PATH" ]; then
-    greMsg "Attempting to stop egg-server using local egg-scripts: $NODE_EXECUTABLE $EGG_SCRIPTS_PATH stop --sticky --title=egg-server"
-    # Capture output to parse PID
-    EGG_STOP_OUTPUT=$("$NODE_EXECUTABLE" "$EGG_SCRIPTS_PATH" stop --sticky --title=egg-server 2>&1)
-    stop_status=$?
-    echo "$EGG_STOP_OUTPUT" # Display the output for logging
-
-    MASTER_PID=$(echo "$EGG_STOP_OUTPUT" | grep 'got master pid' | sed -n 's/.*\["\\([0-9]*\\)"\\].*/\\1/p')
-
-    if [ $stop_status -eq 0 ]; then
-        greMsg "Local egg-scripts stop command reported success."
-        # We'll verify with PID check, so don't assume EGG_SERVER_STOPPED_GRACEFULLY=true yet
-    else
-        purMsg "Local egg-scripts stop command finished with status $stop_status. It might have already been stopped or encountered an issue."
-    fi
-
-    if [ -n "$MASTER_PID" ]; then
-        greMsg "egg-scripts identified master PID: $MASTER_PID. Waiting 5 seconds for it to stop..."
-        sleep 5
-        if ps -p "$MASTER_PID" > /dev/null; then
-            redMsg "Master PID $MASTER_PID (reported by egg-scripts) is STİLL RUNNİNG. Attempting forceful SIGKILL."
-            sudo kill -9 "$MASTER_PID"
-            sleep 2 # Give kill command a moment
-            if ps -p "$MASTER_PID" > /dev/null; then
-                redMsg "Master PID $MASTER_PID is STILL RUNNING even after SIGKILL!"
-            else
-                greMsg "Master PID $MASTER_PID appears to be terminated after SIGKILL."
-                EGG_SERVER_STOPPED_GRACEFULLY=true # Considered "handled"
-            fi
-        else
-            greMsg "Master PID $MASTER_PID (reported by egg-scripts) is no longer running."
-            EGG_SERVER_STOPPED_GRACEFULLY=true
-        fi
-    else
-        purMsg "Could not identify master PID from egg-scripts output. Will rely on port/pkill."
-        # If no PID, wait a bit less before general checks
-        greMsg "Waiting 2 seconds before proceeding to port/pkill checks..."
-        sleep 2
-    fi
-
-elif [ -n "$NODE_EXECUTABLE" ] && [ -n "$NPM_CLI_JS_PATH" ]; then
-    greMsg "Local egg-scripts not found at $EGG_SCRIPTS_PATH. Falling back to npm run stop (may have issues)."
-    greMsg "Attempting to stop egg-server using npm script: $NODE_EXECUTABLE $NPM_CLI_JS_PATH run stop -- --title=egg-server"
-    "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" run stop -- --title=egg-server # package.json stop script
-    stop_status=$?
-    if [ $stop_status -eq 0 ]; then
-        greMsg "egg-server stop script executed successfully."
-        EGG_SERVER_STOPPED_GRACEFULLY=true
-    else
-        purMsg "npm run stop script finished. Exit status: $stop_status"
-    fi
+# egg-scripts is a devDependency, run via run-with-local-node.sh which handles path to node_modules/.bin
+greMsg "Attempting to stop Egg.js backend (egg-server)..."
+# The --title must match what was used to start it. From package.json, it's "egg-server".
+if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" egg-scripts stop --title=egg-server; then
+    greMsg "Egg.js backend (egg-server) stop command executed successfully."
+    greMsg "Note: egg-scripts stop might not give explicit feedback if the server wasn't running."
 else
-    purMsg "NODE_EXECUTABLE not set or local egg-scripts/npm not available. Skipping backend stop."
+    redMsg "Failed to execute Egg.js backend (egg-server) stop command."
+    purMsg "This might be okay if the server was not running or was stopped by other means."
 fi
-
-greMsg "Proceeding to port/pkill checks after egg-server stop attempt..."
-sleep 2 # Brief consistent pause before moving to port checks
-
 
 # --- Stop firewalld-ui systemd service ---
 purMsg "-------------------------Stopping firewalld-ui systemd service-------------------------"
