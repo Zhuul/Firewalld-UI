@@ -18,26 +18,40 @@ RUN_WITH_LOCAL_NODE_SCRIPT="$PROJECT_ROOT_DIR/scripts/run-with-local-node.sh"
 if [ ! -x "$RUN_WITH_LOCAL_NODE_SCRIPT" ]; then
     redMsg "Error: Local node runner script ($RUN_WITH_LOCAL_NODE_SCRIPT) not found or not executable."
     redMsg "Please ensure project setup (e.g., 'npm run waf') is complete."
-    # exit 1 # Decide if exiting here is appropriate or try to continue with global commands
+    exit 1 # Exit if the runner script is missing
 fi
 
 purMsg "-------------------------Starting Firewalld-UI Shutdown Process-------------------------"
 
+# --- Check PM2 availability ---
+purMsg "-------------------------Checking PM2 Availability-------------------------"
+if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx --no-install pm2 -v > /dev/null 2>&1; then
+    greMsg "PM2 is available via npx."
+    PM2_AVAILABLE=true
+else
+    purMsg "PM2 does not seem to be installed or accessible via npx from the local Node environment."
+    purMsg "PM2-related stop operations will be skipped."
+    purMsg "You might need to run 'sh shell/startup.sh' or 'sh shell/pm2.sh' to install PM2."
+    PM2_AVAILABLE=false
+fi
+
 # --- Stop PM2 Managed Frontend (HttpServer) ---
-purMsg "-------------------------Stopping PM2 Frontend (HttpServer)-------------------------"
-# Use npx pm2, which will be resolved by run-with-local-node.sh
-# Check if HttpServer is running before trying to stop/delete
-if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx pm2 describe HttpServer > /dev/null 2>&1; then
-    greMsg "HttpServer is running. Attempting to stop and delete it via PM2..."
-    if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx pm2 delete HttpServer; then
-        greMsg "HttpServer stopped and deleted successfully via PM2."
+if [ "$PM2_AVAILABLE" = true ]; then
+    purMsg "-------------------------Stopping PM2 Frontend (HttpServer)-------------------------"
+    # Check if HttpServer is running before trying to stop/delete
+    # Use --no-install to prevent npx from downloading pm2 if it's missing at this stage (though we checked above)
+    if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx --no-install pm2 describe HttpServer > /dev/null 2>&1; then
+        greMsg "HttpServer is running. Attempting to stop and delete it via PM2..."
+        if bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx --no-install pm2 delete HttpServer; then
+            greMsg "HttpServer stopped and deleted successfully via PM2."
+        else
+            redMsg "Failed to stop/delete HttpServer via PM2. It might have already been stopped or an error occurred."
+        fi
     else
-        redMsg "Failed to stop/delete HttpServer via PM2. It might have already been stopped or an error occurred."
-        # Optionally, try pm2 stop as a fallback if delete fails for some reason
-        # bash "$RUN_WITH_LOCAL_NODE_SCRIPT" npx pm2 stop HttpServer
+        purMsg "HttpServer is not currently managed by PM2 or already stopped."
     fi
 else
-    purMsg "HttpServer is not currently managed by PM2 or already stopped."
+    purMsg "Skipping PM2 Frontend stop because PM2 is not available."
 fi
 
 # --- Stop Egg.js Backend (egg-server) ---

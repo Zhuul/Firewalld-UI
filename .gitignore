@@ -16,3 +16,4 @@ typings/
 !pkg-entry.js
 node
 longlogsfile.txt
+/local_node
