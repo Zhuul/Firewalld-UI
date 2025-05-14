@@ -163,7 +163,7 @@ if command -v systemctl &> /dev/null; then
     SERVICE_EXISTS=$(sudo systemctl list-unit-files | grep -q firewalld-ui.service && echo "exists" || echo "not_exists")
 
     if [ "$SERVICE_EXISTS" = "exists" ]; then
-        greMsg "Attempting to stop, disable, reset-failed, and mask firewalld-ui.service (requires sudo if not already root)..."
+        greMsg "Attempting to stop, disable, and reset-failed firewalld-ui.service (requires sudo if not already root)..."
         
         # Attempt to stop the service
         if sudo systemctl is-active --quiet firewalld-ui.service; then
@@ -179,35 +179,22 @@ if command -v systemctl &> /dev/null; then
         greMsg "Waiting 2 seconds..."
         sleep 2
 
-        # Attempt to disable the service
+        # --- Disable Service ---
         if sudo systemctl is-enabled --quiet firewalld-ui.service; then
+            purMsg "firewalld-ui.service is enabled. Attempting to disable..."
             if sudo systemctl disable firewalld-ui.service; then
                 greMsg "firewalld-ui.service disabled successfully."
             else
-                redMsg "Failed to disable firewalld-ui.service. Status: $? (This may require manual intervention if it keeps restarting)"
+                redMsg "Failed to disable firewalld-ui.service."
             fi
         else
-            purMsg "firewalld-ui.service was not enabled."
+            # If it's not "enabled", it could be "disabled", "static", "masked", etc.
+            # We only explicitly try to disable if it's "enabled".
+            SERVICE_STATUS=$(sudo systemctl is-enabled firewalld-ui.service 2>/dev/null) # Capture the actual status
+            purMsg "firewalld-ui.service is not in 'enabled' state (current state: $SERVICE_STATUS). No disable action needed."
         fi
 
-        # Reload systemd daemon to apply changes like disable
-        greMsg "Reloading systemd daemon..."
-        if sudo systemctl daemon-reload; then
-            greMsg "systemd daemon-reload successful."
-        else
-            redMsg "systemd daemon-reload failed. Status: $?"
-        fi
-        sleep 1
-
-        # Attempt to mask the service
-        greMsg "Attempting to mask firewalld-ui.service..."
-        if sudo systemctl mask firewalld-ui.service; then
-            greMsg "firewalld-ui.service masked successfully."
-        else
-            redMsg "Failed to mask firewalld-ui.service. Status: $? (This is a strong indicator of a problem if it fails)"
-        fi
-
-        # Attempt to reset the failed state of the service
+        # --- Reset Failed State ---
         if sudo systemctl is-failed --quiet firewalld-ui.service; then
             if sudo systemctl reset-failed firewalld-ui.service; then
                 greMsg "firewalld-ui.service reset-failed successfully."
