@@ -17,3 +17,4 @@ typings/
 node
 longlogsfile.txt
 /local_node
+shell/pm2-HttpServer*

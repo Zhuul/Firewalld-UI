@@ -11,7 +11,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 # PROJECT_ROOT_DIR is the parent of SCRIPT_DIR (e.g., /path/to/Firewalld-UI)
 PROJECT_ROOT_DIR=$(dirname "$SCRIPT_DIR")
 
-NODE_VERSION="v22.1.0" # Specify the exact Node.js version
+NODE_VERSION="v22.2.0" # Specify the exact Node.js version
 NODE_ARCH="linux-x64" # Specify architecture
 NODE_FILENAME="node-${NODE_VERSION}-${NODE_ARCH}"
 NODE_TARBALL="${NODE_FILENAME}.tar.gz"

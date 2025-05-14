@@ -57,7 +57,7 @@ greMsg "Using local Node.js from: $NODE_EXECUTABLE"
 greMsg "Using local npm (via CLI script) with: $NODE_EXECUTABLE $NPM_CLI_JS_PATH"
 greMsg "Local Node's bin path: $NODE_BIN_PATH"
 
-NODE_VERSION_EXPECTED_PREFIX="v22.1" # Expecting v22.1.x from node.sh
+NODE_VERSION_EXPECTED_PREFIX="v22.2" # Expecting v22.2.x from node.sh
 NODE_VERSION_OUTPUT=$("$NODE_EXECUTABLE" -v 2>/dev/null)
 
 if ! [[ "$NODE_VERSION_OUTPUT" == "${NODE_VERSION_EXPECTED_PREFIX}."* ]]; then
@@ -66,6 +66,15 @@ if ! [[ "$NODE_VERSION_OUTPUT" == "${NODE_VERSION_EXPECTED_PREFIX}."* ]]; then
 fi
 greMsg "Local Node.js version check: $NODE_VERSION_OUTPUT"
 
+# --- Update npm to latest ---
+purMsg "-------------------------Updating npm to latest-------------------------"
+if env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install -g npm@latest; then
+    greMsg "npm successfully updated globally for the local Node.js instance."
+    NEW_NPM_VERSION=$(env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" -v)
+    greMsg "New npm version: $NEW_NPM_VERSION"
+else
+    redMsg "Failed to update npm. Continuing with existing version." # Not exiting here, as npm might still be functional
+fi
 
 # --- Port Information & Checks ---
 purMsg "-------------------------Port Information-------------------------"
@@ -129,21 +138,53 @@ fi
 # --- Dependency Installation (using local npm) ---
 purMsg "-------------------------Dependency Installation-------------------------"
 # modules.sh uses local npm via .node_paths (NODE_EXECUTABLE + NPM_CLI_JS_PATH)
-sh ./shell/modules.sh 
+sh ./shell/modules.sh
 MODULES_STATUS=$?
 if [ $MODULES_STATUS -ne 0 ]; then
-    redMsg "Dependency installation via modules.sh failed or was skipped."
+    redMsg "Dependency installation/check via modules.sh failed or was skipped by user (status: $MODULES_STATUS). Cannot proceed."
     exit 1
 else
-    greMsg "Front-end and back-end dependencies should be downloaded/updated."
+    greMsg "modules.sh completed successfully (status: $MODULES_STATUS)."
 fi
 
 # --- Update packages to latest ---
 purMsg "-------------------------Updating packages to latest-------------------------"
-env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install -g npm-check-updates
-env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" ncu -u
-env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install
+purMsg "Installing/Updating npm-check-updates globally for the local Node.js..."
+if env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install -g npm-check-updates; then
+    greMsg "npm-check-updates installed/updated successfully."
 
+    purMsg "Running npm-check-updates for backend in $DIR..."
+    cd "$DIR" || { redMsg "Failed to cd to $DIR for backend ncu. Exiting."; exit 1; }
+    if env PATH="${NODE_BIN_PATH}:${PATH}" ncu -u; then
+        greMsg "Backend package.json potentially updated by ncu. Running npm install..."
+        if ! env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps; then
+            redMsg "Backend npm install after ncu failed. Exiting."
+            exit 1
+        fi
+        greMsg "Backend dependencies installed after ncu."
+    else
+        redMsg "npm-check-updates (ncu -u) failed for backend. Exiting."
+        exit 1
+    fi
+
+    purMsg "Running npm-check-updates for frontend in $DIR/express..."
+    cd "$DIR/express" || { redMsg "Failed to cd to $DIR/express for frontend ncu. Exiting."; exit 1; }
+    if env PATH="${NODE_BIN_PATH}:${PATH}" ncu -u; then
+        greMsg "Frontend package.json potentially updated by ncu. Running npm install..."
+        if ! env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps; then
+            redMsg "Frontend npm install after ncu failed. Exiting."
+            exit 1
+        fi
+        greMsg "Frontend dependencies installed after ncu."
+    else
+        redMsg "npm-check-updates (ncu -u) failed for frontend. Exiting."
+        exit 1
+    fi
+    cd "$DIR" || { redMsg "Failed to cd back to $DIR after frontend ncu. Exiting."; exit 1; }
+else
+    redMsg "Failed to install npm-check-updates globally. Package updates with ncu will be skipped. Exiting."
+    exit 1
+fi
 
 # --- Attempt to fix vulnerabilities ---
 purMsg "-------------------------Fixing Vulnerabilities-------------------------"
@@ -187,63 +228,58 @@ echo "" # Add a newline for better readability
 cd "$DIR" || { redMsg "Failed to cd back to $DIR after audit fixes"; exit 1; } # Return to project root
 
 
-# --- Systemd Service Setup (using local npm) ---
-purMsg "-------------------------Setting up systemd service-------------------------"
+# --- Systemd Service Setup Information ---
+purMsg "-------------------------Systemd Service Setup Information-------------------------"
 PROJECT_INSTALL_DIR_ABS=$(cd "$DIR" && pwd) # Get absolute path for service file
 SERVICE_FILE_SOURCE="$SCRIPT_STARTUP_DIR/firewalld-ui.service"
-SERVICE_FILE_DEST="/etc/systemd/system/firewalld-ui.service"
+# SERVICE_FILE_DEST="/etc/systemd/system/firewalld-ui.service" # No longer directly writing here
 TEMP_SERVICE_FILE="/tmp/firewalld-ui.service.$$"
 
 if [ ! -f "$SERVICE_FILE_SOURCE" ]; then
     redMsg "ERROR: Service file template not found at $SERVICE_FILE_SOURCE"
-    exit 1
-fi
-
-purMsg "Customizing service file template from $SERVICE_FILE_SOURCE..."
-# Replace placeholder for WorkingDirectory - more robust sed command
-sed "s|^WorkingDirectory=.*|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
-
-# Replace placeholder for ExecStart to use the local node to run npm-cli.js start:systemd
-# Ensure PATH includes NODE_BIN_PATH for any child processes of npm start
-SYSTEMD_EXEC_START_COMMAND="/bin/sh -c 'PATH=${NODE_BIN_PATH}:\$PATH ${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH} run start:systemd'"
-sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${SYSTEMD_EXEC_START_COMMAND}|g" "$TEMP_SERVICE_FILE"
-
-# Replace placeholder for PIDFile
-sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR_ABS}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
-
-purMsg "Ensuring PIDFile directory exists: ${PROJECT_INSTALL_DIR_ABS}/run"
-mkdir -p "${PROJECT_INSTALL_DIR_ABS}/run"
-# Depending on the user systemd runs the service as, permissions might be needed.
-# For now, assuming the user starting this script or root can manage systemd,
-# and the egg application itself (run by systemd) can write to its own project directory.
-
-purMsg "Installing systemd service file to $SERVICE_FILE_DEST..."
-cp "$TEMP_SERVICE_FILE" "$SERVICE_FILE_DEST"
-CP_STATUS=$?
-rm -f "$TEMP_SERVICE_FILE" 
-
-if [ $CP_STATUS -eq 0 ]; then
-    greMsg "Service file successfully copied to $SERVICE_FILE_DEST."
-    chmod 644 "$SERVICE_FILE_DEST"
-    systemctl daemon-reload
-    systemctl enable firewalld-ui.service
-    systemctl restart firewalld-ui.service
-    RESTART_STATUS=$?
-    sleep 2 # Give systemd a moment
-    systemctl is-active --quiet firewalld-ui.service
-    ACTIVE_STATUS=$?
-
-    if [ $RESTART_STATUS -ne 0 ] || [ $ACTIVE_STATUS -ne 0 ]; then
-        redMsg "ERROR: systemctl restart/activation of firewalld-ui.service failed."
-        systemctl status firewalld-ui.service --no-pager >&2
-        journalctl -u firewalld-ui.service -n 20 --no-pager >&2
-    else
-        greMsg "Service firewalld-ui setup complete and started via systemd."
-    fi
+    # exit 1 # Keep this commented or decide if it's fatal if template is missing
+    purMsg "Skipping systemd service file preparation as template is missing."
 else
-    redMsg "ERROR: Failed to copy customized service file to $SERVICE_FILE_DEST."
+    purMsg "Customizing a template for firewalld-ui.service based on $SERVICE_FILE_SOURCE..."
+    # Replace placeholder for WorkingDirectory - more robust sed command
+    sed "s|^WorkingDirectory=.*|WorkingDirectory=${PROJECT_INSTALL_DIR_ABS}|g" "$SERVICE_FILE_SOURCE" > "$TEMP_SERVICE_FILE"
+
+    # Replace placeholder for ExecStart to use the local node to run npm-cli.js start:systemd
+    # Ensure PATH includes NODE_BIN_PATH for any child processes of npm start
+    SYSTEMD_EXEC_START_COMMAND="/bin/sh -c 'PATH=${NODE_BIN_PATH}:\\\\$PATH ${NODE_EXECUTABLE} ${NPM_CLI_JS_PATH} run start:systemd'"
+    # Use a different delimiter for sed if paths contain slashes
+    sed -i "s|ExecStart=__NPM_EXEC_PATH__ start|ExecStart=${SYSTEMD_EXEC_START_COMMAND}|g" "$TEMP_SERVICE_FILE"
+
+    # Replace placeholder for PIDFile
+    sed -i "s|PIDFile=%H/run/egg-server.pid|PIDFile=${PROJECT_INSTALL_DIR_ABS}/run/egg-server.pid|g" "$TEMP_SERVICE_FILE"
+
+    purMsg "Ensuring PIDFile directory exists (application might need it): ${PROJECT_INSTALL_DIR_ABS}/run"
+    mkdir -p "${PROJECT_INSTALL_DIR_ABS}/run"
+
+    greMsg "A customized systemd service file template has been prepared at: $TEMP_SERVICE_FILE"
+    greMsg "Its content is:"
+    echo "----------------------------------------------------------------------"
+    cat "$TEMP_SERVICE_FILE" # Display the content
+    echo "----------------------------------------------------------------------"
+    
+    purMsg "To manually install and manage the firewalld-ui service with systemd:"
+    purMsg "1. Review the content above (also saved to $TEMP_SERVICE_FILE)."
+    purMsg "2. If it looks correct, copy it to the systemd directory:"
+    bluMsg "   sudo cp $TEMP_SERVICE_FILE /etc/systemd/system/firewalld-ui.service"
+    purMsg "3. Set appropriate permissions:"
+    bluMsg "   sudo chmod 644 /etc/systemd/system/firewalld-ui.service"
+    purMsg "4. Reload the systemd daemon:"
+    bluMsg "   sudo systemctl daemon-reload"
+    purMsg "5. Enable the service to start on boot:"
+    bluMsg "   sudo systemctl enable firewalld-ui.service"
+    purMsg "6. Start the service immediately:"
+    bluMsg "   sudo systemctl start firewalld-ui.service"
+    purMsg "7. Check its status:"
+    bluMsg "   sudo systemctl status firewalld-ui.service"
+    bluMsg "   journalctl -u firewalld-ui.service -f"
+    purMsg "You can remove the temporary file after copying: rm $TEMP_SERVICE_FILE"
 fi
-purMsg "-------------------------Systemd service setup finished-------------------------"
+purMsg "-------------------------Systemd service information provided-------------------------"
 
 
 # --- Application Start (Frontend with PM2) ---
