@@ -7,19 +7,19 @@
     "declarations": true
   },
   "dependencies": {
-    "@npmcli/fs": "^3.1.0",
-    "debug": "^4.3.5",
+    "@npmcli/fs": "^4.0.0",
+    "debug": "^4.4.1",
     "dy-node-ip2region": "^1.0.1",
     "egg": "^3.30.1",
     "egg-cors": "^3.0.1",
     "egg-jwt": "^3.1.7",
-    "egg-scripts": "^2.17.0",
+    "egg-scripts": "^3.1.0",
     "egg-sequelize": "^6.0.0",
     "egg-socket.io": "^4.1.6",
     "egg-validate": "^2.0.2",
-    "esquery": "^1.5.0",
-    "express": "^4.19.2",
-    "http-proxy-middleware": "^3.0.0",
+    "esquery": "^1.6.0",
+    "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5",
     "i18n": "^0.15.1",
     "jsencrypt": "^3.3.2",
     "koa-compress": "^5.1.1",
@@ -36,9 +36,9 @@
   "devDependencies": {
     "egg-bin": "^6.13.0",
     "egg-ci": "^2.2.0",
-    "egg-mock": "^5.10.0",
-    "eslint": "^9.0.0",
-    "eslint-config-egg": "^14.0.0"
+    "egg-mock": "^5.15.1",
+    "eslint": "^9.26.0",
+    "eslint-config-egg": "^14.1.0"
   },
   "engines": {
     "node": ">=22.0.0"

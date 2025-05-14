@@ -50,86 +50,100 @@ module.exports = {
     // Query the blacklist in the database, and re-add the queried entries to the firewall rules (because non-persistent firewall rich rules are lost on reboot)
     const { data } = await ctx.service.blacklist.getBlacklist({ page: 1, pageSize: 10000, unblocked: false });
 
-    await data?.rows?.syncEach?.(async item => {
-      let surplus = parseInt(item.expirationTime - (new Date().getTime() - new Date(item.time).getTime()) / 1000);
+    // await data?.rows?.forEach?.(async item => { // Original problematic line
+    if (data && data.rows) {
+      for (const item of data.rows) {
+        let surplus = parseInt(item.expirationTime - (new Date().getTime() - new Date(item.time).getTime()) / 1000);
+        if (surplus < 0) surplus = 0; // Ensure surplus is not negative
 
-      ctx.helper.ipsCachePut(item.ip, { ip: item.ip, port: item.port, fullSite: item.site, expirationTime: surplus }, surplus);
+        ctx.helper.ipsCachePut(item.ip, { ip: item.ip, port: item.port, fullSite: item.site, expirationTime: surplus }, surplus);
 
-      reload
-        ? ctx.helper
-          .serviceAddSystem(
-            3,
-            ctx.helper.getMessage.application(5, {
-              ip: item.ip,
-              surplus,
-            })
-          )
-          .then(() =>
-            this.getLogger('drop').info(
-              ctx.helper.getMessage.application(6),
-              ctx.helper.getMessage.application(7, {
-                port: item.port,
+        if (reload) { // Corrected 'reload' block with awaits
+          await ctx.helper
+            .serviceAddSystem(
+              3,
+              ctx.helper.getMessage.application(5, {
                 ip: item.ip,
-                site: item.site,
                 surplus,
               })
-            )
-          )
-        : await ctx.helper.drop(item.ip, surplus).then(({ err, stdout, stderr, success }) => {
-          success
-            ? (() => {
-              del &&
-                this.getLogger('drop').info(
-                  ctx.helper.getMessage.application(8),
-                  ctx.helper.getMessage.application(7, {
-                    port: item.port,
-                    ip: item.ip,
-                    site: item.site,
-                    surplus,
-                  })
-                );
-              del &&
-                ctx.helper.serviceAddSystem(
-                  3,
-                  ctx.helper.getMessage.application(9, {
-                    ip: item.ip,
-                    surplus,
-                  })
-                );
-            })()
-            : ctx.helper
+            );
+          await this.getLogger('drop').info(
+            ctx.helper.getMessage.application(6),
+            ctx.helper.getMessage.application(7, {
+              port: item.port,
+              ip: item.ip,
+              site: item.site,
+              surplus,
+            })
+          );
+        } else { // Corrected 'else' block with awaits
+          const { success } = await ctx.helper.drop(item.ip, surplus);
+          if (success) {
+            if (del) {
+              this.getLogger('drop').info(
+                ctx.helper.getMessage.application(8),
+                ctx.helper.getMessage.application(7, {
+                  port: item.port,
+                  ip: item.ip,
+                  site: item.site,
+                  surplus,
+                })
+              );
+              await ctx.helper.serviceAddSystem(
+                3,
+                ctx.helper.getMessage.application(9, {
+                  ip: item.ip,
+                  surplus,
+                })
+              );
+            }
+          } else {
+            await ctx.helper
               .serviceAddSystem(
                 3,
                 ctx.helper.getMessage.application(10, {
                   ip: item.ip,
                   surplus,
                 })
-              )
-              .then(() =>
-                this.getLogger('drop').info(
-                  ctx.helper.getMessage.common(4),
-                  ctx.helper.getMessage.application(11, {
-                    ip: item.ip,
-                  })
-                )
               );
-        });
-    });
+            await this.getLogger('drop').info(
+              ctx.helper.getMessage.common(4),
+              ctx.helper.getMessage.application(11, {
+                ip: item.ip,
+              })
+            );
+          }
+        }
+      }
+    }
   },
   parseIpSite(ip) {
     const { ctx } = this;
     const search = ctx.helper.searcher.memorySearchSync(ip);
-    const region = search?.region.split('|').filter(item => item) ?? [];
+    let regionParts = []; // Initialize to an empty array
+    
+    if (search && typeof search.region === 'string') {
+      regionParts = search.region.split('|').filter(item => item);
+    } else if (search && search.region === null) {
+      // If search.region is explicitly null, treat as no region parts
+      this.getLogger('system').warn(`[Firewalld-UI] parseIpSite: search.region is null for IP: ${ip}`);
+    } else if (search && typeof search.region !== 'undefined') {
+      // If search.region exists but is not a string (and not null)
+      this.getLogger('system').warn(`[Firewalld-UI] parseIpSite: search.region is not a string for IP: ${ip}. Type: ${typeof search.region}, Value: ${search.region}`);
+    } else if (!search) {
+        this.getLogger('system').warn(`[Firewalld-UI] parseIpSite: GeoIP search returned null for IP: ${ip}`);
+    }
+
     const cityNo = search?.city ?? 'Unknown City ID';
-    const country = region[0] ?? 'Unknown Country';
-    const province = region[2] ?? 'Unknown Province';
-    const city = region[3] ?? 'Unknown City';
-    const isp = region[4] ?? 'Unknown Network';
+    const country = regionParts[0] ?? 'Unknown Country';
+    const province = regionParts[2] ?? 'Unknown Province';
+    const city = regionParts[3] ?? 'Unknown City';
+    const isp = regionParts[4] ?? 'Unknown Network';
     const fullSite = `${country}-${province}-${city}-${isp}`;
 
     return { country, province, city, cityNo, isp, fullSite };
   },
-  ipMatch: str => str?.match?.(/(\d{1,3}\.){3}\d{1,3}/g) ?? [],
+  ipMatch: str => str?.match?.(/(\\d{1,3}\\.){3}\\d{1,3}/g) ?? [],
   parseIp(value) {
     const data = value.split(/\s/);
     const connectionTime = `${data[5]} ${data[6]}`;
@@ -166,7 +180,7 @@ module.exports = {
       ip: parseIp.remoteIp,
       port: parseIp.localPort,
       fullSite: site.fullSite,
-      site,
+      site, // This was line 153 in the original file
     };
     isInips || this.ipsCache.some(item => item.ip == parse.ip) || this.ipsCache.push(parse);
     // Filter connection log output: entries already logged within the specified time or added to the blacklist will not be output again
@@ -306,7 +320,14 @@ module.exports = {
     this.ctx.helper.systemStart();
     this.ctx.runInBackground(async () => {
       this.messenger.on('netstat', async data => {
-        await data?.syncEach(async item => await this.addIpsCache(item));
+        // await data?.forEach?.(async item => await this.addIpsCache(item)); // Original problematic line
+        if (data && Array.isArray(data)) {
+          for (const item of data) {
+            await this.addIpsCache(item);
+          }
+        } else if (data) { // Handle if data is a single item, not an array
+          await this.addIpsCache(data);
+        }
       });
     });
     this.messenger.on('logCachePut', async parse => {

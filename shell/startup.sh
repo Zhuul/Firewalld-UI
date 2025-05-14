@@ -66,16 +66,6 @@ if ! [[ "$NODE_VERSION_OUTPUT" == "${NODE_VERSION_EXPECTED_PREFIX}."* ]]; then
 fi
 greMsg "Local Node.js version check: $NODE_VERSION_OUTPUT"
 
-# --- Update npm to latest ---
-purMsg "-------------------------Updating npm to latest-------------------------"
-if env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install -g npm@latest; then
-    greMsg "npm successfully updated globally for the local Node.js instance."
-    NEW_NPM_VERSION=$(env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" -v)
-    greMsg "New npm version: $NEW_NPM_VERSION"
-else
-    redMsg "Failed to update npm. Continuing with existing version." # Not exiting here, as npm might still be functional
-fi
-
 # --- Port Information & Checks ---
 purMsg "-------------------------Port Information-------------------------"
 if [ ! "$HTTP" ]; then redMsg "Front-end port HTTP does not exist"; else bluMsg "Front-end port HTTP: $HTTP"; sh ./shell/http.sh; fi
