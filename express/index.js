@@ -13,7 +13,7 @@ const config = {
   ssl: { key: '', crt: '' },
   limiter: {
     windowMs: 15 * 60 * 1000,
-    max: 100
+    max: 1000  // Increased from 100 to 1000
   },
   proxy: {
     target: 'http://127.0.0.1:7001',
@@ -69,7 +69,14 @@ app
     console.log(`[DEBUG] ${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
   })
-  .use(limiter)
+  // Apply rate limiter only to API paths, not to the login page
+  .use((req, res, next) => {
+    // Skip rate limiting for login page and static assets
+    if (req.path === '/login' || req.path.startsWith('/assets/') || req.path === '/favicon.ico') {
+      return next();
+    }
+    limiter(req, res, next);
+  })
   .use(
     compression({
       filter: (req, res) => {
