@@ -71,4 +71,22 @@
     to {
       transform: rotate(360deg);
     }
-  }</style><body><noscript><strong>Sorry, Micro-Firewall will not work properly without JavaScript support. Please enable JavaScript for your browser and continue.</strong></noscript><div id="app"><div class="a-home"><div class="a-h-main"><div class="spinner"><div class="spinner1"></div></div></div><div class="a-h-footer"><div class="a-h-f-center"><img class="a-github" src="/assets/img/loading/github.svg" alt="Github"> &nbsp; <a href="https://github.com/soonxf" target="_blank">Github Open Source Homepage</a></div></div></div></div><script src="assets/js/chunk-vendors.2d2b2f09.js"></script><script src="assets/js/app.5fff3857.js"></script></body></html>
+  }</style><body><noscript><strong>Sorry, Micro-Firewall will not work properly without JavaScript support. Please enable JavaScript for your browser and continue.</strong></noscript><div id="app"><div class="a-home"><div class="a-h-main"><div class="spinner"><div class="spinner1"></div></div></div><div class="a-h-footer"><div class="a-h-f-center"><img class="a-github" src="/assets/img/loading/github.svg" alt="Github"> &nbsp; <a href="https://github.com/soonxf" target="_blank">Github Open Source Homepage</a></div></div></div></div><script>
+// Add this near the top of your HTML file
+(function() {
+  // Intercept all fetch requests
+  const originalFetch = window.fetch;
+  window.fetch = function() {
+    console.log('Fetch request:', arguments);
+    return originalFetch.apply(this, arguments)
+      .then(response => {
+        console.log('Fetch response:', response);
+        return response.clone(); // Return a clone so the original handler can still read it
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        throw error;
+      });
+  };
+})();
+</script><script src="assets/js/chunk-vendors.2d2b2f09.js"></script><script src="assets/js/app.5fff3857.js"></script></body></html>
