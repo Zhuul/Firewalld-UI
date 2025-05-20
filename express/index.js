@@ -71,6 +71,16 @@ app.get('/login', (req, res) => {
   return res.sendFile(path.resolve(__dirname, './dist/login.html'));
 });
 
+// Define a fallback login route that bypasses the SPA completely
+app.get('/static-login', (req, res) => {
+  console.log('[DEBUG] Serving static login page without SPA routing');
+  // Add cache-busting headers
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  return res.sendFile(path.resolve(__dirname, './dist/basic-login.html'));
+});
+
 // Then structure the rest of the middleware
 app
   .use((req, res, next) => {
