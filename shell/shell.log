@@ -182,3 +182,1415 @@ tion at /frp/waf
 
 ------------------------- 2025-05-14
 07:32:18 END -------------------------
+
+------------------------- 2025-05-20
+02:13:39 PM2 Start -------------------------
+[31m[PM2][ERROR] [39mProcess or Namespace HttpServer not found
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ [1m[36m0[39m[22m  │ HttpServer    │ default     │ 1.0.0   │ [7m[1mfork[22m[27m    │ 5602     │ 0s     │ 0    │ [32m[1monline[22m[39m    │ 0%       │ 61.7mb   │ [1mroot[22m     │ [90mdisabled[39m │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:13:41 END -------------------------
+
+------------------------- 2025-05-20
+02:23:08 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 7358     │ 0s     │ 0    │ online    │ 0%       │ 59.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:23:10 END -------------------------
+
+------------------------- 2025-05-20
+02:23:46 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 8052     │ 0s     │ 0    │ online    │ 200%     │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:23:48 END -------------------------
+
+------------------------- 2025-05-20
+02:24:24 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 8535     │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:24:25 END -------------------------
+
+------------------------- 2025-05-20
+02:25:01 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 9096     │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:25:03 END -------------------------
+
+------------------------- 2025-05-20
+02:25:39 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 9647     │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:25:40 END -------------------------
+
+------------------------- 2025-05-20
+02:26:17 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 10113    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:26:18 END -------------------------
+
+------------------------- 2025-05-20
+02:26:54 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 10630    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:26:56 END -------------------------
+
+------------------------- 2025-05-20
+02:27:32 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 11127    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:27:34 END -------------------------
+
+------------------------- 2025-05-20
+02:28:13 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 11577    │ 0s     │ 0    │ online    │ 100%     │ 61.9mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:28:14 END -------------------------
+
+------------------------- 2025-05-20
+02:28:51 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 12028    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:28:52 END -------------------------
+
+------------------------- 2025-05-20
+02:29:29 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 12474    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:29:30 END -------------------------
+
+------------------------- 2025-05-20
+02:30:06 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 12986    │ 0s     │ 0    │ online    │ 0%       │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:30:07 END -------------------------
+
+------------------------- 2025-05-20
+02:30:43 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 13434    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:30:44 END -------------------------
+
+------------------------- 2025-05-20
+02:31:20 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 13883    │ 0s     │ 0    │ online    │ 0%       │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:31:22 END -------------------------
+
+------------------------- 2025-05-20
+02:31:57 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 14329    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:31:59 END -------------------------
+
+------------------------- 2025-05-20
+02:32:35 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 14780    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:32:36 END -------------------------
+
+------------------------- 2025-05-20
+02:33:16 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 15253    │ 0s     │ 0    │ online    │ 0%       │ 61.9mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:33:17 END -------------------------
+
+------------------------- 2025-05-20
+02:33:54 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 15705    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:33:55 END -------------------------
+
+------------------------- 2025-05-20
+02:34:31 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 16168    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:34:33 END -------------------------
+
+------------------------- 2025-05-20
+02:35:09 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 16641    │ 0s     │ 0    │ online    │ 0%       │ 61.0mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:35:10 END -------------------------
+
+------------------------- 2025-05-20
+02:35:46 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 17092    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:35:47 END -------------------------
+
+------------------------- 2025-05-20
+02:36:23 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 17570    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:36:25 END -------------------------
+
+------------------------- 2025-05-20
+02:37:01 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 18022    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:37:02 END -------------------------
+
+------------------------- 2025-05-20
+02:37:34 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 18610    │ 0s     │ 0    │ online    │ 0%       │ 62.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:37:36 END -------------------------
+
+------------------------- 2025-05-20
+02:41:26 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 19442    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:41:27 END -------------------------
+
+------------------------- 2025-05-20
+02:41:49 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 19807    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:41:50 END -------------------------
+
+------------------------- 2025-05-20
+02:42:11 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 20165    │ 0s     │ 0    │ online    │ 0%       │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:42:13 END -------------------------
+
+------------------------- 2025-05-20
+02:42:34 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 20547    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:42:35 END -------------------------
+
+------------------------- 2025-05-20
+02:42:57 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 20933    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:42:58 END -------------------------
+
+------------------------- 2025-05-20
+02:43:20 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 21335    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:43:21 END -------------------------
+
+------------------------- 2025-05-20
+02:43:43 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 21719    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:43:45 END -------------------------
+
+------------------------- 2025-05-20
+02:44:06 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 22099    │ 0s     │ 0    │ online    │ 0%       │ 62.0mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:44:07 END -------------------------
+
+------------------------- 2025-05-20
+02:44:29 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 22461    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:44:30 END -------------------------
+
+------------------------- 2025-05-20
+02:44:52 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 22837    │ 0s     │ 0    │ online    │ 0%       │ 60.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:44:54 END -------------------------
+
+------------------------- 2025-05-20
+02:45:42 PM2 Start -------------------------
+[31m[PM2][ERROR] [39mProcess or Namespace HttpServer not found
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ [1m[36m0[39m[22m  │ HttpServer    │ default     │ 1.0.0   │ [7m[1mfork[22m[27m    │ 23304    │ 0s     │ 0    │ [32m[1monline[22m[39m    │ 0%       │ 61.8mb   │ [1mroot[22m     │ [90mdisabled[39m │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:45:44 END -------------------------
+
+------------------------- 2025-05-20
+02:51:22 PM2 Start -------------------------
+[32m[PM2] [39mApplying action deleteProcessId on app [HttpServer](ids: [ 0 ])
+[32m[PM2] [39m[HttpServer](0) ✓
+┌────┬───────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+└────┴───────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ [1m[36m0[39m[22m  │ HttpServer    │ default     │ 1.0.0   │ [7m[1mfork[22m[27m    │ 24030    │ 0s     │ 0    │ [32m[1monline[22m[39m    │ 0%       │ 59.9mb   │ [1mroot[22m     │ [90mdisabled[39m │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+02:51:23 END -------------------------
+
+------------------------- 2025-05-20
+04:11:06 PM2 Start -------------------------
+[31m[PM2][ERROR] [39mProcess or Namespace HttpServer not found
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ [1m[36m0[39m[22m  │ HttpServer    │ default     │ 1.0.0   │ [7m[1mfork[22m[27m    │ 25591    │ 0s     │ 0    │ [32m[1monline[22m[39m    │ 0%       │ 61.7mb   │ [1mroot[22m     │ [90mdisabled[39m │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:11:08 END -------------------------
+
+------------------------- 2025-05-20
+04:17:59 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 27894    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:18:00 END -------------------------
+
+------------------------- 2025-05-20
+04:18:22 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 28212    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:18:23 END -------------------------
+
+------------------------- 2025-05-20
+04:18:44 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 28505    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:18:46 END -------------------------
+
+------------------------- 2025-05-20
+04:19:08 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 28824    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:19:09 END -------------------------
+
+------------------------- 2025-05-20
+04:19:31 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 29111    │ 0s     │ 0    │ online    │ 0%       │ 61.9mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:19:32 END -------------------------
+
+------------------------- 2025-05-20
+04:19:54 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 29437    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:19:56 END -------------------------
+
+------------------------- 2025-05-20
+04:20:18 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 29805    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:20:19 END -------------------------
+
+------------------------- 2025-05-20
+04:20:41 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 30150    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:20:43 END -------------------------
+
+------------------------- 2025-05-20
+04:21:04 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 30444    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:21:06 END -------------------------
+
+------------------------- 2025-05-20
+04:21:27 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 30736    │ 0s     │ 0    │ online    │ 0%       │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:21:29 END -------------------------
+
+------------------------- 2025-05-20
+04:21:50 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 31063    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:21:51 END -------------------------
+
+------------------------- 2025-05-20
+04:22:13 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 31379    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:22:14 END -------------------------
+
+------------------------- 2025-05-20
+04:22:36 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 31775    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:22:38 END -------------------------
+
+------------------------- 2025-05-20
+04:23:02 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 32164    │ 0s     │ 0    │ online    │ 0%       │ 62.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:23:03 END -------------------------
+
+------------------------- 2025-05-20
+04:23:25 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 32488    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:23:26 END -------------------------
+
+------------------------- 2025-05-20
+04:23:47 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 32833    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:23:49 END -------------------------
+
+------------------------- 2025-05-20
+04:24:11 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 33123    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:24:12 END -------------------------
+
+------------------------- 2025-05-20
+04:24:34 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 33416    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:24:36 END -------------------------
+
+------------------------- 2025-05-20
+04:24:57 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 33711    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:24:59 END -------------------------
+
+------------------------- 2025-05-20
+04:25:21 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 34061    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:25:22 END -------------------------
+
+------------------------- 2025-05-20
+04:25:44 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 34383    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:25:46 END -------------------------
+
+------------------------- 2025-05-20
+04:26:07 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 34679    │ 0s     │ 0    │ online    │ 0%       │ 62.0mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:26:09 END -------------------------
+
+------------------------- 2025-05-20
+04:26:30 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 34971    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:26:31 END -------------------------
+
+------------------------- 2025-05-20
+04:26:53 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 35265    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:26:54 END -------------------------
+
+------------------------- 2025-05-20
+04:27:16 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 35558    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:27:17 END -------------------------
+
+------------------------- 2025-05-20
+04:27:39 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 35852    │ 0s     │ 0    │ online    │ 0%       │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:27:41 END -------------------------
+
+------------------------- 2025-05-20
+04:28:06 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 36145    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:28:08 END -------------------------
+
+------------------------- 2025-05-20
+04:28:29 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 36458    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:28:30 END -------------------------
+
+------------------------- 2025-05-20
+04:28:52 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 36767    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:28:54 END -------------------------
+
+------------------------- 2025-05-20
+04:29:16 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 37093    │ 0s     │ 0    │ online    │ 0%       │ 61.2mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:29:18 END -------------------------
+
+------------------------- 2025-05-20
+04:29:40 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 37567    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:29:41 END -------------------------
+
+------------------------- 2025-05-20
+04:30:03 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 37978    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:30:05 END -------------------------
+
+------------------------- 2025-05-20
+04:30:26 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 38311    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:30:28 END -------------------------
+
+------------------------- 2025-05-20
+04:30:50 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 38603    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:30:52 END -------------------------
+
+------------------------- 2025-05-20
+04:31:13 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 38917    │ 0s     │ 0    │ online    │ 0%       │ 62.0mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:31:15 END -------------------------
+
+------------------------- 2025-05-20
+04:31:36 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 39210    │ 0s     │ 0    │ online    │ 0%       │ 61.0mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:31:37 END -------------------------
+
+------------------------- 2025-05-20
+04:31:58 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 39518    │ 0s     │ 0    │ online    │ 100%     │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:32:00 END -------------------------
+
+------------------------- 2025-05-20
+04:32:21 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 39810    │ 0s     │ 0    │ online    │ 0%       │ 61.5mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:32:23 END -------------------------
+
+------------------------- 2025-05-20
+04:32:44 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 40110    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:32:46 END -------------------------
+
+------------------------- 2025-05-20
+04:33:12 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 40406    │ 0s     │ 0    │ online    │ 0%       │ 61.4mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:33:13 END -------------------------
+
+------------------------- 2025-05-20
+04:33:34 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 40703    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:33:36 END -------------------------
+
+------------------------- 2025-05-20
+04:33:57 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 40995    │ 0s     │ 0    │ online    │ 0%       │ 61.3mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:33:59 END -------------------------
+
+------------------------- 2025-05-20
+04:34:20 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 41287    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:34:21 END -------------------------
+
+------------------------- 2025-05-20
+04:34:43 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 41596    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:34:44 END -------------------------
+
+------------------------- 2025-05-20
+04:35:06 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 41929    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:35:08 END -------------------------
+
+------------------------- 2025-05-20
+04:35:29 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 42222    │ 0s     │ 0    │ online    │ 0%       │ 62.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:35:31 END -------------------------
+
+------------------------- 2025-05-20
+04:35:53 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 42526    │ 0s     │ 0    │ online    │ 0%       │ 61.6mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:35:55 END -------------------------
+
+------------------------- 2025-05-20
+04:36:16 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 42818    │ 0s     │ 0    │ online    │ 0%       │ 61.8mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:36:17 END -------------------------
+
+------------------------- 2025-05-20
+04:36:39 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 43111    │ 0s     │ 0    │ online    │ 0%       │ 61.7mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:36:40 END -------------------------
+
+------------------------- 2025-05-20
+04:37:01 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 43404    │ 0s     │ 0    │ online    │ 0%       │ 62.0mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:37:03 END -------------------------
+
+------------------------- 2025-05-20
+04:38:28 PM2 Start -------------------------
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+[PM2][ERROR] Process or Namespace HttpServer not found
+[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!
+[PM2][Initialization] Defaulting to /etc/.pm2
+┌────┬───────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name          │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ HttpServer    │ default     │ 1.0.0   │ fork    │ 44561    │ 0s     │ 0    │ online    │ 0%       │ 61.1mb   │ root     │ disabled │
+└────┴───────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+------------------------- 2025-05-20
+04:38:30 END -------------------------

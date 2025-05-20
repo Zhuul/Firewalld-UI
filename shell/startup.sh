@@ -1,4 +1,5 @@
 #!/bin/bash
+# filepath: /usr/local/src/Firewalld-UI/shell/startup.sh
 
 # Get the project root directory
 # Assuming startup.sh is in the 'shell' subdirectory of the project root
@@ -323,4 +324,28 @@ greMsg "Check PM2 logs for frontend: $PM2_EXECUTABLE logs HttpServer"
 greMsg "-------------------------Startup process ends $(date +%F%n%T)-------------------------"
 echo -e "\\n------------------------- $(date +%F%n%T) END -------------------------" >> "$LOG_FILE"
 
-exit 0
+# Final lines: run the server in the foreground if systemd argument is provided
+if [ "$1" = "systemd" ]; then
+  echo "[Firewalld-UI] Starting frontend (PM2) and backend (Egg) in systemd mode..."
+
+  # Use the env PATH so pm2 can be found via $NODE_BIN_PATH
+  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start ./express/express-linux --name HttpServer
+
+  # Keep Egg in foreground (--daemon=false) on localhost:7001
+  echo "[Firewalld-UI] Starting Egg server in foreground for systemd..."
+  exec env PATH="${NODE_BIN_PATH}:${PATH}" npx egg-scripts start --daemon=false --hostname=127.0.0.1 --port=7001
+
+else
+  echo "[Firewalld-UI] Starting in normal mode (not systemd)."
+  ./shell/stop-all.sh
+
+  # Start frontend in background
+  cd "$DIR/express" || exit 1
+  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start express-linux --name HttpServer
+  cd "$DIR" || exit 1
+
+  # Start Egg in daemon mode
+  env PATH="${NODE_BIN_PATH}:${PATH}" npx egg-scripts start --daemon --hostname=127.0.0.1 --port="$SERVER"
+  
+  # End of script
+fi

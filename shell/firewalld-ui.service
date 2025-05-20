@@ -3,17 +3,19 @@ Description=Firewalld UI Application
 After=network.target firewalld.service
 
 [Service]
-Type=forking
-User=root
-WorkingDirectory=/workspaces/Firewalld-UI # Placeholder, will be replaced by startup.sh
-ExecStart=__NPM_EXEC_PATH__ start # Placeholder for npm executable, will be replaced by startup.sh
-PIDFile=%H/run/egg-server.pid # %H will be replaced by the WorkingDirectory in startup.sh
+Type=simple
+
+# This ensures commands run inside /usr/local/src/Firewalld-UI
+WorkingDirectory=/usr/local/src/Firewalld-UI
+
+# If you have a node/.node_paths file, let systemd read it. The leading dash (-) 
+# means "ignore if missing."
+EnvironmentFile=-/usr/local/src/Firewalld-UI/shell/node/.node_paths
+
+ExecStart=/bin/bash /usr/local/src/Firewalld-UI/shell/startup.sh systemd
+ExecStop=/bin/bash /usr/local/src/Firewalld-UI/shell/stop-all.sh
 Restart=always
 RestartSec=10
-Environment=NODE_ENV=production
-
-StandardOutput=journal
-StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

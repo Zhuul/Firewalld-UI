@@ -19,3 +19,6 @@ longlogsfile.txt
 /local_node
 shell/pm2-HttpServer*
 database/sqlite-prod.db
+shell/shell.log
+shell/pm2-HttpServer-out.log
+shell/pm2-HttpServer-err.log
