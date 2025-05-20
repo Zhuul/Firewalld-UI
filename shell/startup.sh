@@ -219,6 +219,78 @@ echo "" # Add a newline for better readability
 cd "$DIR" || { redMsg "Failed to cd back to $DIR after audit fixes"; exit 1; } # Return to project root
 
 
+# --- Build New Frontend ---
+purMsg "-------------------------Building New Frontend-------------------------"
+NEW_FRONTEND_DIR="$DIR/new-frontend"
+
+if [ -d "$NEW_FRONTEND_DIR" ]; then
+    greMsg "Found new frontend directory at $NEW_FRONTEND_DIR"
+    
+    # Change to new frontend directory
+    cd "$NEW_FRONTEND_DIR" || { redMsg "Failed to cd to $NEW_FRONTEND_DIR"; exit 1; }
+    
+    # Install dependencies if needed
+    if [ ! -d "node_modules" ] || [ ! -f "node_modules/.package-lock.json" ]; then
+        purMsg "Installing dependencies for new frontend..."
+        env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" install --legacy-peer-deps
+        if [ $? -ne 0 ]; then
+            redMsg "Failed to install dependencies for new frontend"
+            cd "$DIR" || exit 1
+            # Continue despite error - don't exit
+        else
+            greMsg "Dependencies installed successfully for new frontend"
+        fi
+    else
+        greMsg "Dependencies already installed for new frontend"
+    fi
+    
+    # Build the new frontend
+    purMsg "Building new frontend..."
+    env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$NPM_CLI_JS_PATH" run build
+    if [ $? -ne 0 ]; then
+        redMsg "Failed to build new frontend"
+        cd "$DIR" || exit 1
+        # Continue despite error - don't exit
+    else
+        greMsg "New frontend built successfully"
+        
+        # Backup existing dist directory if it exists
+        if [ -d "$DIR/dist" ]; then
+            purMsg "Backing up existing dist directory..."
+            BACKUP_DIR="$DIR/dist.backup.$(date +%Y%m%d%H%M%S)"
+            mv "$DIR/dist" "$BACKUP_DIR"
+            if [ $? -ne 0 ]; then
+                redMsg "Failed to backup existing dist directory"
+                # Continue despite error
+            else
+                greMsg "Existing dist directory backed up to $BACKUP_DIR"
+            fi
+        fi
+        
+        # Copy new build to dist directory
+        purMsg "Copying new frontend build to dist directory..."
+        if [ -d "$NEW_FRONTEND_DIR/dist" ]; then
+            mkdir -p "$DIR/dist"
+            cp -r "$NEW_FRONTEND_DIR/dist/"* "$DIR/dist/"
+            if [ $? -ne 0 ]; then
+                redMsg "Failed to copy new frontend build to dist directory"
+                # Continue despite error
+            else
+                greMsg "New frontend build copied to dist directory successfully"
+            fi
+        else
+            redMsg "New frontend build directory not found at $NEW_FRONTEND_DIR/dist"
+            # Continue despite error
+        fi
+    fi
+    
+    # Return to project root
+    cd "$DIR" || exit 1
+else
+    purMsg "New frontend directory not found at $NEW_FRONTEND_DIR. Skipping frontend build."
+    purMsg "To use the new frontend, create the directory and files as specified in the documentation."
+fi
+
 # --- Systemd Service Setup Information ---
 purMsg "-------------------------Systemd Service Setup Information-------------------------"
 PROJECT_INSTALL_DIR_ABS=$(cd "$DIR" && pwd) # Get absolute path for service file
