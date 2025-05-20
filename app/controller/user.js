@@ -79,28 +79,20 @@ class UserController extends Controller {
     const { ctx, app } = this;
 
     ctx.validate({
-      captchaSecret: { type: 'string', required: true },
       username: { type: 'string', required: true },
       password: { type: 'string', required: true },
-      code: { type: 'string', required: true },
     });
 
     ctx.validate({ fingerprint: { type: 'string', required: true } }, ctx.request.header);
 
-    const { username, password, captchaSecret, code } = ctx.request.body;
-
+    const { username, password } = ctx.request.body;
     const { fingerprint } = ctx.request.header;
-
-    const { playload } = ctx.helper.captchaJwtVerify(captchaSecret);
-
-    ctx.helper.captchaCheck(playload, code);
 
     const usernameDecrypt = ctx.helper.decrypt(username);
     const passwordDecrypt = ctx.helper.decrypt(password);
 
     const { data, equalNull } = await ctx.service.user.findUserOne({
       username: usernameDecrypt,
-      // password: passwordDecrypt,
     });
 
     equalNull &&
