@@ -123,6 +123,11 @@ app
       code: 200
     });
   })
+  // Special route for serving the new login page
+  .get('/login', (req, res) => {
+    console.log("[DEBUG] Serving new login page");
+    res.sendFile(path.resolve(__dirname, './dist/login.html'));
+  })
   // Here is the key change: History needs to happen AFTER our API endpoints
   .use('/api', createProxyMiddleware(config.proxy))
   // History middleware should be last before static files

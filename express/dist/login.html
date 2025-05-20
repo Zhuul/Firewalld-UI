@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firewalld-UI Login</title>
+  <!-- Element UI CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    .login-container {
+      width: 350px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .login-button {
+      width: 100%;
+    }
+    .full-width {
+      width: 100%;
+    }
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="login-container">
+      <div class="title">
+        <h2>Firewalld UI</h2>
+      </div>
+      <el-form :model="loginForm" :rules="rules" ref="loginForm">
+        <el-form-item prop="username">
+          <el-input 
+            v-model="loginForm.username" 
+            placeholder="Username"
+            prefix-icon="el-icon-user">
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input 
+            v-model="loginForm.password" 
+            placeholder="Password" 
+            prefix-icon="el-icon-lock"
+            show-password
+            type="password">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox v-model="loginForm.rememberMe">Remember me</el-checkbox>
+        </el-form-item>
+        <el-form-item>
+          <el-button 
+            type="primary" 
+            :loading="loading" 
+            class="full-width" 
+            @click="handleLogin">
+            Login
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <div class="form-footer">
+        <el-alert
+          v-if="errorMessage"
+          :title="errorMessage"
+          type="error"
+          show-icon
+        ></el-alert>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vue.js -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <!-- Element UI -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <!-- English locale -->
+  <script src="https://unpkg.com/element-ui/lib/umd/locale/en.js"></script>
+  
+  <script>
+    ELEMENT.locale(ELEMENT.lang.en);
+    
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          loginForm: {
+            username: '',
+            password: '',
+            rememberMe: false
+          },
+          loading: false,
+          errorMessage: '',
+          rules: {
+            username: [{ required: true, message: 'Please enter username', trigger: 'blur' }],
+            password: [{ required: true, message: 'Please enter password', trigger: 'blur' }]
+          }
+        };
+      },
+      methods: {
+        handleLogin() {
+          this.$refs.loginForm.validate(valid => {
+            if (valid) {
+              this.loading = true;
+              this.errorMessage = '';
+              
+              // Call the login API
+              fetch('/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  username: this.loginForm.username,
+                  password: this.loginForm.password
+                })
+              })
+              .then(response => response.json())
+              .then(data => {
+                this.loading = false;
+                
+                if (data.success) {
+                  // Save token
+                  if (this.loginForm.rememberMe) {
+                    localStorage.setItem('token', data.data.token);
+                  } else {
+                    sessionStorage.setItem('token', data.data.token);
+                  }
+                  
+                  // Redirect to dashboard
+                  window.location.href = '/';
+                } else {
+                  this.errorMessage = data.message || 'Login failed';
+                }
+              })
+              .catch(error => {
+                this.loading = false;
+                this.errorMessage = 'Network error: ' + error.message;
+                console.error('Login error:', error);
+              });
+            }
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
