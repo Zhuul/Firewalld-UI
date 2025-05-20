@@ -5,7 +5,14 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 
 const path = require('path');
-const config = require(path.join(process.cwd(), './config'));
+const config = {
+  proxy: {
+    target: 'http://127.0.0.1:7001',
+    path: '/',  // Route all requests to the backend
+    changeOrigin: true,
+    pathRewrite: { '^/api': '/' }  // Optional - only if needed
+  }
+};
 
 const fs = require('fs');
 const http = require('http');
