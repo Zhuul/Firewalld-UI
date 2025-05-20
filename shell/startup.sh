@@ -300,19 +300,25 @@ echo -e "\\n------------------------- $(date +%F%n%T) PM2 Start ----------------
 env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" delete HttpServer >> "$LOG_FILE" 2>&1 # Suppress error if not found
 sleep 1
 
-purMsg "Starting/Managing frontend service (express-linux) with local pm2..."
-# Already in $DIR/express directory
-# Ensure PM2 also uses the correct PATH if it needs to find node for any reason,
-# though express-linux is a binary. For consistency with npm, we can set it.
-env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
-PM2_START_STATUS=$?
-cd "$DIR" || exit 1 # Return to project root
+# --- Fix the duplication by adding a check:
+# In the main PM2 starter section (around line 287):
+if [ "$1" != "systemd" ]; then
+  purMsg "Starting/Managing frontend service (express-linux) with local pm2..."
+  # Already in $DIR/express directory
+  # Ensure PM2 also uses the correct PATH if it needs to find node for any reason,
+  # though express-linux is a binary. For consistency with npm, we can set it.
+  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
+  PM2_START_STATUS=$?
+  cd "$DIR" || exit 1 # Return to project root
 
-if [ $PM2_START_STATUS -ne 0 ]; then
-    redMsg "Frontend (pm2 start express-linux) failed. Check $LOG_FILE and pm2 logs ($DIR/shell/pm2-HttpServer-*.log)."
+  if [ $PM2_START_STATUS -ne 0 ]; then
+      redMsg "Frontend (pm2 start express-linux) failed. Check $LOG_FILE and pm2 logs ($DIR/shell/pm2-HttpServer-*.log)."
+  else
+      greMsg "Frontend started/managed by local pm2."
+      env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" list >> "$LOG_FILE" 2>&1
+  fi
 else
-    greMsg "Frontend started/managed by local pm2."
-    env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" list >> "$LOG_FILE" 2>&1
+  purMsg "Skipping PM2 in main flow because systemd mode detected (will start later)"
 fi
 
 greMsg "Service startup initiated."

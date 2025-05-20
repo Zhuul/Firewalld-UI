@@ -46,9 +46,9 @@ if [ "$EXISTS" -eq 0 ]; then
     "INSERT INTO users (username, password, role) VALUES ('admin','admin','administrator');"
   echo "[create-default-admin] Created default admin user."
 else
-  echo "[create-default-admin] Admin user already exists. Updating password to 'admin'..."
+  echo "[create-default-admin] Admin user already exists. Updating password to 'Admin123!'..."
   env PATH="${NODE_BIN_PATH}:${PATH}" "$SQLITE_EXECUTABLE" "$DB_PATH" \
-    "UPDATE users SET password='admin' WHERE username='admin';"
+    "UPDATE users SET password='Admin123!' WHERE username='admin';"
   echo "[create-default-admin] Password updated for existing admin."
 fi
 
