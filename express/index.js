@@ -78,14 +78,6 @@ app
     })
   )
   .use('/api', createProxyMiddleware(config.proxy))
-  .use('/', createProxyMiddleware({
-    target: 'http://127.0.0.1:7001',
-    changeOrigin: true,
-    pathFilter: function(path) {
-      // Only proxy API requests and /login, let static assets be served normally
-      return path.match(/^\/(login|captcha|api)/);
-    }
-  }))
   .use(history())
   .use(
     express.static('./dist', {
