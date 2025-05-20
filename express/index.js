@@ -64,14 +64,25 @@ if (key != '' && cert != '') {
     })
   );
 }
+
+// First define a route handler that always sends our custom login page
+app.get('/login', (req, res) => {
+  console.log("[DEBUG] Explicitly serving custom login page");
+  return res.sendFile(path.resolve(__dirname, './dist/login.html'));
+});
+
+// Then structure the rest of the middleware
 app
   .use((req, res, next) => {
     console.log(`[DEBUG] ${new Date().toISOString()} - ${req.method} ${req.url}`);
+    // If the request is for /login, send our custom login page
+    if (req.path === '/login' && req.method === 'GET') {
+      return res.sendFile(path.resolve(__dirname, './dist/login.html'));
+    }
     next();
   })
-  // Apply rate limiter only to API paths, not to the login page
+  // Apply rate limiter but exclude certain paths
   .use((req, res, next) => {
-    // Skip rate limiting for login page and static assets
     if (req.path === '/login' || req.path.startsWith('/assets/') || req.path === '/favicon.ico') {
       return next();
     }
@@ -88,7 +99,7 @@ app
       level: 5,
     })
   )
-  // First handle API endpoints BEFORE history middleware
+  // API endpoints
   .get('/api/user/getPublicKeyFingerprint', (req, res) => {
     console.log("[DEBUG] Serving fingerprint request");
     res.json({
@@ -122,7 +133,7 @@ app
       data: {
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluaXN0cmF0b3IiLCJpYXQiOjE2MTcwMjIwMDAsImV4cCI6MTYxNzEwODQwMH0.3TqAC1UvJ1jVrDNM0A9JXzIj8QUbS-vOJ8Y60Q8t9XQ',
         auth: {
-          username: 'admin',
+          username: req.body.username || 'admin',
           role: 'administrator'
         }
       },
@@ -130,20 +141,23 @@ app
       code: 200
     });
   })
-  // Special route for serving the new login page
-  .get('/login', (req, res) => {
-    console.log("[DEBUG] Serving new login page");
+  .get('/direct-login', (req, res) => {
+    console.log("[DEBUG] Serving direct login page");
     res.sendFile(path.resolve(__dirname, './dist/login.html'));
   })
-  // Here is the key change: History needs to happen AFTER our API endpoints
   .use('/api', createProxyMiddleware(config.proxy))
-  // History middleware should be last before static files
+  // Add a special handler to redirect /login to our custom page even after history API
+  .use((req, res, next) => {
+    if (req.url === '/login') {
+      return res.sendFile(path.resolve(__dirname, './dist/login.html'));
+    }
+    next();
+  })
   .use(history({
-    // Disable history for our API routes
     rewrites: [
       { from: /^\/api\/.*$/, to: context => context.parsedUrl.pathname },
       { from: /^\/captcha$/, to: '/captcha' },
-      { from: /^\/login$/, to: '/login' }
+      // Removing the login rewrite from history - we handle it directly
     ]
   }))
   .use(express.static('./dist', {
