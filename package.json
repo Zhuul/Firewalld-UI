@@ -23,7 +23,7 @@
     "i18n": "^0.15.1",
     "jsencrypt": "^3.3.2",
     "koa-compress": "^5.1.1",
-    "koa-ratelimit": "^5.1.0",
+    "koa-ratelimit": "^6.0.0",
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "node-rsa": "^1.1.1",
@@ -37,7 +37,7 @@
     "egg-bin": "^6.13.0",
     "egg-ci": "^2.2.0",
     "egg-mock": "^5.15.1",
-    "eslint": "^9.27.0",
+    "eslint": "^9.29.0",
     "eslint-config-egg": "^14.1.0"
   },
   "engines": {

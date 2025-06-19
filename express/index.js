@@ -65,6 +65,15 @@ if (key != '' && cert != '') {
   );
 }
 
+// Emergency direct login that bypasses everything
+app.get('/emergency', (req, res) => {
+  console.log("[DEBUG] Serving emergency login page");
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.sendFile(path.resolve(__dirname, './dist/emergency-login.html'));
+});
+
 // First define a route handler that always sends our custom login page
 app.get('/login', (req, res) => {
   console.log("[DEBUG] Explicitly serving custom login page");
