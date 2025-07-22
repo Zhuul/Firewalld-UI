@@ -349,16 +349,16 @@ purMsg "-------------------------Systemd service information provided-----------
 cd "$DIR" || exit 1 # Ensure we are in project root
 purMsg "Entering root directory $DIR"
 
-if [ ! -f "./express/express-linux" ];then
-    redMsg "Front-end executable ./express/express-linux does not exist"
+if [ ! -f "./express/index.js" ];then
+    redMsg "Front-end file ./express/index.js does not exist"
     exit 1
 fi
 
 purMsg "Entering front-end directory $DIR/express"
 cd ./express || exit 1
-purMsg "Modifying front-end execution permissions for express-linux"
-chmod +x express-linux
-# No need to run express-linux directly here if PM2 is managing it.
+purMsg "Frontend will be started using index.js with Node.js"
+# No need to set execute permissions for .js files
+# No need to run index.js directly here if PM2 is managing it.
 
 sleep 1
 
@@ -375,16 +375,16 @@ sleep 1
 # --- Fix the duplication by adding a check:
 # In the main PM2 starter section (around line 287):
 if [ "$1" != "systemd" ]; then
-  purMsg "Starting/Managing frontend service (express-linux) with local pm2..."
+  purMsg "Starting/Managing frontend service (index.js) with local pm2..."
   # Already in $DIR/express directory
   # Ensure PM2 also uses the correct PATH if it needs to find node for any reason,
-  # though express-linux is a binary. For consistency with npm, we can set it.
-  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start express-linux --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
+  # though index.js is run with Node.js. For consistency with npm, we can set it.
+  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start index.js --name=HttpServer --exp-backoff-restart-delay=1000 --output "$DIR/shell/pm2-HttpServer-out.log" --error "$DIR/shell/pm2-HttpServer-err.log"
   PM2_START_STATUS=$?
   cd "$DIR" || exit 1 # Return to project root
 
   if [ $PM2_START_STATUS -ne 0 ]; then
-      redMsg "Frontend (pm2 start express-linux) failed. Check $LOG_FILE and pm2 logs ($DIR/shell/pm2-HttpServer-*.log)."
+      redMsg "Frontend (pm2 start index.js) failed. Check $LOG_FILE and pm2 logs ($DIR/shell/pm2-HttpServer-*.log)."
   else
       greMsg "Frontend started/managed by local pm2."
       env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" list >> "$LOG_FILE" 2>&1
@@ -407,7 +407,7 @@ if [ "$1" = "systemd" ]; then
   echo "[Firewalld-UI] Starting frontend (PM2) and backend (Egg) in systemd mode..."
 
   # Use the env PATH so pm2 can be found via $NODE_BIN_PATH
-  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start ./express/express-linux --name HttpServer
+  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start ./express/index.js --name HttpServer
 
   # Keep Egg in foreground (--daemon=false) on localhost:7001
   echo "[Firewalld-UI] Starting Egg server in foreground for systemd..."
@@ -419,7 +419,7 @@ else
 
   # Start frontend in background
   cd "$DIR/express" || exit 1
-  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start express-linux --name HttpServer
+  env PATH="${NODE_BIN_PATH}:${PATH}" "$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start index.js --name HttpServer
   cd "$DIR" || exit 1
 
   # Start Egg in daemon mode

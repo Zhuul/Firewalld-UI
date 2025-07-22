@@ -1,19 +1,27 @@
 module.exports = {
-  proxy: {
-    path: '/api',
-    // Backend API address
-    target: 'http://0.0.0.0:7001/',
-    changeOrigoin: false,
-    pathRewrite: { '^/api': '/' },
-    xfwd: true,
-  },
+  proxy: [
+    {
+      path: '/api',
+      // Backend API address
+      target: 'http://127.0.0.1:7001/',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '/' },
+      xfwd: true,
+    },
+    {
+      path: '/login',
+      target: 'http://127.0.0.1:7001',
+      changeOrigin: true,
+      xfwd: true,
+    },
+  ],
   // Traffic limit
   limiter: {
-    // Reset time interval 10 minutes
+    // Reset time interval: 10 minutes
     windowMs: 10 * 60 * 1000,
-    // Maximum number of visits
+    // Max requests per windowMs
     max: 500,
-    message: 'Too many visits, please try again later!!!',
+    message: 'Too many requests, please try again later.',
     standardHeaders: true,
     legacyHeaders: false,
   },

@@ -12,7 +12,7 @@ WorkingDirectory=/usr/local/src/Firewalld-UI
 # means "ignore if missing."
 EnvironmentFile=-/usr/local/src/Firewalld-UI/shell/node/.node_paths
 
-ExecStart=/bin/bash /usr/local/src/Firewalld-UI/shell/startup.sh systemd
+ExecStart=/bin/bash /usr/local/src/Firewalld-UI/shell/systemd-start.sh
 ExecStop=/bin/bash /usr/local/src/Firewalld-UI/shell/stop-all.sh
 Restart=always
 RestartSec=10
