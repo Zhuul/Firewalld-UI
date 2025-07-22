@@ -3,10 +3,11 @@ module.exports = {
     {
       path: '/api',
       // Backend API address
-      target: 'http://127.0.0.1:7001/',
+      target: 'http://127.0.0.1:7001',
       changeOrigin: true,
       pathRewrite: { '^/api': '/' },
       xfwd: true,
+      logLevel: 'debug',
     },
     {
       path: '/login',

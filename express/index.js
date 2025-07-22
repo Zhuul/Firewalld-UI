@@ -32,63 +32,53 @@ const httpServer = http.createServer(
 
 const limiter = rateLimit(config.limiter);
 
-if (key != '' && cert != '') {
-  app.use(
-    helmet({
-      hsts: {
-        maxAge: 0,
-        includeSubDomains: false,
-        preload: true,
-      },
-      dnsPrefetchControl: { allow: true },
-      contentSecurityPolicy: {
-        directives: {
-          'img-src': ['data:', 'blob:', 'mediastream:', 'filesystem:', "'self' img.example.com"],
-        },
-      },
-    })
-  );
-}
-app
-  .use(limiter)
-  .use(
-    compression({
-      filter: (req, res) => {
-        if (req.headers['x-no-compression']) {
-          return false;
-        }
-        return compression.filter(req, res);
-      },
-      level: 5,
-    })
-  )
+// Apply rate limiting and compression to all requests
+app.use(limiter);
+app.use(
+  compression({
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+    level: 5,
+  })
+);
 
-// Route for the login page
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'login.html'));
-});
-
-// Proxy API requests
+// Proxy API requests FIRST
 if (Array.isArray(config.proxy)) {
   config.proxy.forEach(proxy => {
-    app.use(proxy.path, createProxyMiddleware(proxy));
+    const proxyOptions = {
+      ...proxy,
+      onProxyReq: (proxyReq, req, res) => {
+        console.log(`[HPM] Proxying request ${req.method} ${req.url} to ${proxy.target}${proxyReq.path}`);
+      },
+      onError: (err, req, res) => {
+        console.error('[HPM] Proxy error:', err);
+        if (!res.headersSent) {
+            res.status(500).send('Proxy error');
+        }
+      }
+    };
+    app.use(proxy.path, createProxyMiddleware(proxyOptions));
   });
-} else {
-  app.use(config.proxy.path, createProxyMiddleware(config.proxy));
 }
 
-// Static files middleware
-app.use(express.static('./dist', {
+// Static files middleware for the main Vue app and login page
+app.use(express.static(path.join(__dirname, 'dist'), {
   maxAge: config.maxAge,
 }));
 
-// History API fallback for SPA
+// History API fallback for SPA (Vue)
+// This should come after static middleware and proxies
 app.use(history());
 
-// Serve index.html as a fallback for history middleware
-app.use(express.static('./dist', {
+// Serve static files again to catch history fallback rewrites (e.g., /index.html)
+app.use(express.static(path.join(__dirname, 'dist'), {
   maxAge: config.maxAge,
 }));
+
 
 httpServer.listen(config.httpPort, () => console.log('http:' + config.httpPort));
 httpServer.on('connection', socket => socket.setTimeout(config.setTimeout));
