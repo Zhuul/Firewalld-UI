@@ -101,22 +101,48 @@
                     const data = await response.json();
 
                     if (data.success && data.data.token) {
-                        message.textContent = 'Login successful! Redirecting...';
+                        message.textContent = 'Login successful! Preparing to redirect...';
                         
-                        // The Vuex state needs to be structured correctly.
-                        // Let's assume the user module holds the token and fingerprint.
+                        // The original app might have a more complex state.
+                        // Let's create a structure that's more likely to match.
                         const vuexState = {
                             user: {
                                 token: data.data.token,
-                                fingerprint: fingerprint
+                                fingerprint: fingerprint,
+                                // The app might expect other user properties
+                                name: 'admin', 
+                                avatar: '',
+                                roles: ['admin']
+                            },
+                            // It might also expect other modules to be present
+                            app: {
+                                sidebar: {
+                                    opened: true,
+                                    withoutAnimation: false
+                                },
+                                device: 'desktop',
+                                language: 'en',
+                                size: 'medium'
+                            },
+                            permission: {
+                                routes: [],
+                                addRoutes: []
+                            },
+                            tagsView: {
+                                visitedViews: [],
+                                cachedViews: []
                             }
                         };
                         
                         // Storing in localStorage for the Vue app to pick up.
-                        localStorage.setItem('vuex', JSON.stringify(vuexState));
+                        const stateString = JSON.stringify(vuexState);
+                        localStorage.setItem('vuex', stateString);
+                        console.log('Stored vuex state in localStorage:', stateString);
 
-                        // Redirect to the main application page.
-                        window.location.href = '/';
+                        // Redirect to the main application page after a short delay
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 500);
                     } else {
                         throw new Error(data.message || 'Login failed.');
                     }
