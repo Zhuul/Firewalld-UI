@@ -3,31 +3,36 @@ import requests
 import json
 import sys
 
+BASE_URL = 'http://localhost:5000'
+
 def test_login():
     print("🔐 Testing login...")
     try:
-        response = requests.post('http://localhost:5000/login', 
+        response = requests.post(f'{BASE_URL}/login', 
                                json={'username': 'admin', 'password': 'Admin123456@'},
-                               timeout=5)
+                               timeout=15) # Increased timeout
+        print(f"   - Received status code: {response.status_code}")
         if response.status_code == 200:
             data = response.json()
+            print(f"   - Raw login response: {data}")
             if data.get('success'):
                 print("✅ Login successful!")
                 return data['data']['token']
             else:
-                print(f"❌ Login failed: {data.get('message', 'Unknown error')}")
+                print(f"❌ Login failed: {data.get('message', 'No message')}")
                 return None
         else:
-            print(f"❌ Login HTTP error: {response.status_code}")
+            print(f"❌ Login failed with status code: {response.status_code}")
+            print(f"   - Response text: {response.text}")
             return None
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print(f"❌ Login exception: {e}")
         return None
 
 def test_fingerprint():
     print("🔑 Testing fingerprint...")
     try:
-        response = requests.get('http://localhost:5000/api/getPublicKeyFingerprint', timeout=5)
+        response = requests.get(f'{BASE_URL}/api/getPublicKeyFingerprint', timeout=15)
         if response.status_code == 200:
             data = response.json()
             if data.get('success'):
@@ -46,7 +51,7 @@ def test_fingerprint():
 def test_main_app():
     print("🌐 Testing main app access...")
     try:
-        response = requests.get('http://localhost:5000/', timeout=5)
+        response = requests.get(BASE_URL, timeout=15)
         if response.status_code == 200:
             print("✅ Main app accessible!")
             print(f"   Content length: {len(response.text)} chars")

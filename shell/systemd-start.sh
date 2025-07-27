@@ -59,7 +59,7 @@ trap cleanup EXIT TERM INT
 # Start Express frontend with PM2 (daemon mode)
 echo "[$(date)] Starting Express frontend with PM2..."
 cd "$DIR/express"
-"$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start index.js --name HttpServer --interpreter "$NODE_EXECUTABLE" --silent || {
+"$NODE_EXECUTABLE" "$PM2_EXECUTABLE" start index.js --name HttpServer --interpreter "$NODE_EXECUTABLE" || {
     echo "[$(date)] ERROR: Failed to start Express server with PM2"
     exit 1
 }
